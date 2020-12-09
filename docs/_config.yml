@@ -33,6 +33,7 @@ search: true
 markdown: kramdown
 remote_theme: mmistakes/minimal-mistakes
 
+permalink: /:categories/:title/
 paginate: 10
 paginate_apth: /page:num/
 timezone: Asia/Tokyo
