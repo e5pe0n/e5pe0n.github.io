@@ -41,11 +41,12 @@ plugins:
   - jekyll-include-cache
 
 author:
-  name  : "e5pe0n"
-  avatar : "/assets/images/biophoto"
-  bio     : "Python, C++, etc"
-  links :
+  name: "e5pe0n"
+  avatar: "/assets/images/biophoto"
+  bio: "Python, C++, etc"
+  links:
     - label: "GitHub"
+      icon: "fab fa-fw fa-github"
       url: "https://github.com/e5pe0n"
 
 # Exclude from processing.
