@@ -40,6 +40,14 @@ plugins:
   - jemoji
   - jekyll-include-cache
 
+author:
+  name  : "e5pe0n"
+  avatar : "/assets/images/biophoto"
+  bio     : "Python, C++, etc"
+  links :
+    - label: "GitHub"
+      url: "https://github.com/e5pe0n"
+
 # Exclude from processing.
 # The following items will not be processed, by default.
 # Any item listed under the `exclude:` key here will be automatically added to
