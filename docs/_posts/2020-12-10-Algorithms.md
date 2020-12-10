@@ -9,6 +9,25 @@ tags:
   - Python
 ---
 
+$
+  A = \left(
+    \begin{array}{ccc}
+      a & b & c \\
+      d & e & f \\
+      g & h & i
+    \end{array}
+  \right)
+$
+
+$$
+  A = \left(
+    \begin{array}{ccc}
+      a & b & c \\
+      d & e & f \\
+      g & h & i
+    \end{array}
+  \right)
+$$
 
 # Single Source Shortest Paths (単一始点最短路問題)
 
@@ -20,7 +39,7 @@ tags:
   - see all vertexes in each loop
 - based on *triangle inequality*
 
-![bellman_ford_graph1]({{ site.url }}/assets/{{site.url}}/Algorithms_images/bellman_ford_graph1.png)
+![bellman_ford_graph1]({{ site.url }}{{site.baseurl}}/assets/Algorithms_images/bellman_ford_graph1.png)
 
 ```
 // test1.txt
@@ -380,7 +399,7 @@ print_path(S, T)
 - use DP to consider a path from $i$ to $j$ is through $k$ or not
   - which more shorter is path through $k$ or not
 
-![all_pairs_shortest_paths]({{site.url}}/{{site.url}}/Algorithms_images/all_pairs_shortest_paths.png)
+![all_pairs_shortest_paths]({{site.url}}{{site.baseurl}}/assets/Algorithms_images/all_pairs_shortest_paths.png)
 
 ```
 // test1.txt
@@ -500,7 +519,7 @@ for _d in d:
 - use *Union-Find Tree*
 - add vertexes of the min weight edge into tree repeatedly if the tree doesn't include the vertexes
 
-![mst]({{site.url}}/{{site.url}}/Algorithms_images/mst.png)
+![mst]({{site.url}}{{site.baseurl}}/assets/Algorithms_images/mst.png)
 
 ```
 // test1.txt
@@ -1349,8 +1368,8 @@ print(_sum(1))  # 5
 - determine maximum flow
 - $O(F|E|)$
 
-![flow_network]({{site.url}}/Algorithms_images/flow_network.png)
-![residual_network]({{site.url}}/Algorithms_images/residual_network.png)
+![flow_network]({{site.url}}{{site.baseurl}}/assets/Algorithms_images/flow_network.png)
+![residual_network]({{site.url}}{{site.baseurl}}/assets/Algorithms_images/residual_network.png)
 
 ```
 // test1.txt
@@ -1495,7 +1514,7 @@ print(max_flow(s, t))
 
 ## Bipartite Matching
 
-![bipartite_matching]({{site.url}}/Algorithms_images/bipartite_matching.png)
+![bipartite_matching]({{site.url}}{{site.baseurl}}/assets/Algorithms_images/bipartite_matching.png)
 
 ```
 // test1.txt
