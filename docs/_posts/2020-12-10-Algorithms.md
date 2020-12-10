@@ -9,10 +9,13 @@ tags:
   - Python
 ---
 
-$O(|V|)$
+$O(|V|)$  
+$| V |$  
+
 
 - $O(V)$
 - $|V|$
+- $| V |$
 
 # Single Source Shortest Paths (単一始点最短路問題)
 
