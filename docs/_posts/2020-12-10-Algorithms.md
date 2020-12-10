@@ -15,7 +15,8 @@ $$|V|$$
 
 
 - $O(V)$
-- $|V|$
+- $\lvert V \rvert$
+- $O(\lvert V \rvert)$
 
 # Single Source Shortest Paths (単一始点最短路問題)
 
