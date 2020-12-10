@@ -200,7 +200,7 @@ print_path(S, T)
 
 ## Dijkstra's Algorithm
 
-- $O(V^2)$ -> $O(|E|log|V|)$ (used heap queue)
+- $O(V^2)$ -> $O(\lvert E \rvert log \lvert V \rvert)$ (used heap queue)
 - use priority queue
   - see only the most nearest vertex
 
@@ -495,7 +495,7 @@ for _d in d:
 ## Kruscal's Algorithm
 
 - be similar to Bellman-Ford Algorithm
-- $O(|E|log|V|)$
+- $O(\lvert E \rvert log \lvert V \rvert)$
 - use *Union-Find Tree*
 - add vertexes of the min weight edge into tree repeatedly if the tree doesn't include the vertexes
 
@@ -658,7 +658,7 @@ print(ans)
 ## Prim's Algorithm
 
 - be similar to Dijkstra's Algorithm
-- use priority queue -> $O(|E|log|V|)$
+- use priority queue -> $O(\lvert E \rvert log \lvert V \rvert)$
 - add vertex having the shortest distance from added vertexes in the tree into tree repeatedly
 
 ```c++
@@ -1130,7 +1130,7 @@ while comb < 1 << n:
 ## RMQ: Range Minimum Query
 
 - Each node holds min val in the range
-- $O(log \ N)$
+- $O(log N)$
 
 ```
 // test1.txt
@@ -1251,7 +1251,7 @@ print(query(7, 8, 0, 0, n))  # 2
 ## BIT: Binary Indexed Tree
 
 - Each node holds sum of vals in the range
-- $O(log \ N)$
+- $O(log N)$
 
 ```
 // test1.txt
@@ -1346,7 +1346,7 @@ print(_sum(1))  # 5
 ## Ford-Fulkerson
 
 - determine maximum flow
-- $O(F|E|)$
+- $O(F \lvert E \rvert)$
 
 ![flow_network]({{site.url}}{{site.baseurl}}/assets/Algorithms_images/flow_network.png)
 ![residual_network]({{site.url}}{{site.baseurl}}/assets/Algorithms_images/residual_network.png)

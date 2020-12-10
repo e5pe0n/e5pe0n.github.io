@@ -130,9 +130,9 @@ $$
 \boldsymbol{A} = \boldsymbol{U} \boldsymbol{M} \boldsymbol{V^{T}} =
 \boldsymbol{U}\left(
     \begin{array}{cccc}
-      \sigma_1 & & & \\\\
-      & \sigma_2 &  & \\\\
-      & & \ddots \\\\
+      \sigma_1 & & & \\
+      & \sigma_2 &  & \\
+      & & \ddots \\
       & & & \sigma_r
     \end{array}
   \right) \boldsymbol{V^{T}}
@@ -144,9 +144,9 @@ $$
 \boldsymbol{A^{-}} = \boldsymbol{V} \boldsymbol{M} \boldsymbol{U^{T}} =
 \boldsymbol{V}\left(
     \begin{array}{cccc}
-      1/\sigma_1 & & & \\\\
-      & 1/\sigma_2 &  & \\\\
-      & & \ddots \\\\
+      1/\sigma_1 & & & \\
+      & 1/\sigma_2 &  & \\
+      & & \ddots \\
       & & & 1/\sigma_r
     \end{array}
   \right) \boldsymbol{U^{T}}
@@ -211,7 +211,7 @@ $$
 \boldsymbol{V} = 
 \left(
     \begin{array}{cc}
-      \sum_{\alpha=1}^N (x_{\alpha} - m_x)^2 / N & \sum_{\alpha=1}^{N} (x_{\alpha} - m_x) (y_{\alpha} - m_y) / N \\\\
+      \sum_{\alpha=1}^N (x_{\alpha} - m_x)^2 / N & \sum_{\alpha=1}^{N} (x_{\alpha} - m_x) (y_{\alpha} - m_y) / N \\
       \sum_{\alpha=1}^{N} (x_{\alpha} - m_x) (y_{\alpha} - m_y) / N & \sum_{\alpha=1}^{N} (y_{\alpha} - m_y)^2 / N \\
     \end{array}
   \right)
@@ -239,7 +239,7 @@ $r_{xy}$はデータ$x_{\alpha}$誤差ベクトルとデータ$y_{\alpha}$誤差
 i.e. データ$x_{\alpha}$とデータ$y_{\alpha}$の誤差の傾向がどれだけ似ているかを表す．  
 誤差モデルは，入力$x$と出力$y$の問題を誤差の問題に置き換えて考えていたため，`誤差の傾向 = データx, yの傾向` となる．  
 
-![rxy.png]({{site.url}}/One_Phrase_Discriptions_images/rxy.png)
+![rxy.png]({{site.url}}{{site.baseurl}}/One_Phrase_Discriptions_images/rxy.png)
 
 <br>
 <hr>
@@ -293,7 +293,7 @@ E[f(X)] \le E[a(X - x_0) + f(E[X])] \\
 = f(E[X])
 $$
 
-![jensen_inquality.png]({{site.url}}/One_Phrase_Discriptions_images/jensen_inquality.png)
+![jensen_inquality.png]({{site.url}}{{site.baseurl}}/One_Phrase_Discriptions_images/jensen_inquality.png)
 
 <br>
 <hr>
@@ -328,13 +328,13 @@ $$
 $$
 制約条件(constraint):\ 
 \begin{cases}
-a_{11}x_1 + a_{12}x_2 + \dots + a_{1n}x_n \le b_1 \\\\
-a_{21}x_1 + a_{22}x_2 + \dots + a_{2n}x_n \le b_2 \\\\
-\dots & \\\\
+a_{11}x_1 + a_{12}x_2 + \dots + a_{1n}x_n \le b_1 \\
+a_{21}x_1 + a_{22}x_2 + \dots + a_{2n}x_n \le b_2 \\
+\dots & \\
 a_{m1}x_1 + a_{m2}x_2 + \dots + a_{mn}x_n \le b_m 
 \end{cases}
-\\\\
-x_1, x_2, ..., x_3 \ge 0 \\\\
+\\
+x_1, x_2, ..., x_3 \ge 0 \\
 目的関数(objective function):\ f = c_{1}x_1 + c_{2}x_2 + \dots + c_{n}x_n \rightarrow max
 $$
 
@@ -368,9 +368,9 @@ i.e. 目的関数$f$が最大となる$x_{\alpha}$を求めたいなら，凸多
 
   およびその最大値のときの$x_i$を関数$\hat{x_i}(x_{i + 1})$として配列に記憶する．  
 
-2. $f_n(x_n)$を最大にする$x_n$の値$x_n^*$を探索し，その最大値を$J^* = f_n(x_n^*)$とする
-3. $i = n - 1, ..., 1$に対して$x_i^* = \hat{x_{i + 1}}^*$を計算する
-4. $(x_1^*, x_2^*, ..., x_n^*)$と$J^*$を返す  
+2. $f_n(x_n)$を最大にする$x_n$の値$x_n^{*}$を探索し，その最大値を$J^{*} = f_n(x_n^{*})$とする
+3. $i = n - 1, ..., 1$に対して$x_i^{*} = \hat{x_{i + 1}}^{*}$を計算する
+4. $(x_1^{*}, x_2^{*}, ..., x_n^{*})$と$J^{*}$を返す  
 
 i.e, $i = 1$から$i = n$まで，すべての$x_i$について$f(x_i)$を計算し，$f_{i + 1}(x_{i + 1})$を最大化する$x_i$を記録しておき，計算し終わったら，今度は逆に,
 $f_{n}$が最大となる$x_n$を選び，$i = n$から$f_i(x_i)$を最大にする$x_{i - 1}$を辿っていくと，辿った$x_n, ..., x_1$が最適解である．  
@@ -411,31 +411,31 @@ i.e.
 $$
 \left(
   \begin{array}{c}
-    y_0 \\\\
-    y_1 \\\\
-    y_2 \\\\
-    y_3 \\\\
-    \vdots \\\\
-    y_{n-1} \\
+    y_0 \\
+    y_1 \\
+    y_2 \\
+    y_3 \\
+    \vdots \\
+    y_{n-1} 
   \end{array}
 \right) = 
 \left(
   \begin{array}{cccccc}
-    1 & 1 & 1 & 1 & \cdots & 1 \\\\
-    1 & \omega_n & \omega_n^2 & \omega_n^3 & \cdots & \omega_n^{n-1} \\\\
-    1 & \omega_n^2 & \omega_n^4 & \omega_n^6 & \cdots & \omega_n^{2(n-1)} \\\\
-    1 & \omega_n^3 & \omega_n^6 & \omega_n^9 & \cdots & \omega_n^{3(n-1)} \\\\
-    \vdots & \vdots & \vdots & \vdots & \ddots & \vdots \\\\
+    1 & 1 & 1 & 1 & \cdots & 1 \\
+    1 & \omega_n & \omega_n^2 & \omega_n^3 & \cdots & \omega_n^{n-1} \\
+    1 & \omega_n^2 & \omega_n^4 & \omega_n^6 & \cdots & \omega_n^{2(n-1)} \\
+    1 & \omega_n^3 & \omega_n^6 & \omega_n^9 & \cdots & \omega_n^{3(n-1)} \\
+    \vdots & \vdots & \vdots & \vdots & \ddots & \vdots \\
     1 & \omega_n^{n-1} & \omega_n^{2(n-1)} & \omega_n^{3(n-1)} & \cdots & \omega_n^{(n-1)(n-1)} \\
   \end{array}
 \right) 
 \left(
   \begin{array}{c}
-    a_0 \\\\
-    a_1 \\\\
-    a_2 \\\\
-    a_3 \\\\
-    \vdots \\\\
+    a_0 \\
+    a_1 \\
+    a_2 \\
+    a_3 \\
+    \vdots \\
     a_{n-1} \\
   \end{array}
 \right)
@@ -497,13 +497,13 @@ $p$ が素数ならば必ず $a^{p-1} \equiv 1\ (mod\ p)$ となるが，$a^{n-1
 
 
 # 原始根 (primitive root)
-$ord_n(g) = |\mathbb{Z^*_n}|$ ならば，$\mathbb{Z^*_n}$ のすべての要素は法$n$の下で$g$のべき乗である（$g^1\ mod\ n, g^2\ mod\ n, ..., g^{n-1}\ mod\ n$ で $1...n - 1$ をすべて表せる）．  
-$g$ を $\mathbb{Z^*_n}$ の **原始根(primitive root)** あるいは **生成元(generator)** という．  
+$ord_n(g) = |\mathbb{Z^{*}_n}|$ ならば，$\mathbb{Z^{*}_n}$ のすべての要素は法 $n$ の下で $g$ のべき乗である（$g^1 \ mod \ n, g^2 \ mod \ n, ..., g^{n-1} \ mod \ n$ で $1...n - 1$ をすべて表せる）．  
+$g$ を $\mathbb{Z^{*}_n}$ の **原始根(primitive root)** あるいは **生成元(generator)** という．  
 e.g. 3は法7の下で原始根だが，2は法7の下で原始根ではない．  
 e.g. $\omega_{8} = e^{2 \pi i / 8}$ は1の原始8乗根
 
 # 離散対数 (discrete logarithm)
-$g$ を $\mathbb{Z^*_n}$ の原始根，$a \in \mathbb{Z^*_n}$ のとき，$g^z \equiv a\ (mod\ n)$ を満たす$z$を，$n$を法とし$g$を底とする**離散対数(discrete logarithm)** あるいは $a$ の **指数(index)** と呼び，$ind_{n,g}(a)$ で表す．
+$g$ を $\mathbb{Z^{*}_n}$ の原始根，$a \in \mathbb{Z^{*}_n}$ のとき，$g^z \equiv a\ (mod\ n)$ を満たす$z$を，$n$ を法とし $g$ を底とする**離散対数(discrete logarithm)** あるいは $a$ の **指数(index)** と呼び，$ind_{n,g}(a)$ で表す．
     
 e.g.   
 原始根 $g = 3$, 法 $n = 7$ とするとき，$a = 6$ となるのは $3^3\ mod\ 7 = 6$ なので $z = ind_{7,3} = 3$．
@@ -512,9 +512,9 @@ e.g.
 
 # ラグランジュの未定乗数法 (Lagrange multiplier)
 束縛条件のもとで最適化を行うための数学(解析学)的な方法．  
-ラグランジュ関数$L(x, y, \lambda) = f(x) - \lambda(g(x))$ の微分が0の点，すなわち極値について解くため，厳密にはそのときの$x$と$y$が$f(x)$を最大あるいは最小にすることは保証されていない（$f(x)$の形状に依る）．  
+ラグランジュ関数 $L(x, y, \lambda) = f(x) - \lambda(g(x))$ の微分が 0 の点，すなわち極値について解くため，厳密にはそのときの $x$ と $y$ が $f(x)$ を最大あるいは最小にすることは保証されていない（ $f(x)$ の形状に依る）．  
 
-e.g. $x^2$ + y^2$ のもとで $f(x, y) = 2x + 3y$ の最大値を求める    
+e.g. $x^2 + y^2$ のもとで $f(x, y) = 2x + 3y$ の最大値を求める    
     
 $$
 L(x, y, \lambda) = 2x + 3y - \lambda(x^2 + y^2 - 1)\\\\
