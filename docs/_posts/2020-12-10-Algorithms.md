@@ -9,26 +9,10 @@ tags:
   - Python
 ---
 
-$
-  A = \left(
-    \begin{array}{ccc}
-      a & b & c \\
-      d & e & f \\
-      g & h & i
-    \end{array}
-  \right)
-$
+$O(|V|)$
 
-$$
-  A = \left(
-    \begin{array}{ccc}
-      a & b & c \\
-      d & e & f \\
-      g & h & i
-    \end{array}
-  \right)
-$$
-
+- $O(V)$
+- $|V|$
 
 # Single Source Shortest Paths (単一始点最短路問題)
 
