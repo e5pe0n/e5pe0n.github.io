@@ -29,6 +29,27 @@ $$
   \right)
 $$
 
+$$
+|V|
+$$
+
+$
+|V|
+$
+
+$
+\|V\|
+$
+
+$
+\\|V\\|
+$
+
+$
+\abs{V}
+$
+
+
 # Single Source Shortest Paths (単一始点最短路問題)
 
 ## Bellman-Ford Algorithm
