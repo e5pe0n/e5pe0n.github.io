@@ -33,7 +33,7 @@ $$
 
 ## Bellman-Ford Algorithm
 
-- $O(\abs{V})$
+- $O(\|V\|)$
 - $O(\left|V\right|)$
 - **detect negative loop**
 - relax edges for $|V| - 1$
