@@ -9,22 +9,13 @@ tags:
   - Python
 ---
 
-$O(|V|)$  
-
-$$|V|$$
-
-
-- $O(V)$
-- $\lvert V \rvert$
-- $O(\lvert V \rvert)$
-
 # Single Source Shortest Paths (単一始点最短路問題)
 
 ## Bellman-Ford Algorithm
 
-- $O(|V|)$
+- $O(\lvert V \rvert)$
 - **detect negative loop**
-- relax edges for $|V| - 1$
+- relax edges for $\lvert V \rvert - 1$
   - see all vertexes in each loop
 - based on *triangle inequality*
 

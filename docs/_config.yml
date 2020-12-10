@@ -104,3 +104,8 @@ category_archive:
 tag_archive:
   type: liquid
   path: /tags/
+
+kramdown:
+  syntax_highlighter_opts:
+    block:
+      line_numbers: true
