@@ -1,7 +1,7 @@
 ---
 title: "競プロで Python を使うとき気を付けること"
 categories:
-  - Competitive Programming
+  - Note
 tags:
   - Competitive Programming
   - AtCoder
