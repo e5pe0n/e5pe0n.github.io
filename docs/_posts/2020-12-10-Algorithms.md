@@ -33,7 +33,8 @@ $$
 
 ## Bellman-Ford Algorithm
 
-- $O(|V||E|)$
+- $O(\abs{V})$
+- $O(\left|V\right|)$
 - **detect negative loop**
 - relax edges for $|V| - 1$
   - see all vertexes in each loop
