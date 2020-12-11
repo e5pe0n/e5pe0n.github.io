@@ -6,6 +6,9 @@ tags:
   - Competitive Programming
 ---
 
+
+# 最適化
+
 # 2 分探索
 
 単調増加の数列がある，あるいは作れるときは 2 分探索を使いやすい
@@ -15,6 +18,17 @@ tags:
 [ABC174 E - Logs](https://atcoder.jp/contests/abc174/tasks/abc174_e)
 [ABC109 B - log](https://atcoder.jp/contests/arc109/tasks/arc109_b)  
 [ABC157 E - Simple String Queries](https://atcoder.jp/contests/abc157/tasks/abc157_e)  
+[ABC153 F - Silver Fox vs Monster](https://atcoder.jp/contests/abc153/tasks/abc153_f)
+
+
+## DP  
+
+[ABC153 E - Created Ibis vs Monster](https://atcoder.jp/contests/abc153/tasks/abc153_e)
+
+## 尺取法
+
+[ABC153 F - Silver Fox vs Monster](https://atcoder.jp/contests/abc153/tasks/abc153_f)
+
 
 
 
@@ -97,7 +111,6 @@ N が小さいときはビット全探索で総当たり
 ## セグ木
 
 [ABC157 E - Simple String Queries](https://atcoder.jp/contests/abc157/tasks/abc157_e)
-
 
 
 
