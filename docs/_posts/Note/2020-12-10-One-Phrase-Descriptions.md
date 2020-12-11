@@ -8,12 +8,12 @@ tags:
 
 
 # 大数の法則: Law of Large Numbers; LLN
-$N \rightarrow \infty$ で，標本の確率や平均，分散といった$N$が分母にある数値がいくらでも理論値(母集団の値)に近づく．  
+$N \rightarrow \infty$ で，標本の確率や平均，分散といった $N$ が分母にある数値がいくらでも理論値 (母集団の値) に近づく．  
 
 ### 注意
-ズレ量$\Delta$が$N \rightarrow \infty$で$\Delta \rightarrow 0$となるわけではない．  
-$N \rightarrow \infty$で$\Delta \rightarrow \infty$である．  
-しかし，$N \gg \Delta$であり，ズレ量$\Delta$は相対的にいくらでも小さくなるため，サンプル数$N$が十分大きいのとき$N$が分母である数値(標本確率，標本平均，標本分散)を母集団における確率，平均，分散と一致するとみなしてもよい，という意味  
+ズレ量 $\Delta$ が $N \rightarrow \infty$ で $\Delta \rightarrow 0$ となるわけではない．  
+$N \rightarrow \infty$ で $\Delta \rightarrow \infty$ である．  
+しかし，$N \gg \Delta$ であり，ズレ量 $\Delta$ は相対的にいくらでも小さくなるため，サンプル数 $N$ が十分大きいのとき $N$ が分母である数値 (標本確率，標本平均，標本分散) を母集団における確率，平均，分散と一致するとみなしてもよい，という意味  
 
 <br>
 <hr>
@@ -25,54 +25,54 @@ $N \rightarrow \infty$で$\Delta \rightarrow \infty$である．
   - Pros
     - 単純かつ極めて有効
   - Cons
-    - 勾配$\nabla f$を計算に含むため，微分できない関数は都合が悪い．
+    - 勾配 $\nabla f$ を計算に含むため，微分できない関数は都合が悪い．
     - 初期値の与え方によっては最大値，最小値でない極値に到達する可能性がある．
     - 極値が一つの場合でも到達に時間のかかる場合がある (極値が細長い尾根の上や細長い谷の底にある場合)
 - ニュートン法
   - Pros
     - 真の解に近い近似値から反復を開始すると収束が速い
-      - 2次収束 ($(K+1)$回目の近似値と真値との差$\epsilon^{(K+1)}$が$\epsilon^{(K)^2}$の定数倍)
-        - e.g. K回目で誤差0.1 -> (K + 1)回目で誤差0.01
+      - 2次収束 ($(K+1)$ 回目の近似値と真値との差 $\epsilon^{(K+1)}$ が $\epsilon^{(K)^2}$ の定数倍)
+        - e.g. K回目で誤差0.1 -> (K + 1) 回目で誤差 0.01
   - Cons
-    - 勾配$\nabla f$を計算に含むため，微分できない関数は都合が悪い．
+    - 勾配 $\nabla f$ を計算に含むため，微分できない関数は都合が悪い．
     - 初期値の与え方によっては最大値，最小値でない極値に到達する可能性がある．
-    - ヘッセ行列$\boldsymbol{H}$を計算するのにすべての2階の導関数$\frac{\partial^2 f}{\partial x_i \partial x_j}$が与えられなければならない  
-    - $\boldsymbol{H}^{-1}$の計算が必要  
+    - ヘッセ行列 $\boldsymbol{H}$ を計算するのにすべての2階の導関数 $\frac{\partial^2 f}{\partial x_i \partial x_j}$ が与えられなければならない  
+    - $\boldsymbol{H}^{-1}$ の計算が必要  
 - 共役勾配法
   - Pros
     - 逆行列の計算を避ける
   - Cons
-    - 勾配$\nabla f$を計算に含むため，微分できない関数は都合が悪い．
+    - 勾配 $\nabla f$ を計算に含むため，微分できない関数は都合が悪い．
     - 初期値の与え方によっては最大値，最小値でない極値に到達する可能性がある．
 - 乱数による最適化
-  - 最適解が求まる保証はないが，そこそこの解を素早く(=全ての組合せに対して非常に少ない試行回数で)求めることができる
+  - 最適解が求まる保証はないが，そこそこの解を素早く (=全ての組合せに対して非常に少ない試行回数で) 求めることができる
 
 ## 勾配法  
 
 
 ## ニュートン法  
 多変数用アルゴリズム  
-1. $\boldsymbol{x}$の初期値を与える
-2. 勾配$\nabla f(\boldsymbol{x})$，ヘッセ行列$\boldsymbol{H}(\boldsymbol{x})$ を計算
-3. 連立1次方程式の解$\Delta x$を計算 (ガウスの消去法 or LU分解)  
+1. $\boldsymbol{x}$ の初期値を与える
+2. 勾配 $\nabla f(\boldsymbol{x})$，ヘッセ行列$\boldsymbol{H}(\boldsymbol{x})$ を計算
+3. 連立1次方程式の解 $\Delta x$ を計算 (ガウスの消去法 or LU分解)  
    $$
    \boldsymbol{H} \Delta x = -\Delta f
    $$
-4. $\boldsymbol{x}$の更新
+4. $\boldsymbol{x}$ の更新  
    $$
    \boldsymbol{x} \leftarrow \boldsymbol{x} + \Delta \boldsymbol{x}
    $$
-5. $\|\Delta x\| < \delta$ なら$\boldsymbol{x}$を返して終了．そうでなければステップ2．
+5. $\lVert \Delta x \rVert < \delta$ なら $\boldsymbol{x}$ を返して終了．そうでなければステップ2．
 
 <br>
 
 特に1変数の場合  
-1. $x$の初期値を与える
-2. $\bar{x} \leftarrow x$ と置き，以下のように$x$を更新
+1. $x$ の初期値を与える
+2. $\bar{x} \leftarrow x$ と置き，以下のように $x$ を更新
    $$
    x \leftarrow \bar{x} - \frac{f'(\bar{x})}{f''(\bar{x})}
    $$
-3. $|x - \bar{x}| < \delta$ であれば$x$返して終了． そうでなければステップ2．
+3. $\lvert x - \bar{x} \rvert < \delta$ であれば $x$ 返して終了． そうでなければステップ2．
 
 <br>
 <hr>
@@ -194,11 +194,11 @@ e.g.
 観測データは真値にどのような誤差が加わって生じたのかという解釈．   
 e.g.
 - 出力誤差モデル
-    - 出力$y_{\alpha}$を誤差$\epsilon_{\alpha}$の問題に置き換える．i.e. $y_a$は真値にどのような誤差$\epsilon_{\alpha}$が加わって生じたか？
-    - たとえば，誤差が正規分布$\frac{1}{\sqrt{2 \pi \sigma^{2}}} e^{-(x - \mu)^2 / 2\sigma^2}$に従って生じると仮定したとき，最尤推定は最小二乗法(誤差の二乗和を最小にする問題)に等しくなる．  
+    - 出力 $y_{\alpha}$ を誤差 $\epsilon_{\alpha}$ の問題に置き換える．i.e. $y_a$ は真値にどのような誤差 $\epsilon_{\alpha}$ が加わって生じたか？
+    - たとえば，誤差が正規分布 $\frac{1}{\sqrt{2 \pi \sigma^{2}}} e^{-(x - \mu)^2 / 2\sigma^2}$ に従って生じると仮定したとき，最尤推定は最小二乗法(誤差の二乗和を最小にする問題)に等しくなる．  
 - 入力誤差モデル
-    - $x_\alpha$, $y_\alpha$をxy平面上にプロットし，真値(直線)との誤差が最小になるような関数を求める
-      - 直線の当てはめの場合，最尤推定値$\hat{x}_{\alpha}$, $\hat{y}_{\alpha}$は観測値$x_{\alpha}$，$y_{\alpha}$から直線$Ax + By + C = 0$に下ろした垂線との交点となる． 
+    - $x_\alpha$, $y_\alpha$ をxy平面上にプロットし，真値(直線)との誤差が最小になるような関数を求める
+      - 直線の当てはめの場合，最尤推定値 $\hat{x_\alpha}$, $\hat{y_\alpha}$ は観測値 $x_\alpha$，$y_\alpha$ から直線 $Ax + By + C = 0$ に下ろした垂線との交点となる． 
 
 <br>
 <hr>
@@ -235,11 +235,11 @@ $$
 
 シュワルツの不等式より $-1 \le r_{xy} \le 1$  
 $\boldsymbol{a} = ((x_1 - m_x), ..., (x_N - m_x)),\ \boldsymbol{b} = ((y_1 - m_y), ..., (y_N - m_y))$ と当てはめると，  
-$r_{xy}$はデータ$x_{\alpha}$誤差ベクトルとデータ$y_{\alpha}$誤差ベクトルの向きがどれだけ一致しているかを表す．  
-i.e. データ$x_{\alpha}$とデータ$y_{\alpha}$の誤差の傾向がどれだけ似ているかを表す．  
-誤差モデルは，入力$x$と出力$y$の問題を誤差の問題に置き換えて考えていたため，`誤差の傾向 = データx, yの傾向` となる．  
+$r_{xy}$はデータ$x_{\alpha}$ 誤差ベクトルとデータ $y_{\alpha}$ 誤差ベクトルの向きがどれだけ一致しているかを表す．  
+i.e. データ $x_{\alpha}$ とデータ $y_{\alpha}$ の誤差の傾向がどれだけ似ているかを表す．  
+誤差モデルは，入力 $x$ と出力 $y$ の問題を誤差の問題に置き換えて考えていたため，$誤差の傾向 = データ x, y の傾向$ となる．  
 
-![rxy.png]({{site.url}}{{site.baseurl}}/One_Phrase_Discriptions_images/rxy.png)
+![rxy.png]({{site.url}}{{site.baseurl}}/assets/One_Phrase_Discriptions_images/rxy.png)
 
 <br>
 <hr>
@@ -247,16 +247,16 @@ i.e. データ$x_{\alpha}$とデータ$y_{\alpha}$の誤差の傾向がどれだ
 
 # クラス判別(教師なし学習)
 - 事前確率: $\pi_k$  
-  - N個のクラスの中でクラス$k$が選択される確率  
-    $\equiv$ 各クラスに属するデータ$x$の分布  
-    = 確率変数$x$がクラス$k$に属する確率
+  - N個のクラスの中でクラス $k$ が選択される確率  
+    $\equiv$ 各クラスに属するデータ $x$ の分布  
+    = 確率変数 $x$ がクラス $k$ に属する確率
 - 条件付き確率密度: $p_k(x)$
-  - $x$がクラス$k$に属することがわかっているときの確率密度  
-    = クラス$k$におけるデータの発生確率
+  - $x$ がクラス $k$ に属することがわかっているときの確率密度  
+    = クラス $k$ におけるデータの発生確率
 - $p_k(\alpha)$
-  - クラス$k$で$x_{\alpha}$が観測される確率
+  - クラス $k$ で $x_{\alpha}$ が観測される確率
 - 事後確率: $w_{\alpha}^{(k)}$
-  - 観測された$x_{\alpha}$がクラス$k$に属する確率
+  - 観測された $x_{\alpha}$ がクラス $k$ に属する確率
 
 
 $$
@@ -278,40 +278,41 @@ $$
 
 # イェンセンの不等式: Jensen's inquality
 $f(x)$が凸関数のとき，期待値$E[X]$について次の不等式が成り立つ．  
+  
 $$
-E[f(X)] \le f(E[X])]
+E[f(X)] \le f(E[X])
 $$
 
-応用例:
-$log(E[x]) \le E[log{x}]$
+応用例:  $log(E[x]) \le E[log{x}]$
 
 証明  
-$f(x)$が上に凸の関数のとき，交点$(x_0, f(x_0))$以外のすべての点で$f(x)$より大きい値をとる直線$f(x) \le a(x - x_0) + f(x_0)$が引ける．(交点がなくても常に$f(x)$より大きな値をとる直線が引ければよい．1つの交点を持つ直線は，不等式が成り立つための最低限の直線である)
+$f(x)$ が上に凸の関数のとき，交点 $(x_0, f(x_0))$ 以外のすべての点で $f(x)$ より大きい値をとる直線 $f(x) \le a(x - x_0) + f(x_0)$ が引ける．(交点がなくても常に $f(x)$ より大きな値をとる直線が引ければよい．1つの交点を持つ直線は，不等式が成り立つための最低限の直線である)  
+  
 $$
 E[f(X)] \le E[a(X - x_0) + f(E[X])] \\
 = a(E[X] - x_0) + f(x_0) \\
 = f(E[X])
 $$
 
-![jensen_inquality.png]({{site.url}}{{site.baseurl}}/One_Phrase_Discriptions_images/jensen_inquality.png)
+![jensen_inquality.png]({{site.url}}{{site.baseurl}}/assets/One_Phrase_Discriptions_images/jensen_inquality.png)
 
 <br>
 <hr>
 <br>
 
 # EMアルゴリズム
-不完全データから母集団のパラメータ$\boldsymbol{\theta}$について最尤推定を行う際に用いられる．  
-初期値から反復によって最尤推定量を求めるが，このとき各反復での対数尤度$log\ p(\boldsymbol{x}|\boldsymbol{\theta})$は単調に増加する．  
+不完全データから母集団のパラメータ $\boldsymbol{\theta}$ について最尤推定を行う際に用いられる．  
+初期値から反復によって最尤推定量を求めるが，このとき各反復での対数尤度 $log\ p(\boldsymbol{x}|\boldsymbol{\theta})$ は単調に増加する．  
   
 <br>
 
 $\boldsymbol{x}$: 観測値
 $\boldsymbol{y}$: 欠損データ
 
-1. 未知パラメータ$\boldsymbol{\theta}$の初期値$\boldsymbol{\theta^{(0)}}$を与え，$K = 0$とする
-2. $Q_K(\boldsymbol{\theta})$を計算する: *E Step*
-3. $Q_K(\boldsymbol{\theta})$を最大にする$\boldsymbol{\theta}$を$\boldsymbol{\theta^{(K + 1)}}$とする: *M Step*
-4. $K \leftarrow K + 1$としてStep 2に戻り，収束するまで反復
+1. 未知パラメータ $\boldsymbol{\theta}$ の初期値 $\boldsymbol{\theta^{(0)}}$ を与え， $K = 0$ とする
+2. $Q_K(\boldsymbol{\theta})$ を計算する: *E Step*
+3. $Q_K(\boldsymbol{\theta})$ を最大にする $\boldsymbol{\theta}$ を $\boldsymbol{\theta^{(K + 1)}}$ とする: *M Step*
+4. $K \leftarrow K + 1$ としてStep 2に戻り，収束するまで反復
 
 $$
 Q_K(\boldsymbol{\theta}) = E_{\boldsymbol{y}|\boldsymbol{x}, \theta^{(K)}}[\log p(\boldsymbol{x}, \boldsymbol{y}|\boldsymbol{\theta})] \\\\
@@ -342,14 +343,14 @@ $$
   
 ## 線形計画の基本定理
 最適解が存在すれば，目的関数は可能領域(凸多面体)の頂点で最大値をとる  
-i.e. 目的関数$f$が最大となる$x_{\alpha}$を求めたいなら，凸多面体の頂点の座標のみを調べて$f$が最大となるものを選べばよい  
+i.e. 目的関数 $f$ が最大となる $x_{\alpha}$ を求めたいなら，凸多面体の頂点の座標のみを調べて $f$ が最大となるものを選べばよい  
 
 考え方  
-- $f$は線形(直線)だから可能領域(凸多面体)内部で極値をとらない    
-  i.e. 直線がいずれ衝突する可能領域の面で$f$は最大となり得る
-- n次元凸多面体の方向への直線の衝突を考える
+- $f$ は線形(直線)だから可能領域(凸多面体)内部で極値をとらない    
+  i.e. 直線がいずれ衝突する可能領域の面で $f$ は最大となり得る
+- n 次元凸多面体の方向への直線の衝突を考える
   - 最も多くの凸多面体へ衝突する直線 = 凸多面体の頂点を通る直線  
-    i.e 可能領域内で$f$を最大にする点は凸多面体の頂点のいずれかである
+    i.e 可能領域内で $f$ を最大にする点は凸多面体の頂点のいずれかである
 
 
 <br>
@@ -366,14 +367,14 @@ i.e. 目的関数$f$が最大となる$x_{\alpha}$を求めたいなら，凸多
   f_{i + 1}(x_{i + 1}) = \max_{x_i}[f_i(x_i) = h_i(x_i, x_{i + 1})]
   $$
 
-  およびその最大値のときの$x_i$を関数$\hat{x_i}(x_{i + 1})$として配列に記憶する．  
+  およびその最大値のときの $x_i$ を関数 $\hat{x_i}(x_{i + 1})$ として配列に記憶する．  
 
-2. $f_n(x_n)$を最大にする$x_n$の値$x_n^{*}$を探索し，その最大値を$J^{*} = f_n(x_n^{*})$とする
-3. $i = n - 1, ..., 1$に対して$x_i^{*} = \hat{x_{i + 1}}^{*}$を計算する
-4. $(x_1^{*}, x_2^{*}, ..., x_n^{*})$と$J^{*}$を返す  
+2. $f_n(x_n)$ を最大にする $x_n$ の値 $x_n^\ast$ を探索し，その最大値を $J^\ast = f_n(x_n^\ast)$ とする
+3. $i = n - 1, ..., 1$ に対して $x_i^\ast = \hat{x_{i + 1}}^\ast$ を計算する
+4. $(x_1^\ast, x_2^\ast, ..., x_n^\ast)$ と $J^\ast$ を返す  
 
-i.e, $i = 1$から$i = n$まで，すべての$x_i$について$f(x_i)$を計算し，$f_{i + 1}(x_{i + 1})$を最大化する$x_i$を記録しておき，計算し終わったら，今度は逆に,
-$f_{n}$が最大となる$x_n$を選び，$i = n$から$f_i(x_i)$を最大にする$x_{i - 1}$を辿っていくと，辿った$x_n, ..., x_1$が最適解である．  
+i.e, $i = 1$ から $i = n$ まで，すべての $x_i$ について $f(x_i)$ を計算し，$f_{i + 1}(x_{i + 1})$ を最大化する $x_i$ を記録しておき，計算し終わったら，今度は逆に,
+$f_{n}$ が最大となる$x_n$を選び，$i = n$ から $f_i(x_i)$ を最大にする $x_{i - 1}$ を辿っていくと，辿った $x_n, ..., x_1$ が最適解である．  
 
 <br>
 <hr>
@@ -381,26 +382,28 @@ $f_{n}$が最大となる$x_n$を選び，$i = n$から$f_i(x_i)$を最大にす
 
 # 多項式
 ## 係数表現
-次数上界$n$の多項式$A(x) = \sum_{j=0}^{n-1} {a_{j}x^{j}}$の係数ベクトル$a = (a_0, a_1, ..., a_{n-1})$ を$A(x)$ の係数表現という．  
+次数上界 $n$ の多項式 $A(x) = \sum_{j=0}^{n-1} {a_{j}x^{j}}$ の係数ベクトル $a = (a_0, a_1, ..., a_{n-1})$ を $A(x)$ の係数表現という．  
 
 ## Hornerの公式 (Horner's rule)
-与えられた点$x = x_0$における$A(x)$の評価(evaluation of a polynominal) = $A(x_0)$ はHornerの公式を用いて$\Theta(n)$時間で計算できる  
+与えられた点 $x = x_0$ における $A(x)$ の評価 (evaluation of a polynominal) = $A(x_0)$ はHornerの公式を用いて $\Theta(n)$ 時間で計算できる  
 
 $$
 A(x_0) = a_0 + x_0(a_1 + x_0(a_2 + \cdots + x_0(a_{n-2} + x_0(a_{n-1}))\cdots))
 $$
 
 ## 座標表現
-次数上界$n$の多項式$A(x)$に対してn個の座標(point-value pair)の集合  
+次数上界 $n$ の多項式 $A(x)$ に対して n 個の座標 (point-value pair) の集合  
+
 $$
 {(x_0, y_0), (x_1, y_1), ..., (x_{n-1}, y_{n-1})}
 $$
-を$A(x)$の座標表現(point-value representation)という($y_k = A(x_k)$)．
+
+を $A(x)$ の座標表現 (point-value representation) という ($y_k = A(x_k)$)．
 
 <br>
 
 # 離散フーリエ変換(DFT; discrete Fourier transform)
-次数上界$n$の多項式$A(x)$の1の複素n乗根 $\omega_n^0, \omega_n^1, ..., \omega_n^{n-1}$ での評価 $y = (y_0, y_1, ..., y_{n-1}) = DFT_n(a)$  
+次数上界 $n$ の多項式 $A(x)$ の 1 の複素 n 乗根 $\omega_n^0, \omega_n^1, ..., \omega_n^{n-1}$ での評価 $y = (y_0, y_1, ..., y_{n-1}) = DFT_n(a)$  
 
 $$
 y_k = A(\omega_n^k) = \sum_{j=0}^{n-1}{a_j\omega_n^{kj}}
@@ -445,8 +448,8 @@ $$
 <br>
 
 # 高速フーリエ変換(FFT; fast Fourier transform)
-1の複素根の性質を利用してDFTを$\Theta(nlgn)$で計算する．  
--> 通常係数表現で$\Theta(n^2)$時間の多項式の乗算を$\Theta(nlgn)$時間で計算できる．  
+1 の複素根の性質を利用して DFT を $\Theta(nlgn)$ で計算する．  
+-> 通常係数表現で $\Theta(n^2)$ 時間の多項式の乗算を $\Theta(nlgn)$ 時間で計算できる．  
 
 <br>
 
@@ -470,7 +473,7 @@ $$
   $\vdots$  
   $C(\omega_{2n}^{2n-1})$  
   
-↓  補間(<b>逆DFT</b>): $\Theta(nlgn)$
+↓  補間 (**逆DFT**): $\Theta(nlgn)$
 
 <br>
 <hr>
@@ -478,15 +481,16 @@ $$
 
 # 中国人剰余定理 (Chinese remainder theorem)
 任意の $a \in \mathbb{Z}_n$ に対して（一意となる）対応 $a \leftrightarrow (a_1, a_2, ..., a_k)$ を考えると，$a_i \in \mathbb{Z_n}_i$ は $a_i = a\ mod\ n_i$ である．   
-i.e. 法$n$の下で演算$\oplus$について閉じている数$a$は，$a$を，$n$を構成する各素数$n_k$で割ったときの剰余$a_i$の組合せによって一意に定まる．（$a_i$は線形代数でいう基底ベクトル）   
+i.e. 法 $n$ の下で演算 $\oplus$ について閉じている数 $a$ は，$a$ を，$n$ を構成する各素数 $n_k$ で割ったときの剰余 $a_i$ の組合せによって一意に定まる．（$a_i$ は線形代数でいう基底ベクトル）   
   
 ## 応用
-ビット演算の回数の点では，法$n$の下で計算するより，各$\mathbb{Z_n}_i$上で計算する方が効率が良いため，効率の良いアルゴリズムの設計に利用できる．
+ビット演算の回数の点では，法 $n$ の下で計算するより，各 $\mathbb{Z_n}_i$ 上で計算する方が効率が良いため，効率の良いアルゴリズムの設計に利用できる．
 
 <br>
 
 # フェルマの定理 (Fermat's Theorem)
 $p$ を任意の素数とする．すべての $a \in \mathbb{Z^*_p}$ に対して  
+
 $$
 a^{p-1} \equiv 1\ (mod\ p)
 $$
@@ -497,13 +501,13 @@ $p$ が素数ならば必ず $a^{p-1} \equiv 1\ (mod\ p)$ となるが，$a^{n-1
 
 
 # 原始根 (primitive root)
-$ord_n(g) = |\mathbb{Z^{*}_n}|$ ならば，$\mathbb{Z^{*}_n}$ のすべての要素は法 $n$ の下で $g$ のべき乗である（$g^1 \ mod \ n, g^2 \ mod \ n, ..., g^{n-1} \ mod \ n$ で $1...n - 1$ をすべて表せる）．  
-$g$ を $\mathbb{Z^{*}_n}$ の **原始根(primitive root)** あるいは **生成元(generator)** という．  
+$ord_n(g) = \lvert \mathbb{Z^\ast_n} \rvert$ ならば，$\mathbb{Z^\ast_n}$ のすべての要素は法 $n$ の下で $g$ のべき乗である（$g^1 \ mod \ n, g^2 \ mod \ n, ..., g^{n-1} \ mod \ n$ で $1...n - 1$ をすべて表せる）．  
+$g$ を $\mathbb{Z^\ast_n}$ の **原始根(primitive root)** あるいは **生成元(generator)** という．  
 e.g. 3は法7の下で原始根だが，2は法7の下で原始根ではない．  
-e.g. $\omega_{8} = e^{2 \pi i / 8}$ は1の原始8乗根
+e.g. $\omega_8 = e^{2 \pi i / 8}$ は1の原始8乗根
 
 # 離散対数 (discrete logarithm)
-$g$ を $\mathbb{Z^{*}_n}$ の原始根，$a \in \mathbb{Z^{*}_n}$ のとき，$g^z \equiv a\ (mod\ n)$ を満たす$z$を，$n$ を法とし $g$ を底とする**離散対数(discrete logarithm)** あるいは $a$ の **指数(index)** と呼び，$ind_{n,g}(a)$ で表す．
+$g$ を $\mathbb{Z^\ast_n}$ の原始根，$a \in \mathbb{Z^\ast_n}$ のとき，$g^z \equiv a\ (mod\ n)$ を満たす $z$ を，$n$ を法とし $g$ を底とする **離散対数(discrete logarithm)** あるいは $a$ の **指数(index)** と呼び，$ind_{n,g} (a)$ で表す．
     
 e.g.   
 原始根 $g = 3$, 法 $n = 7$ とするとき，$a = 6$ となるのは $3^3\ mod\ 7 = 6$ なので $z = ind_{7,3} = 3$．
@@ -515,14 +519,16 @@ e.g.
 ラグランジュ関数 $L(x, y, \lambda) = f(x) - \lambda(g(x))$ の微分が 0 の点，すなわち極値について解くため，厳密にはそのときの $x$ と $y$ が $f(x)$ を最大あるいは最小にすることは保証されていない（ $f(x)$ の形状に依る）．  
 
 e.g. $x^2 + y^2$ のもとで $f(x, y) = 2x + 3y$ の最大値を求める    
-    
+
 $$
 L(x, y, \lambda) = 2x + 3y - \lambda(x^2 + y^2 - 1)\\\\
 \frac{\partial L}{\partial x} = 2 - 2x\lambda = 0\\\\
 \frac{\partial L}{\partial y} = 3 - 2y\lambda = 0\\\\
 \frac{\partial L}{\partial \lambda} = -x^2 - y^2 + 1 = 0\\\\
 $$
+
 これを解いて
+
 $$
 (x, y) = (\pm\frac{2}{\sqrt{13}}, \pm\frac{3}{\sqrt{13}})
 $$  
@@ -541,5 +547,5 @@ $$
 
 # 時間と周波数の不確定性関係
 $\Delta t\Delta\omega \ge \frac{1}{2}$  
-e.g. 時間-周波数領域が$T-W$の信号空間の次元数(信号の個数)は $TW / \frac{1}{2} = 2TW$ である．（面積$TW$を信号1個あたりの面積$\frac{1}{2}$で割る）
+e.g. 時間-周波数領域が $T-W$ の信号空間の次元数 (信号の個数) は $TW / \frac{1}{2} = 2TW$ である．（面積 $TW$ を信号 1 個あたりの面積 $\frac{1}{2}$ で割る）
 
