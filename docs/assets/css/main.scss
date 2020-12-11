@@ -23,39 +23,39 @@
 // $base0f: #d33682 !default;
 
 // Gigavold
-// $base00: #202126;
-// $base01: #2d303d;
-// $base02: #5a576e;
-// $base03: #a1d2e6;
-// $base04: #cad3ff;
-// $base05: #e9e7e1;
-// $base06: #eff0f9;
-// $base07: #f2fbff;
-// $base08: #ff661a;
-// $base09: #19f988;
-// $base0A: #ffdc2d;
-// $base0B: #f2e6a9;
-// $base0C: #fb6acb;
-// $base0D: #40bfff;
-// $base0E: #ae94f9;
-// $base0F: #6187ff;
+$base00: #202126;
+$base01: #2d303d;
+$base02: #5a576e;
+$base03: #a1d2e6;
+$base04: #cad3ff;
+$base05: #e9e7e1;
+$base06: #eff0f9;
+$base07: #f2fbff;
+$base08: #ff661a;
+$base09: #19f988;
+$base0A: #ffdc2d;
+$base0B: #f2e6a9;
+$base0C: #fb6acb;
+$base0D: #40bfff;
+$base0E: #ae94f9;
+$base0F: #6187ff;
 
-$base00: #151515;
-$base01: #202020;
-$base02: #303030;
-$base03: #505050;
-$base04: #b0b0b0;
-$base05: #d0d0d0;
-$base06: #e0e0e0;
-$base07: #f5f5f5;
-$base08: #fb9fb1;
-$base09: #eda987;
-$base0A: #ddb26f;
-$base0B: #acc267;
-$base0D: #12cfc0;
-$base0C: #6fc2ef;
-$base0E: #e1a3ee;
-$base0F: #deaf8f;
+// $base00: #151515;
+// $base01: #202020;
+// $base02: #303030;
+// $base03: #505050;
+// $base04: #b0b0b0;
+// $base05: #d0d0d0;
+// $base06: #e0e0e0;
+// $base07: #f5f5f5;
+// $base08: #fb9fb1;
+// $base09: #eda987;
+// $base0A: #ddb26f;
+// $base0B: #acc267;
+// $base0D: #12cfc0;
+// $base0C: #6fc2ef;
+// $base0E: #e1a3ee;
+// $base0F: #deaf8f;
 
 @import "minimal-mistakes/skins/{{ site.minimal_mistakes_skin | default: 'default' }}"; // skin
 @import "minimal-mistakes"; // main partials
