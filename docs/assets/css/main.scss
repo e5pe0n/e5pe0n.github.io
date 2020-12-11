@@ -22,22 +22,22 @@
 // $base0e: #6c71c4 !default;
 // $base0f: #d33682 !default;
 
-$base00: #282c34;
-$base01: #353b45;
-$base02: #3e4451;
-$base03: #545862;
-$base04: #565c64;
-$base05: #abb2bf;
-$base06: #b6bdca;
-$base07: #c8ccd4;
-$base08: #e06c75;
-$base09: #d19a66;
-$base0A: #e5c07b;
-$base0B: #98c379;
-$base0C: #56b6c2;
-$base0D: #61afef;
-$base0E: #c678dd;
-$base0F: #be5046;
+$base00: #202126;
+$base01: #2d303d;
+$base02: #5a576e;
+$base03: #a1d2e6;
+$base04: #cad3ff;
+$base05: #e9e7e1;
+$base06: #eff0f9;
+$base07: #f2fbff;
+$base08: #ff661a;
+$base09: #19f988;
+$base0A: #ffdc2d;
+$base0B: #f2e6a9;
+$base0C: #fb6acb;
+$base0D: #40bfff;
+$base0E: #ae94f9;
+$base0F: #6187ff;
 
 @import "minimal-mistakes/skins/{{ site.minimal_mistakes_skin | default: 'default' }}"; // skin
 @import "minimal-mistakes"; // main partials
