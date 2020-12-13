@@ -71,7 +71,7 @@ plugins:
 
 author:
   name: "e5pe0n"
-  avatar: "/assets/images/bio_photo.png"
+  avatar: "/assets/images/bio_photo.jpeg"
   bio: "Python, C++, Comppetitive programming, etc"
   links:
     - label: "GitHub"
