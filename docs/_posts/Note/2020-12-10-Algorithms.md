@@ -904,6 +904,55 @@ print(" ".join([f"{f[0]}^{f[1]}" for f in fs.most_common()]))
 # 541^1 547^1
 ```
 
+## Enumerating Divisors
+
+```cpp
+#include <algorithm>
+#include <stdio.h>
+#include <vector>
+using namespace std;
+typedef long long ll;
+
+vector<ll> divisors(ll n) {
+  vector<ll> res;
+  for (ll i = 1; i * i <= n; ++i) {
+    if (n % i == 0) {
+      res.push_back(i);
+      if (n / i != i) {
+        res.push_back(n / i);
+      }
+    }
+  }
+  sort(res.begin(), res.end()); // optional
+  return res;
+}
+
+int main() {
+  ll N = 12;
+  vector<ll> res = divisors(N);
+  for (int i = 0; i < res.size(); ++i) {
+    printf("%lld%c", res[i], i == res.size() - 1 ? '\n' : ' '); // 1 2 3 4 6 12
+  }
+}
+```
+
+```python
+def divisors(n):
+    res = []
+    for i in range(1, int(n**0.5) + 1):
+        if n % i == 0:
+            res.append(i)
+            if n // i != i:
+                res.append(n // i)
+    res.sort()  # optional
+    return res
+
+
+N = 12
+res = divisors(N)
+print(res)
+```
+
 <br>
 
 ## Extra GCD
