@@ -906,6 +906,113 @@ print(" ".join([f"{f[0]}^{f[1]}" for f in fs.most_common()]))
 
 <br>
 
+## Extra GCD
+
+Determine x and y to satisfy $ax + by = 1$ (a, b are primetive. i.e. `gcd(a, b) == 1`).  
+
+
+```cpp
+ll extgcd(ll a, ll b, ll &x, ll &y) {
+  ll d = a;
+  if (b != 0) {
+    d = extgcd(b, a % b, y, x);
+    y -= (a / b) * x;
+  } else {
+    x = 1, y = 0;
+  }
+  return d;
+}
+```
+
+```python
+def extgcd(a, b, x, y):
+    d = a
+    if b != 0:
+        d = extgcd(b, a % b, y, x)
+        y[0] = y[0] - (a // b) * x[0]
+    else:
+        x[0] = 1
+        y[0] = 0
+    return d
+```
+
+e.g.  
+
+Determine $x$ to satisfy $A x \equiv B \mod M$ by determining $A^{-1}$ (inverse of $A$ modulo $M$).  
+
+$$
+A x \equiv B \mod M  \\
+A^{-1}A x \equiv B \mod M \\
+x \equiv A^{-1}B \mod M
+$$
+
+We can obtain $A^{-1}$ by extra gcd.  
+
+$$
+ax + by = 1 \\
+AA^{-1} + My = 1
+$$
+
+In example below, we obtain $x = 4$  
+
+$$
+Ax \equiv B \mod M \\
+3x \equiv 2 \mod 10
+$$
+
+$$
+AA^{-1} + My = 1 \\
+3 A^{-1} + 10 y = 1
+$$
+
+```cpp
+int extgcd(int a, int b, int &x, int &y) {
+  int d = a;
+  if (b != 0) {
+    d = extgcd(b, a % b, y, x);
+    y -= (a / b) * x;
+  } else {
+    x = 1, y = 0;
+  }
+  return d;
+}
+
+int main() {
+  int B = 2;
+  int A = 3, M = 10;
+  int _A = 0, y = 0;
+  extgcd(A, M, _A, y);
+  x = _A * B;
+  x %= M;
+  x = (x + M) % M;
+  printf("%d\n", x);  // 4
+}
+```
+
+```python
+def extgcd(a, b, x, y):
+    d = a
+    if b != 0:
+        d = extgcd(b, a % b, y, x)
+        y[0] = y[0] - (a // b) * x[0]
+    else:
+        x[0] = 1
+        y[0] = 0
+    return d
+
+B = 2
+A = 3, M = 10
+_A = 0, y = 0
+extgcd(A, M, _A, y)
+x = _A * B
+x %= M
+x = (x + M) % M
+print(x)  # 4
+```
+
+
+<br>
+
 # Enumerating
 
 ## Enumerating Set
