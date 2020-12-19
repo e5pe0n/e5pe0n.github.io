@@ -9,16 +9,19 @@ tags:
 
 # 最適化
 
-# 2 分探索
+## 2 分探索
 
 単調増加の数列がある，あるいは作れるときは 2 分探索を使いやすい
 
 
+[ABC143 D - Triangles](https://atcoder.jp/contests/abc143/tasks/abc143_d)
+[CODEFESTIVAL 2016 Final B - Exactly N points](https://atcoder.jp/contests/cf16-final/tasks/codefestival_2016_final_b)
 [ABC172 C - Tsundoku](https://atcoder.jp/contests/abc172/tasks/abc172_c)  
 [ABC174 E - Logs](https://atcoder.jp/contests/abc174/tasks/abc174_e)
 [ABC109 B - log](https://atcoder.jp/contests/arc109/tasks/arc109_b)  
 [ABC157 E - Simple String Queries](https://atcoder.jp/contests/abc157/tasks/abc157_e)  
 [ABC153 F - Silver Fox vs Monster](https://atcoder.jp/contests/abc153/tasks/abc153_f)
+
 
 
 ## DP  
@@ -58,19 +61,27 @@ tags:
 - 剰余を考慮した反復二乗法
 - 二項係数の前処理  
 
+[AGC017 A - Biscuits](https://atcoder.jp/contests/agc017/tasks/agc017_a)  
 [ABC156 D - Bouquet](https://atcoder.jp/contests/abc156/tasks/abc156_d)  
 [ABC156 E - Roaming](https://atcoder.jp/contests/abc156/tasks/abc156_e)  
-
+[ABC098 C - March](https://atcoder.jp/contests/abc089/tasks/abc089_c)  
+[AGC031 A - Colorful Subsequence](https://atcoder.jp/contests/agc031/tasks/agc031_a)  
 
 何かを固定して考えてみる
 
 [ABC167 E - Colorful Blocks](https://atcoder.jp/contests/abc167/tasks/abc167_e)  
 
 
+- 包除定理
+
+[ABC131 C - Anti-Division](https://atcoder.jp/contests/abc131/tasks/abc131_c)  
+
+
 ## DP
 
 基本
 
+[ABC129 C - Typical Stairs](https://atcoder.jp/contests/abc129/tasks/abc129_c)
 [ABC178 D - Redistribution](https://atcoder.jp/contests/abc178/tasks/abc178_d)  
 [ABC184 D - increment of coins](https://atcoder.jp/contests/abc184/tasks/abc184_d)  
 [ABC183 E - Queen on Grid](https://atcoder.jp/contests/abc183/tasks/abc183_e)  
@@ -97,6 +108,7 @@ tags:
 
 N が小さいときはビット全探索で総当たり
 
+[ABC128 C - Switches](https://atcoder.jp/contests/abc128/tasks/abc128_c)
 [ABC167 C - Skill Up](https://atcoder.jp/contests/abc167/tasks/abc167_c)  
 [ABC173 C - H and V](https://atcoder.jp/contests/abc173/tasks/abc173_c)  
 
@@ -105,6 +117,7 @@ N が小さいときはビット全探索で総当たり
 
 区間ごとの和を考えるとき
 
+[ABC122 C - GeT AC](https://atcoder.jp/contests/abc122/tasks/abc122_c)  
 [ABC179 D - Leaping Tak](https://atcoder.jp/contests/abc179/tasks/abc179_d)  
 
 
@@ -140,7 +153,19 @@ K が N より異様に大きいときはループしている部分を抜き出
 
 # 数学系
 
+## 剰余
+
+[ABC133 C - Remainder Minimization 2019](https://atcoder.jp/contests/abc133/tasks/abc133_c)
+
+
+## 期待値
+
+[ABC078 C - HSI](https://atcoder.jp/contests/abc078/tasks/arc085_a)  
+
+
 ## XOR
+
+[AGC035 A - XOR Circle](https://atcoder.jp/contests/agc035/tasks/agc035_a)  
 
 2 進数にして桁ごとに考える
 
@@ -160,6 +185,7 @@ K が N より異様に大きいときはループしている部分を抜き出
 - 有理化  
 - EPS = 1e-10  
 
+[Panasonic2020 C - Sqrt Inequality](https://atcoder.jp/contests/panasonic2020/tasks/panasonic2020_c)  
 [ABC169 C - Multiplication 3](https://atcoder.jp/contests/abc169/tasks/abc169_c)  
 
 

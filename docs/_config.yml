@@ -70,7 +70,7 @@ plugins:
   - jekyll-include-cache
 
 author:
-  name: "e5pe0n"
+  name: "espe0n"
   avatar: "/assets/images/bio_photo.jpeg"
   bio: "Python, C++, Comppetitive programming, etc"
   links:
