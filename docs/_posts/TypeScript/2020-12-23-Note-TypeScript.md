@@ -1,3 +1,10 @@
+---
+title: "Note: TypeScript"
+categories:
+  - Note
+tags:
+  - TypeScript
+---
 
 # Class
 
