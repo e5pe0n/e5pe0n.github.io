@@ -33,3 +33,115 @@ const pointC: Point3d = { x: 5, y: 5, z: 10 };
 ## Inheritance vs Composition
 
 Composition is better than inheritance in maintainability.  
+
+
+# Overloads
+
+In case of overloads, function definition statement is better than arrow expression in readability.   
+
+```ts
+let suits = ["heats", "spades", "clubs", "diamonds"];
+
+function pickCard(x: { suit: string; card: number }[]): number;
+function pickCard(x: number): { suit: string; card: number };
+function pickCard(x: any): any {
+  if (typeof x == "object") {
+    let pickedCard = Math.floor(Math.random() * x.length);
+    return pickedCard;
+  } else if (typeof x == "number") {
+    let pickedSuit = Math.floor(x / 13);
+    return { suit: suits[pickedSuit], card: x % 13 };
+  }
+}
+
+let myDeck = [
+  { suit: "diamonds", card: 2 },
+  { suit: "spades", card: 10 },
+  { suit: "heats", card: 4 },
+];
+
+let pickedCard1 = myDeck[pickCard(myDeck)];
+console.log("card: " + pickedCard1.card + " of " + pickedCard1.suit);
+
+let pickedCard2 = pickCard(15);
+console.log("card: " + pickedCard2.card + " of " + pickedCard2.suit);
+```
+
+NG example  
+- `a: number | string, b: number | string` includes cases of `{a: number, b: string}` or `{a: string, b: number}`
+
+```ts
+function add(a: number, b: number): number;
+function add(a: string, b: string): string;
+function add(a: number | string, b: number | string): number | string {
+  let res = Number(a) + Number(b);
+  if (typeof a == "nubmer" && typeof b == "number") {
+    return res;
+  } else if (typeof a == "string" && typeof b == "number") {
+    return String(res);
+  } else {
+    throw new Error("Invalid Arguments");
+  }
+}
+```
+
+Correct code   
+
+```ts
+type NumPair = {
+  a: number;
+  b: number;
+};
+
+type strPair = {
+  a: string;
+  b: string;
+}
+
+const isNumPair = (arg: unknown): arg is NumPair => {
+  const n = arg as NumPair;
+  return typeof n.a === "number" && typeof n.b === "number";
+}
+
+function add(x: NumPair): number;
+function add(x: strPair): string;
+function add(x: NumPair | strPair): number | string {
+  let res = Number(x.a) + Number(x.b);
+  if (isNumPair(x)) {
+    return res;
+  } else {
+    return String(res);
+  }
+}
+```
+
+### Note:   
+TypeScript has no way to check type of any object on runtime (number, string are primitive type. these are *value*, not *object*), just only to compare object structures (**Structural Subtyping**).  
+Don't forget that TypeScript codes are compiled to JavaScript and JavaScript has no type of object.    
+So we can't write codes like below.  
+
+```ts
+// NG
+function add(x: NumPair | strPair): number | string {
+  let res = Number(x.a) + Number(x.b);
+  if (typeof x === "NumPair") {
+    return res;
+  } else {
+    return String(res);
+  }
+}
+```
+
+```ts
+// NG
+function add(x: NumPair | strPair): number | string {
+  let res = Number(x.a) + Number(x.b);
+  if (x instanceof NumPair) {
+    return res;
+  } else {
+    return String(res);
+  }
+}
+```
+
+And be aware about that `typeof null` returns `"object"`.   

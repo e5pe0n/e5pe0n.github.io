@@ -72,7 +72,7 @@ plugins:
 author:
   name: "espe0n"
   avatar: "/assets/images/bio_photo.jpeg"
-  bio: "Python, C++, Comppetitive programming, etc"
+  bio: "Python, C++, Competitive programming, etc"
   links:
     - label: "GitHub"
       icon: "fab fa-fw fa-github"
