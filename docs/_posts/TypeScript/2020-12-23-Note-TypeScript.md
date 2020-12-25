@@ -6,6 +6,34 @@ tags:
   - TypeScript
 ---
 
+# JavaScript
+
+## Standard Specification
+
+**JavaScript** is the product name.  
+The name of standard specification is **ECMAScript (エクマスクリプト)**.  
+
+|    Edition    | Published |                            Description                             |
+| :-----------: | :-------: | :----------------------------------------------------------------: |
+|      ES5      |   2009    |                       ECMAScript 5th Edition                       |
+| ES6 (=ES2015) |   2015    | 6 th Edition.   <br> Language specification is changed drastically |
+|    ES2020     |   2020    |                                                                    |
+
+## Modules
+
+|       API       | Published |                                   Description                                    |     API example      |
+| :-------------: | :-------: | :------------------------------------------------------------------------------: | :------------------: |
+|    CommonJS     |   2009    |                                   with Node.js                                   | `require`, `exports` |
+| ES Modules; ESM |   2015    | with ES2015 <br> `"type": "module"` in package.json is option to use ESM on Node |  `import`, `export`  |
+
+
+|   Tools    |   Desription   |   supported API   |
+| :--------: | :------------: | :---------------: |
+| Browserify | Module bundler |     CommonJS      |
+|  webpack   | Module bundler | ComonJS, ESM, etc |
+
+
+
 # Class
 
 In TypeScript, class is not only *Type* but also *Function*.   
@@ -145,3 +173,44 @@ function add(x: NumPair | strPair): number | string {
 ```
 
 And be aware about that `typeof null` returns `"object"`.   
+
+
+# tsconfig.json
+
+```json
+{
+  "compilerOptions": {
+    "target": "es5",
+    "lib": [
+      "dom",
+      "dom.iterable",
+      "esnext"
+    ],
+    "allowJs": true,
+    "skipLibCheck": true,
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "strict": true,
+    "forceConsistentCasingInFileNames": true,
+    "noFallthroughCasesInSwitch": true,
+    "module": "esnext", // set "commonjs" when use Node
+    "moduleResolution": "node",
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "noEmit": true,
+    "jsx": "react-jsx",
+    "baseUrl": "src", // enable absolute import setting src as root dir
+    "downlevelIteration": true  // enable iteration statements even though target is before es2015
+  },
+  "include": [
+    "src"
+  ]
+}
+```
+
+## jsx
+
+|   Value   |                                          Description                                           |
+| :-------: | :--------------------------------------------------------------------------------------------: |
+| react-jsx | emittable `import React from 'react'`. <br> Available `TypeScript (> 4.1) and React (>= 17.0)` |
+|    jsx    |                                                                                                |
