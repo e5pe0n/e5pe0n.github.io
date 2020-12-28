@@ -4,6 +4,7 @@ categories:
   - Note
 tags:
   - TypeScript
+last_modified_at: 2020-12-26
 ---
 
 # JavaScript
@@ -13,26 +14,153 @@ tags:
 **JavaScript** is the product name.  
 The name of standard specification is **ECMAScript (エクマスクリプト)**.  
 
-|    Edition    | Published |                            Description                             |
-| :-----------: | :-------: | :----------------------------------------------------------------: |
-|      ES5      |   2009    |                       ECMAScript 5th Edition                       |
-| ES6 (=ES2015) |   2015    | 6 th Edition.   <br> Language specification is changed drastically |
-|    ES2020     |   2020    |                                                                    |
+|    edition    | published |                             description                             |
+| :-----------: | :-------: | :-----------------------------------------------------------------: |
+|      ES5      |   2009    |                       ECMAScript 5th Edition                        |
+| ES6 (=ES2015) |   2015    | 6 th Edition.   <br> Language specification was changed drastically |
+|    ES2020     |   2020    |                                                                     |
 
 ## Modules
 
-|       API       | Published |                                   Description                                    |     API example      |
+|       API       | published |                                   description                                    |     API example      |
 | :-------------: | :-------: | :------------------------------------------------------------------------------: | :------------------: |
 |    CommonJS     |   2009    |                                   with Node.js                                   | `require`, `exports` |
 | ES Modules; ESM |   2015    | with ES2015 <br> `"type": "module"` in package.json is option to use ESM on Node |  `import`, `export`  |
 
 
-|   Tools    |   Desription   |   supported API   |
+|   tools    |   desription   |   supported API   |
 | :--------: | :------------: | :---------------: |
 | Browserify | Module bundler |     CommonJS      |
 |  webpack   | Module bundler | ComonJS, ESM, etc |
 
 
+<br>
+
+# Types
+
+## Any
+
+## Unknown
+
+- Introduced from TypeScript 3.0
+- Be like safety *any*
+  - *unknown* has no property and prototype method
+
+## Never
+
+- Any object cannot be assigned into a variable of never type
+
+Correct code  
+
+```ts
+const greet = (n: 1 | 2 | 3) => {
+  switch (n) {
+    case 1:
+      return "one";
+    case 2:
+      return "two";
+    case 3:
+      return "three";
+    default: {
+      const check: never = n;
+    }
+  }
+}
+```
+
+Incorrect code.  
+The value of `n` cannot be assigned to check so a linter notifies us of the error.  
+This prevents us from forgetting to implement some cases.  
+
+```ts
+const greet = (n: 1 | 2 | 3) => {
+  switch (n) {
+    case 1:
+      return "one";
+    case 2:
+      return "two";
+    default: {
+      const check: never = n; // compile error because 3 is not be assignable to check
+    }
+  }
+}
+```
+
+To be honest, I don't know what is good.  
+
+## Built-in Utility Types
+
+|     types     |              description              |
+| :-----------: | :-----------------------------------: |
+| `Partial<T>`  | Makes all properties of `T` omittable |
+| `Required<T>` | Makes all properties of `T` required  |
+| `Readonly<T>` | Makes all properties of `T` readonly  |
+
+|    types     |                description                 |
+| :----------: | :----------------------------------------: |
+| `Pick<T, K>` | Extracts properties by key of `K` from `T` |
+| `Omit<T, K>` |   Omits properties of key of `K` in `T`    |
+
+```ts
+type Todo = {
+  title: string;
+  description: string;
+  isDone: boolean;
+};
+
+type PickedTodo = Pick<Todo, "title" | "isDone">;
+type OmittedTodo = Omit<Todo, "description">;
+```
+
+|      types      |            description            |
+| :-------------: | :-------------------------------: |
+| `Extract<T, U>` | Extracts elements of `U` from `T` |
+| `Exclude<T, U>` | Excludes elements of `U` from `T` |
+
+```ts
+type Permission = "r" | "w" | "x";
+
+type RW1 = Extract<Permission, "r" | "w">;
+type RW2 = Exclude<Permission, "x">;
+```
+
+|      types       |                                                     description                                                      |
+| :--------------: | :------------------------------------------------------------------------------------------------------------------: |
+| `NonNullable<T>` | Exclude `null` and `undefined` from `T`. <br> Needs `"strictNullChecks" : true` or `"strict": true` in tsconfig.json |
+
+```ts
+type T1 = NonNullable<string | number | null>;
+type T2 = NonNullable<number[] | null | undefined>;
+
+const str: T1 = null;     // compile error
+const arr: T2 = undefined // compile error
+```
+
+
+<br>
+
+# Nullish Coalescing
+
+ternary operator  
+
+```ts
+type Item = {
+  id: string,
+  name: string,
+  description: string?
+};
+
+const item = { "001", "item1"};
+const d = item.description ? item.description : "???"
+```
+
+nullish coalescing (TypeScript >= 3.7, ES >= ES2020) 
+
+```ts
+const d = item.description ?? "???"
+```
+
+<br>
 
 # Class
 
@@ -62,6 +190,7 @@ const pointC: Point3d = { x: 5, y: 5, z: 10 };
 
 Composition is better than inheritance in maintainability.  
 
+<br>
 
 # Overloads
 
@@ -174,8 +303,12 @@ function add(x: NumPair | strPair): number | string {
 
 And be aware about that `typeof null` returns `"object"`.   
 
+<br>
 
-# tsconfig.json
+# TypeScript Config
+
+
+tsconfig.json
 
 ```json
 {
@@ -208,9 +341,168 @@ And be aware about that `typeof null` returns `"object"`.
 }
 ```
 
+
 ## jsx
 
 |   Value   |                                          Description                                           |
 | :-------: | :--------------------------------------------------------------------------------------------: |
-| react-jsx | emittable `import React from 'react'`. <br> Available `TypeScript (> 4.1) and React (>= 17.0)` |
+| react-jsx | Emittable `import React from 'react'`. <br> Available `TypeScript (> 4.1) and React (>= 17.0)` |
 |    jsx    |                                                                                                |
+
+
+tsconfig.eslint.json  
+
+```json
+{
+  "extends": "./tsconfig.json",
+  "include": [
+    "src/**/*.js",
+    "src/**/*.jsx",
+    "src/**/*.ts",
+    "src/**/*.tsx"
+  ],
+  "exclude": [
+    "node_modules"
+  ]
+}
+```
+
+<br>
+
+# ESLint
+
+Parckages of ESLint's Ecosystem
+
+|       Part       |         Description          |             Examples             |
+| :--------------: | :--------------------------: | :------------------------------: |
+|      Parser      | Static code analysis library |    @typescript-eslint/parser     |
+|      Plugin      |    Adding original rules     | @typescript-eslint/eslint-plugin |
+| Shareable Config |       Multi rules sets       |       eslint-config-airbnb       |
+
+
+eslintrc.js  
+
+```js
+module.exports = {
+  "env": {
+    "browser": true,
+    "es2021": true
+  },
+  "extends": [
+    "airbnb",
+    "airbnb/hooks",
+    "plugin:import/errors",
+    "plugin:import/warning",
+    "plugin:import/typescript",
+    "plugin:@typescript-eslint/recommended",
+    "plugin:@typescript-eslint/recommended-requiring-type-checking"
+  ],
+  "parser": "@typescript-eslint/parser",
+  "parserOptions": {
+    "ecmaFeatures": {
+      "jsx": true
+    },
+    "ecmaVersion": 12,
+    "project": "./tsconfig.eslint.json",
+    "sourceType": "module",
+    "tsconfigRootDir": __dirname
+  },
+  "plugins": [
+    "@typescript-eslint",
+    "import",
+    "jsx-a11y",
+    "react",
+    "react-hooks"
+  ],
+  "root": true,
+  "rules": {
+    "no-use-before-define": "off",
+    "@typescript-eslint/no-use-before-define": [
+      "error"
+    ],
+    "lines-between-class-members": [
+      "error",
+      "always",
+      {
+        "exceptAfterSingleLine": true
+      }
+    ],
+    "no-void": [
+      "error",
+      {
+        "allowAsStatement": true
+      }
+    ],
+    "padding-line-between-statements": [
+      "error",
+      {
+        "blankLine": "always",
+        "prev": "*",
+        "next": "return"
+      }
+    ],
+    "@typescript-eslint/no-unused-vars": [
+      "error",
+      {
+        "vars": "all",
+        "args": "after-used",
+        "argsIgnorePattern": "_",
+        "ignoreRestSiblings": false,
+        "varsIgnorePattern": "_"
+      }
+    ],
+    "import/extensions": [
+      "error",
+      "ignorePackages",
+      {
+        "js": "never",
+        "jsx": "never",
+        "ts": "never",
+        "tsx": "never"
+      }
+    ],
+    "react/jsx-filename-extension": [
+      "error",
+      {
+        "extensions": [".jsx", ".tsx"]
+      }
+    ],
+    "react/jsx-props-no-spreading": [
+      "error",
+      {
+        "html": "enforce",
+        "custom": "enforce",
+        "explicitSpread": "ignore"
+      }
+    ],
+    "react/react-in-jsx-scope": "off"
+  },
+  "overrides": [
+    {
+      "files": ["*.tsx"],
+      "rules": {
+        "react/prop-types": "off"
+      }
+    }
+  ],
+  "settings": {
+    "import/resolver": {
+      "node": {
+        "paths": ["src"]
+      }
+    }
+  }
+};
+```
+
+.eslintignore  
+
+```
+build/
+public/
+**/coverage/
+**/node_modules/
+**/*.min.js
+*.config.js
+.*lintrc.js
+```
