@@ -3,6 +3,7 @@ title: "Note: React"
 categories:
   - Note
 tags:
+  - React
   - TypeScript
 last_modified_at: 2020-12-29
 ---
