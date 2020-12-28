@@ -1,5 +1,5 @@
 ---
-title: "Note: TypeScript"
+title: "Note: React"
 categories:
   - Note
 tags:
