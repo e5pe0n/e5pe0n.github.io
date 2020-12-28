@@ -10,21 +10,16 @@ last_modified_at: 2020-12-29
 
 # Concepts
 
-## Declarative
+- Declarative  
+- Component-Based
+  - **Compenent-Based Arch** is to make parts of an application capsuling appearance and function, and composite them to build complex UI  
+- Just The UI
+- Virtual DOM
+  - React holds virtual DOM in cache, and works by rendering virtual DOM to real DOM.  
+- One-Way Dataflow
+- Learn Once, Write Anywhere
 
-## Component-Based
-
-**Compenent-Based Arch** is to make parts of an application capsuling appearance and function, and composite them to build complex UI  
-
-## Just The UI
-
-## Virtual DOM
-
-React holds virtual DOM in cache, and works by rendering virtual DOM to real DOM.  
-
-## One-Way Dataflow
-
-## Learn Once, Write Anywhere
+<br>
 
 
 # Components
@@ -36,6 +31,8 @@ Components
 React Elements
 - compose virtual DOM
 - executable link to call a component with a props
+
+<br>
 
 
 # Life Cycle
@@ -91,6 +88,7 @@ Detects and handle errors caused in successor components.
 |     `componentDidCatch(error, info)`     |     `void`     |                       Called when an exception caused in a successor component                        |
 | `static getDerivedStateFromError(error)` | `State | null` | Be called when an exception caused in a successor component and set new `state` with the return value |
 
+<br>
 
 # Presentation components and container components
 
