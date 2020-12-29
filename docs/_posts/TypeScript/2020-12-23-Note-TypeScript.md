@@ -384,114 +384,127 @@ eslintrc.js
 
 ```js
 module.exports = {
-  "env": {
-    "browser": true,
-    "es2021": true
+  env: {
+    browser: true,
+    es2020: true,
   },
-  "extends": [
-    "airbnb",
-    "airbnb/hooks",
-    "plugin:import/errors",
-    "plugin:import/warning",
-    "plugin:import/typescript",
-    "plugin:@typescript-eslint/recommended",
-    "plugin:@typescript-eslint/recommended-requiring-type-checking"
+  extends: [
+    'airbnb',
+    'airbnb/hooks',
+    'plugin:import/errors',
+    'plugin:import/warnings',
+    'plugin:import/typescript',
+    'plugin:@typescript-eslint/recommended',
+    'plugin:@typescript-eslint/recommended-requiring-type-checking',
+    'prettier',
+    'prettier/@typescript-eslint',
+    'prettier/react',
   ],
-  "parser": "@typescript-eslint/parser",
-  "parserOptions": {
-    "ecmaFeatures": {
-      "jsx": true
+  parser: '@typescript-eslint/parser',
+  ignorePatterns: ['.eslintrc.js'],
+  parserOptions: {
+    ecmaFeatures: {
+      jsx: true,
     },
-    "ecmaVersion": 12,
-    "project": "./tsconfig.eslint.json",
-    "sourceType": "module",
-    "tsconfigRootDir": __dirname
+    ecmaVersion: 12,
+    project: './tsconfig.eslint.json',
+    sourceType: 'module',
+    tsconfigRootDir: __dirname,
   },
-  "plugins": [
-    "@typescript-eslint",
-    "import",
-    "jsx-a11y",
-    "react",
-    "react-hooks"
+  plugins: [
+    '@typescript-eslint',
+    'import',
+    'jsx-a11y',
+    'prefer-arrow',
+    'react',
+    'react-hooks',
   ],
-  "root": true,
-  "rules": {
-    "no-use-before-define": "off",
-    "@typescript-eslint/no-use-before-define": [
-      "error"
-    ],
-    "lines-between-class-members": [
-      "error",
-      "always",
+  root: true,
+  rules: {
+    // occur error in `import React from 'react'` with react-scripts 4.0.1
+    'no-use-before-define': 'off',
+    '@typescript-eslint/no-use-before-define': ['error'],
+    'lines-between-class-members': [
+      'error',
+      'always',
       {
-        "exceptAfterSingleLine": true
-      }
+        exceptAfterSingleLine: true,
+      },
     ],
-    "no-void": [
-      "error",
+    'no-void': [
+      'error',
       {
-        "allowAsStatement": true
-      }
+        allowAsStatement: true,
+      },
     ],
-    "padding-line-between-statements": [
-      "error",
+    'padding-line-between-statements': [
+      'error',
       {
-        "blankLine": "always",
-        "prev": "*",
-        "next": "return"
-      }
+        blankLine: 'always',
+        prev: '*',
+        next: 'return',
+      },
     ],
-    "@typescript-eslint/no-unused-vars": [
-      "error",
+    '@typescript-eslint/no-unused-vars': [
+      'error',
       {
-        "vars": "all",
-        "args": "after-used",
-        "argsIgnorePattern": "_",
-        "ignoreRestSiblings": false,
-        "varsIgnorePattern": "_"
-      }
+        vars: 'all',
+        args: 'after-used',
+        argsIgnorePattern: '_',
+        ignoreRestSiblings: false,
+        varsIgnorePattern: '_',
+      },
     ],
-    "import/extensions": [
-      "error",
-      "ignorePackages",
+    'import/extensions': [
+      'error',
+      'ignorePackages',
       {
-        "js": "never",
-        "jsx": "never",
-        "ts": "never",
-        "tsx": "never"
-      }
+        js: 'never',
+        jsx: 'never',
+        ts: 'never',
+        tsx: 'never',
+      },
     ],
-    "react/jsx-filename-extension": [
-      "error",
+    'prefer-arrow/prefer-arrow-functions': [
+      'error',
       {
-        "extensions": [".jsx", ".tsx"]
-      }
+        disallowPrototype: true,
+        singleReturnOnly: false,
+        classPropertiesAllowed: false,
+      },
     ],
-    "react/jsx-props-no-spreading": [
-      "error",
+    'react/jsx-filename-extension': [
+      'error',
       {
-        "html": "enforce",
-        "custom": "enforce",
-        "explicitSpread": "ignore"
-      }
+        extensions: ['.jsx', '.tsx'],
+      },
     ],
-    "react/react-in-jsx-scope": "off"
+    'react/jsx-props-no-spreading': [
+      'error',
+      {
+        html: 'enforce',
+        custom: 'enforce',
+        explicitSpread: 'ignore',
+      },
+    ],
+    'react/react-in-jsx-scope': 'off',
   },
-  "overrides": [
+  overrides: [
     {
-      "files": ["*.tsx"],
-      "rules": {
-        "react/prop-types": "off"
-      }
-    }
+      files: ['*.tsx'],
+      rules: {
+        'react/prop-types': 'off',
+      },
+    },
   ],
-  "settings": {
-    "import/resolver": {
-      "node": {
-        "paths": ["src"]
-      }
-    }
-  }
+  settings: {
+    'import/resolver': {
+      node: {
+        extensions: ['.js', '.jsx', '.ts', '.tsx'],
+        moduleDirectory: ['node_modules', 'src/'],
+      },
+    },
+  },
 };
 ```
 
