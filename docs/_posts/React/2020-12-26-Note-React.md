@@ -444,3 +444,623 @@ const TextInput: FC = () => {
 
 export default TextInput;
 ```
+
+### Custom Hooks
+
+src/hooks/use-timer.tsx
+
+```tsx
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { getPrimes } from 'utils/math-tool';
+
+const useTimer = (limit: number): [number, boolean, () => void] => {
+  const [timeLeft, setTimeLeft] = useState(limit);
+  const primes = useMemo(() => getPrimes(limit), [limit]);
+  const timerId = useRef<NodeJS.Timeout>();
+  const tick = () => setTimeLeft((t) => t - 1);
+
+  const clearTimer = () => {
+    if (timerId.current) clearInterval(timerId.current);
+  };
+
+  const reset = useCallback(() => {
+    clearTimer();
+    timerId.current = setInterval(tick, 1000);
+    setTimeLeft(limit);
+  }, [limit]);
+
+  useEffect(() => {
+    reset();
+
+    return clearTimer;
+  }, [reset]);
+
+  useEffect(() => {
+    if (timeLeft === 0) reset();
+  }, [timeLeft, reset]);
+
+  return [timeLeft, primes.includes(timeLeft), reset];
+};
+
+export default useTimer;
+```
+
+src/components/Timer.tsx
+
+```tsx
+import { FC } from 'react';
+import { Button, Card, Icon, Statistic } from 'semantic-ui-react';
+import './Timer.css';
+
+type Props = {
+  timeLeft?: number;
+  isPrime?: boolean;
+  reset?: () => void;
+};
+
+const Timer: FC<Props> = ({
+  timeLeft = 0,
+  isPrime = false,
+  reset = () => undefined,
+}) => (
+  <Card>
+    <Statistic className="number-board">
+      <Statistic.Label>time</Statistic.Label>
+      <Statistic.Value className={isPrime ? 'prime-number' : undefined}>
+        {timeLeft}
+      </Statistic.Value>
+    </Statistic>
+    <Card.Content>
+      <Button color="red" fluid onClick={reset}>
+        <Icon name="redo" />
+        Reset
+      </Button>
+    </Card.Content>
+  </Card>
+);
+
+export default Timer;
+```
+
+src/container/Timer.tsx
+
+```tsx
+import { FC } from 'react';
+import useTimer from 'hooks/use-timer';
+import Timer from 'components/Timer';
+
+const EnhancedTimer: FC<{ limit: number }> = ({ limit }) => {
+  const [timeLeft, isPrime, reset] = useTimer(limit);
+
+  return <Timer timeLeft={timeLeft} isPrime={isPrime} reset={reset} />;
+};
+
+export default EnhancedTimer;
+```
+
+src/App.tsx
+
+```tsx
+import { FC } from 'react';
+import Timer from 'containers/Timer';
+import './App.css';
+
+const App: FC = () => (
+  <div className="container">
+    <header>
+      <h1>Timer</h1>
+    </header>
+    <Timer limit={60} />
+  </div>
+);
+
+export default App;
+```
+
+### useReduce
+
+```tsx
+const [state, dispatch] = useReducer(reducer, initValue, initFunc);
+// initFunc initialize the state with initValue
+```
+
+```tsx
+import { FC, useReducer } from 'react';
+import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import CounterWidget from 'components/templates/CounterWidget';
+
+type CounterState = { count: number };
+const initialState: CounterState = { count: 0 };
+
+const counterSlice = createSlice({
+  name: 'counter',
+  initialState,
+  reducers: {
+    added: (state, action: PayloadAction<number>) => ({
+      ...state,
+      count: state.count + action.payload,
+    }),
+    decremented: (state) => ({ ...state, count: state.count - 1 }),
+    incremented: (state) => ({ ...state, count: state.count + 1 }),
+  },
+});
+
+const EnhancedCounterWidget: FC<{ initialCount?: number }> = ({
+  initialCount = 0,
+}) => {
+  const [state, dispatch] = useReducer(
+    counterSlice.reducer,
+    initialCount,
+    (count: number): CounterState => ({ count }),
+  );
+  const { added, decremented, incremented } = counterSlice.actions;
+
+  return (
+    <CounterWidget
+      count={state.count}
+      add={(amount: number) => dispatch(added(amount))}
+      decrement={() => dispatch(decremented())}
+      increment={() => dispatch(incremented())}
+    />
+  );
+};
+
+export default EnhancedCounterWidget;
+```
+
+
+<br>
+
+# React Router (v5)
+
+## BrowserRouter
+
+- enable *Route*s
+
+index.tsx
+
+```tsx
+import ReactDOM from 'react-dom';
+import { BrowserRouter } from 'react-router-dom';
+
+import App from './App';
+import reportWebVitals from './reportWebVitals';
+import 'semantic-ui-css/semantic.min.css';
+import './index.css';
+
+ReactDOM.render(
+  <BrowserRouter>
+    <App />
+  </BrowserRouter>,
+  document.getElementById('root'),
+);
+
+reportWebVitals();
+```
+
+## Route
+
+### path
+
+prefix match basically.  
+
+|  props  |  description  |
+| :-----: | :-----------: |
+| `exact` | perfect match |
+
+## Switch
+
+## Redirect
+
+## Link
+
+## Hooks
+
+### useHistory
+
+useHistory() returns history object defined by React Router.  
+
+|   properties    |                  description                   |
+| :-------------: | :--------------------------------------------: |
+|    `length`     |             Num of stacked history             |
+|    `action`     | Latest action (`"PUSH"`, `"REPLACE"`, `"POP"`) |
+|  `push(PATH)`   |                  Go to `PATH`                  |
+| `replace(PATH)` |               redirect to `PATH`               |
+|   `goBack()`    |              go to previous page               |
+|  `goForward()`  |                go to next page                 |
+|     `go(N)`     |         go to a history whose num is N         |
+
+### useLocation
+
+```tsx
+const { search } = useLocation(); // get value of key: search
+
+// when URL = https://exampleapp.com/user/patty?from=user-list#friends
+// location object is
+//{
+//  pathname: '/user/patty',
+//  search: '?from=user-list',
+//  hash: '#friends',
+//  state: {
+//    [secretKey]: '9qWV408Zyr',
+//  },
+//  key: '1j3qup',
+//}
+
+```
+
+### useParams / useRouteMatch
+
+```tsx
+import { FC } from 'react';
+import { useParams, useRouteMatch } from 'react-router-dom';
+
+const User: FC = () => {
+  const { userId } = useParams(); // get params in match object
+  const match = useRouteMatch();  // get match object
+
+  console.log(userId);  // patty
+  console.log(match);
+  // when path is /user/:userId
+  // match object
+  // {
+  //   path: "/user/:userId",
+  //   url: "/user/patty",
+  //   isExact: true,
+  //   params: {
+  //    userId: "patty",
+  // }
+```
+
+# React Router (v6)
+
+## BrowserRouter
+
+- enable *Route*s
+
+index.tsx
+
+```tsx
+import ReactDOM from 'react-dom';
+import { BrowserRouter } from 'react-router-dom';
+
+import App from './App';
+import reportWebVitals from './reportWebVitals';
+import 'semantic-ui-css/semantic.min.css';
+import './index.css';
+
+ReactDOM.render(
+  <BrowserRouter>
+    <App />
+  </BrowserRouter>,
+  document.getElementById('root'),
+);
+
+reportWebVitals();
+```
+
+## Routes
+
+- *nested routes* comes back
+- relative path in nested routes is enabled
+
+```tsx
+import { FC } from 'react';
+
+import { Routes, Route, Outlet } from 'react-router';
+import { Link } from 'react-router-dom';
+
+const App: FC = () => (
+  <Routes>
+    <Route path="/" element={<Home />} />
+    <Route path="users" element={<Users />}>
+      <Route path="me" element={<SelfProfile />} />
+      <Route path=":id" element={<UserProfile />} />
+    </Route>
+  </Routes>
+);
+
+const Users: FC = () => (
+  <div>
+    <nav>
+      <Link to="me">My Profile</Link>
+    </nav>
+    <Outlet />
+  </div>
+);
+```
+
+## Route
+
+- `element={<MyComponent />}`
+- perfect matching basically  
+  - `exact`, `stract` are abolished
+  - `caseSensitive` is introduced to distinguish upper between lower
+  - regular expression is disabled
+
+
+- **History object is abolished** -> use `navigation` function returned `useNavigation()` instead.  
+  - `history.replace("/")` -> `navigate({ path: "/" }, { replace: true })`
+
+  
+## Redirect
+
+- abolished -> use `<Navigate />` instead  
+  - `<Redirect to="/Home" push />` -> `<Navigate to="/Home">`: not overwrite history
+  - `<Redirect to="/Home" />` -> `<Navigate to="/Home" replace />`: overwrite history
+
+
+# Redux
+
+## Concepts
+
+- Single source of truth
+  - Redux represents an application state by a tree structure of just only one *store* object
+- State is read-only
+  - Dispatching *action*s to change state of store
+  - *action* is a plain object to represent what an event occurred
+- Changes are made with pure functions
+  - *reducer()* updates state tree
+    - `(prevState, action) => newState`
+
+![redux_dataflow]({{ site.url }}{{site.baseurl}}/assets/React_images/redux_dataflow.png)
+
+## Store
+
+src/index.tsx
+
+```tsx
+import ReactDOM from 'react-dom';
+import { createStore } from 'redux';
+import { Provider } from 'react-redux';
+
+import { counterReducer, initialState } from 'reducer';
+import reportWebVitals from './reportWebVitals';
+import App from './App';
+import 'semantic-ui-css/semantic.min.css';
+import './index.css';
+
+const store = createStore(counterReducer, initialState);
+
+ReactDOM.render(
+  <Provider store={store}>
+    <App />
+  </Provider>,
+  document.getElementById('root') as HTMLElement,
+);
+
+reportWebVitals();
+```
+
+## Action
+
+src/actions.ts
+
+```ts
+export const CounterActionType = {
+  ADD: 'ADD',
+  DECREMENT: 'DECREMENT',
+  INCREMENT: 'INCREMENT',
+} as const;
+
+type ValueOf<T> = T[keyof T];
+
+export type CounterAction = {
+  type: ValueOf<typeof CounterActionType>;
+  amount?: number;
+};
+
+
+// action creators
+export const add = (amount: number): CounterAction => ({
+  type: CounterActionType.ADD,
+  amount,
+});
+
+export const decrement = (): CounterAction => ({
+  type: CounterActionType.DECREMENT,
+});
+
+export const increment = (): CounterAction => ({
+  type: CounterActionType.INCREMENT,
+});
+```
+
+
+## Reducer
+
+src/reducer.ts
+
+```ts
+import { Reducer } from 'redux';
+import { CounterAction, CounterActionType as Type } from 'actions';
+
+export type CounterState = { count: number };
+export const initialState: CounterState = { count: 0 };
+
+export const counterReducer: Reducer<CounterState, CounterAction> = (
+  state: CounterState = initialState,
+  action: CounterAction,
+): CounterState => {
+  switch (action.type) {
+    case Type.ADD:
+      return {
+        ...state,
+        count: state.count + (action.amount || 0),
+      };
+    case Type.DECREMENT:
+      return {
+        ...state,
+        count: state.count - 1,
+      };
+    case Type.INCREMENT:
+      return {
+        ...state,
+        count: state.count + 1,
+      };
+    default: {
+      const _: never = action.type;
+
+      return state;
+    }
+  }
+};
+```
+
+
+## Hooks APIs
+
+### useSelector
+
+- extract values of state from store
+
+```tsx
+import { useSelector } from 'react-redux';
+
+const useSelector<StateType, KeyType>(selector: Function)
+```
+
+### useDispatch
+
+- get function to dispatch actions
+
+```tsx
+import { FC } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+
+import { add, decrement, increment } from 'actions';
+import { CounterState } from 'reducer';
+import CounterBoard from 'components/organisms/CounterBoard';
+
+const EnhancedCounterBoard: FC = () => {
+  const count = useSelector<CounterState, number>((state) => state.count);
+  const dispatch = useDispatch();
+
+  return (
+    <CounterBoard
+      count={count}
+      add={(amount: number) => dispatch(add(amount))}
+      decrement={() => dispatch(decrement())}
+      increment={() => dispatch(increment())}
+    />
+  );
+};
+
+export default EnhancedCounterBoard;
+```
+
+## Style Guide
+
+### A
+
+- Do not update state directly
+- reducer must not have side-effect
+  - processies causing side-effect are
+    - connect to outer system
+    - overwrite value of variable out of reducer
+    - pass values not to be reproduced to store
+- Do not put not serializable values in state or action
+- store is just only one per one app
+
+### about ACtion
+
+- Model action as event, not setter
+- Name action to represent mean precisely
+- Name action to follow format "domain model / event type"
+- Make action conform to FSA (Flux Standard Action)
+  - FSA: standard of structure of action
+- Do not write action to dispatch, use action creator
+
+### about Tools or Design Pattern
+
+- Use Redux Toolkit to write logic of Redux
+- Use Immer to update immutable state
+- Use Redux DevTools extension to debug
+- Apply Feature Folder or Ducks pattern to file structure
+
+```
+// Feature Folder
+src/
+  features/   // divide by domain
+    user/
+      user-actions.ts
+      user-reducer.ts
+    article/
+      article-actions.ts
+      article-reducer.ts
+    ...
+
+// Ducks Pattern
+src/
+  ducks/
+    user.ts     // put actions and reducer for user domain together
+    article.ts  // put actions and reducer for article domain together
+    ...
+```
+
+### about Design
+
+- Consider what should have what state flexibly
+- Do not put state of form in Redux
+  - should 
+- Exclude complex logic from component
+- Use Redux Thunk for async processes
+
+<br>
+
+## Redux Toolkits
+
+src/index.tsx
+
+```ts
+import ReactDOM from 'react-dom';
+import { configureStore } from '@reduxjs/toolkit';
+import { Provider } from 'react-redux';
+
+import { counterSlice } from 'features/counter';
+import reportWebVitals from './reportWebVitals';
+import App from './App';
+import 'semantic-ui-css/semantic.min.css';
+import './index.css';
+
+const store = configureStore({ reducer: counterSlice.reducer });
+
+ReactDOM.render(
+  <Provider store={store}>
+    <App />
+  </Provider>,
+  document.getElementById('root') as HTMLElement,
+);
+
+reportWebVitals();
+```
+
+src/features/counter.ts
+
+```ts
+import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+
+export type CounterState = { count: number };
+const initialState: CounterState = { count: 0 };
+
+export const counterSlice = createSlice({
+  name: 'counter',
+  initialState,
+  reducers: {
+    added: (state, action: PayloadAction<number>) => ({
+      ...state,
+      count: state.count + action.payload,
+    }),
+    decremented: (state) => ({ ...state, count: state.count - 1 }),
+    incremented: (state) => ({ ...state, count: state.count + 1 }),
+  },
+});
+```
+
+
+# Difficult Points
+
+- Logics for appearance and data used inside app are mixed in a React Component
+- It is difficult to understand data flow and timing to update it
+  - Hooks
+- Functional

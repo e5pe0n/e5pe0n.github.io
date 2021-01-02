@@ -88,6 +88,65 @@ const greet = (n: 1 | 2 | 3) => {
 
 To be honest, I don't know what is good.  
 
+## typeof
+
+```ts
+console.log(typeof 100) // number
+
+cosnt arr = [1, 2, 3];
+console.log(typeof arr) // 'object'
+
+
+type NumArr = typeof arr;
+const val: NumArr = [4, 5, 6];
+const val2: NumArr = ["foo", "bar", "baz"]; // compile error
+```
+
+## in
+
+```ts
+const obj = { a: 1, b: 2, c: 3 };
+console.log("a" in obj);  // true
+for (const key in obj) { console.log(key); }  // a b c
+
+
+type Fig = "one" | "two" | "three";
+type FigMap = { [k in Fig]?: number };  // Mapped Type
+
+const figMap: FigMap = {
+  one: 100,
+  two: 200,
+  three: 300
+};
+figMap.four = 400;  // compile error
+```
+
+## keyof
+
+```ts
+const permissions = {
+  r: 0b100,
+  w: 0b010,
+  x: 0b001,
+} as const; // Const Assertions
+
+type PermsChar = keyof typeof permissions; // "r" | "w" | "x"
+const readable: PermsChar = "r";
+const writable: PermsChar = "z";  // compile error
+
+type ValueOf<T> = T[keyof T];
+type PermsNum = ValueOf<typeof permissions>;  // 1 | 2 | 4
+
+const permissions2 = {
+  r: 0b100,
+  w: 0b010,
+  x: 0b001,
+};
+
+type PermsNum2 = Value<typeof permissions>; // number if without `as const`
+```
+
+
 ## Built-in Utility Types
 
 |     types     |              description              |

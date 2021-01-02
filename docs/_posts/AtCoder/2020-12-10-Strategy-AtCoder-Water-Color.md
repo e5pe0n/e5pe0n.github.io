@@ -14,8 +14,8 @@ tags:
 単調増加の数列がある，あるいは作れるときは 2 分探索を使いやすい
 
 
-[ABC143 D - Triangles](https://atcoder.jp/contests/abc143/tasks/abc143_d)
-[CODEFESTIVAL 2016 Final B - Exactly N points](https://atcoder.jp/contests/cf16-final/tasks/codefestival_2016_final_b)
+[ABC143 D - Triangles](https://atcoder.jp/contests/abc143/tasks/abc143_d)  
+[CODEFESTIVAL 2016 Final B - Exactly N points](https://atcoder.jp/contests/cf16-final/tasks/codefestival_2016_final_b)  
 [ABC172 C - Tsundoku](https://atcoder.jp/contests/abc172/tasks/abc172_c)  
 [ABC174 E - Logs](https://atcoder.jp/contests/abc174/tasks/abc174_e)
 [ABC109 B - log](https://atcoder.jp/contests/arc109/tasks/arc109_b)  
@@ -23,6 +23,11 @@ tags:
 [ABC153 F - Silver Fox vs Monster](https://atcoder.jp/contests/abc153/tasks/abc153_f)
 
 
+## 貪欲法
+
+スケジュール問題
+
+[キーエンスプログラミングコンテスト 2020](https://atcoder.jp/contests/keyence2020/tasks/keyence2020_b)  
 
 ## DP  
 
@@ -67,7 +72,7 @@ tags:
 [ABC098 C - March](https://atcoder.jp/contests/abc089/tasks/abc089_c)  
 [AGC031 A - Colorful Subsequence](https://atcoder.jp/contests/agc031/tasks/agc031_a)  
 
-何かを固定して考えてみる
+- 何かを固定して考えてみる
 
 [ABC167 E - Colorful Blocks](https://atcoder.jp/contests/abc167/tasks/abc167_e)  
 
@@ -108,7 +113,7 @@ tags:
 
 N が小さいときはビット全探索で総当たり
 
-[ABC128 C - Switches](https://atcoder.jp/contests/abc128/tasks/abc128_c)
+[ABC128 C - Switches](https://atcoder.jp/contests/abc128/tasks/abc128_c)  
 [ABC167 C - Skill Up](https://atcoder.jp/contests/abc167/tasks/abc167_c)  
 [ABC173 C - H and V](https://atcoder.jp/contests/abc173/tasks/abc173_c)  
 
@@ -152,6 +157,14 @@ K が N より異様に大きいときはループしている部分を抜き出
 
 
 # 数学系
+
+## 素数 / 約数
+
+[ABC 142 D - Disjoint Set of Common Divisors](https://atcoder.jp/contests/abc142/tasks/abc142_d)  
+
+## 最大公約数
+
+[AGC 018 A - Getting Difference](https://atcoder.jp/contests/agc018/tasks/agc018_a)  
 
 ## 剰余
 
