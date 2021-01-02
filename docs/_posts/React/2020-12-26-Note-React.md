@@ -712,6 +712,8 @@ const User: FC = () => {
   // }
 ```
 
+<br>
+
 # React Router (v6)
 
 ## BrowserRouter
