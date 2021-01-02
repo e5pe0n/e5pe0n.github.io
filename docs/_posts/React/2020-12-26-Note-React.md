@@ -5,7 +5,7 @@ categories:
 tags:
   - React
   - TypeScript
-last_modified_at: 2020-12-29
+last_modified_at: 2021-01-02
 ---
 
 # Concepts
@@ -953,7 +953,7 @@ export default EnhancedCounterBoard;
 
 ## Style Guide
 
-### A
+### Priority: A
 
 - Do not update state directly
 - reducer must not have side-effect
@@ -964,7 +964,7 @@ export default EnhancedCounterBoard;
 - Do not put not serializable values in state or action
 - store is just only one per one app
 
-### about ACtion
+### about Action
 
 - Model action as event, not setter
 - Name action to represent mean precisely

@@ -4,7 +4,7 @@ categories:
   - Note
 tags:
   - TypeScript
-last_modified_at: 2020-12-29
+last_modified_at: 2021-01-02
 ---
 
 # JavaScript
