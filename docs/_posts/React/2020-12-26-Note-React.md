@@ -285,12 +285,12 @@ const Counter: FC<{ max: number }> = ({ max }) => (
 
 ## Hooks
 
-- useState()
-- useEffect()
-- useMemo()
-- useCallback()
-- useRef()
-- useReducer()
+- `useState()`
+- `useEffect()`
+- `useMemo()`
+- `useCallback()`
+- `useRef()`
+- `useReducer()`
 - Custom Hooks
 
 ### State Hooks
