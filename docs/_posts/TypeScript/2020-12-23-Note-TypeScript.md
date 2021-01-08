@@ -33,6 +33,97 @@ The name of standard specification is **ECMAScript (エクマスクリプト)**.
 | Browserify | Module bundler |     CommonJS      |
 |  webpack   | Module bundler | ComonJS, ESM, etc |
 
+## Useful Syntax
+
+### Shorthand of Properties
+
+```js
+const key = "bar";
+const baz = 65536;
+const obj1 = { foo: 256, [key]: 4096, baz: baz };
+console.log(obj1) // { foo: 256, bar: 4096, baz: 65536 }
+
+const obj2 = { baz };
+console.log(obj2) // { baz: 65536 }
+```
+
+### Destructuring Assignment
+
+```js
+const [n, m] = [1, 4];
+console.log(n, m);  // 1 4
+
+const obj = { name: "Kanae", age: 24 };
+const { name, age } = obj;
+console.log(name, age)  // Kanae  24
+
+const response = {
+  data: [
+    {
+      id: 1,
+      name: "Patty Rabbit",
+      email: "patty@maple.town",
+    },
+    {
+      id: 2,
+      name: "Rolley Cocker",
+      email: "rolley@palm.town",
+    },
+    {
+      id: 3,
+      name: "Bobby Bear",
+      email: "bobby@maple.town",
+    },
+  ],
+};
+const { data: users = [] } = response;  // set [] to users as a defalut value for the case that data is empty.
+console.log(users);
+// [
+//   { id: 1, name: 'Patty Rabbit', email: 'patty@maple.town' },
+//   { id: 2, name: 'Rolley Cocker', email: 'rolley@palm.town' },
+//   { id: 3, name: 'Bobby Bear', email: 'bobby@maple.town' }
+// ]
+```
+
+### Spread Syntax
+
+```js
+const arr1 = ["A", "B", "C"];
+const arr2 = [...arr1, "D", "E"];
+console.log(arr2);  // [ 'A', 'B', 'C', 'D', 'E' ]
+
+const obj1 = { a: 1, b: 2, c: 3, d: 4 };
+const obj2 = { ...obj1, d: 99, e: 5 };
+console.log(obj2) // { a: 1, b: 2, c: 3, d: 99, e: 5 }
+
+const user = {
+  id: 1,
+  name: "Patty Rabbit",
+  email: "patty@maple.town",
+  age: 8,
+};
+const { id, ...userWithoutId } = user;
+console.log(userWithoutId);
+// { name: 'Patty Rabit', email: 'patty@maple.town', age: 8 }
+```
+
+## Shallow Copy
+
+```js
+const org = { a: 1, b: 2, c: 3 };
+
+const copy = { ...org };
+console.log(copy === org) // false
+
+const assigned = { ...org, ...{ c: 10, d: 50 }, d: 100 }:
+console.log(assigned) // { a: 1, b: 2, c: 10, d: 100 }
+```
+
+
+## Deep Copy
+
+- Use `cloneDeep()` of utiliy library `Lodash`
+
 
 <br>
 

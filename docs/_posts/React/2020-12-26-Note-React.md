@@ -32,6 +32,64 @@ React Elements
 - compose virtual DOM
 - executable link to call a component with a props
 
+## Error Boundary
+
+- Component to catch an error in child-component tree and display UI of `fallback` instead of a crashed component tree.
+
+- `getDerivedStateFromError()`
+  - update state when catching error
+- `componentDidCatch()`
+  - do something except changing state when catching error
+
+src/ErrorBoundary.tsx
+
+```tsx
+import { ErrorInfo, PureComponent, ReactNode } from 'react';
+import ky from 'ky';
+import { Message } from 'semantic-ui-react';
+
+type StatusMessages = { [status: number]: string };
+type Props = { statusMessages?: StatusMessages };
+type State = { hasError: boolean; error: Error | null };
+const DEFAULT_MESSAGES: StatusMessages = { 0: 'Server Error' };
+
+class ErrorBoundary extends PureComponent<Props, State> {
+  constructor(props: Props) {
+    super(props);
+    this.state = { hasError: false, error: null };
+  }
+
+  static getDerivedStateFromError = (error: Error): State => ({
+    hasError: true,
+    error,
+  });
+
+  componentDidCatch = (error: Error, info: ErrorInfo): void => {
+    console.error(error, info); // eslint-disable-line no-console
+  };
+
+  render = (): ReactNode => {
+    const { children, statusMessages = {} } = this.props;
+    const { hasError, error } = this.state;
+    const messages = { ...DEFAULT_MESSAGES, ...statusMessages };
+
+    if (hasError) {
+      const statusCode = (error as ky.HTTPError)?.response?.status;
+
+      if (statusCode && Object.keys(messages).includes(String(statusCode))) {
+        return <Message warning>{messages[statusCode]}</Message>;
+      }
+
+      return <Message error>{messages[0]}</Message>;
+    }
+
+    return children;
+  };
+}
+
+export default ErrorBoundary;
+```
+
 <br>
 
 
@@ -227,6 +285,14 @@ const Counter: FC<{ max: number }> = ({ max }) => (
 
 ## Hooks
 
+- useState()
+- useEffect()
+- useMemo()
+- useCallback()
+- useRef()
+- useReducer()
+- Custom Hooks
+
 ### State Hooks
 
 ```tsx
@@ -348,6 +414,8 @@ export default Timer;
 - `useMemo()`
 - `useCallback()`
 
+- sample: https://github.com/e5pe0n/rea-ct/tree/main/09-hooks/04-memoize
+
 src/utils/math-tool.ts  
 
 ```ts
@@ -377,9 +445,9 @@ type TimerProps = {
 
 const Timer: FC<TimerProps> = ({ limit }) => {
   const [timeLeft, setTimeLeft] = useState(limit);
-  const primes = useMemo(() => getPrimes(limit), [limit]);  // getPrimes is called when limit is changed. i.e. the same return value is reused until limit is changed.
-  const reset = useCallback(() => setTimeLeft(limit), [limit]);
-  const tick = () => setTimeLeft((t) => t - 1);
+  const primes = useMemo(() => getPrimes(limit), [limit]);  // getPrimes() is called when limit is changed. i.e. the same return value is reused until limit is changed.
+  const reset = useCallback(() => setTimeLeft(limit), [limit]); // useCallback() keeps a passed funtion and reuses it after re-rendering too.
+  const tick = () => setTimeLeft((t) => t - 1); // tick() cannot be given to useCallback() because setTimeLeft() is made by useState() every re-rendering.
 
   useEffect(() => {
     const timerId = setInterval(tick, 1000);
@@ -414,9 +482,12 @@ const Timer: FC<TimerProps> = ({ limit }) => {
 export default Timer;
 ```
 
-### Ref
+### useRef()
 
-- `useRef()`
+|  Hooks API   |           state updated           |
+| :----------: | :-------------------------------: |
+| `useState()` |   the component is re-renderred   |
+|  `useRef()`  | the component is not re-renderred |
 
 ```tsx
 import { FC, SyntheticEvent, useEffect, useRef } from 'react';
@@ -443,6 +514,61 @@ const TextInput: FC = () => {
 };
 
 export default TextInput;
+```
+
+```tsx
+import { FC, useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { Button, Card, Icon, Statistic } from 'semantic-ui-react';
+import { getPrimes } from 'utils/math-tool';
+import './Timer.css';
+
+const Timer3: FC<{ limit: number }> = ({ limit }) => {
+  const [timeLeft, setTimeLeft] = useState(limit);
+  const primes = useMemo(() => getPrimes(limit), [limit]);
+  const timerId = useRef<NodeJS.Timeout>(); // call useRef(), not useState()
+  const tick = () => setTimeLeft((t) => t - 1);
+
+  const clearTimer = () => {
+    if (timerId.current) clearInterval(timerId.current);
+  };
+
+  const reset = useCallback(() => {
+    clearTimer();
+    timerId.current = setInterval(tick, 1000);
+    setTimeLeft(limit);
+  }, [limit]);
+
+  useEffect(() => {
+    reset();
+
+    return clearTimer;
+  }, [reset]);
+
+  useEffect(() => {
+    if (timeLeft === 0) reset();
+  }, [timeLeft, reset]);
+
+  return (
+    <Card>
+      <Statistic className="number-board">
+        <Statistic.Label>time</Statistic.Label>
+        <Statistic.Value
+          className={primes.includes(timeLeft) ? 'prime-number' : undefined}
+        >
+          {timeLeft}
+        </Statistic.Value>
+      </Statistic>
+      <Card.Content>
+        <Button color="red" fluid onClick={reset}>
+          <Icon name="redo" />
+          Reest
+        </Button>
+      </Card.Content>
+    </Card>
+  );
+};
+
+export default Timer3;
 ```
 
 ### Custom Hooks
@@ -557,7 +683,7 @@ const App: FC = () => (
 export default App;
 ```
 
-### useReduce
+### useReducer()
 
 ```tsx
 const [state, dispatch] = useReducer(reducer, initValue, initFunc);
@@ -613,6 +739,18 @@ export default EnhancedCounterWidget;
 
 # React Router (v5)
 
+- BrowserRouter
+- Route
+- Switch
+- Redirect
+- Link
+
+- Hooks API
+  - useHistory()
+  - useLocation()
+  - useParams()
+  - useRouteMatch()
+
 ## BrowserRouter
 
 - enable *Route*s
@@ -656,9 +794,9 @@ prefix match basically.
 
 ## Hooks
 
-### useHistory
+### useHistory()
 
-useHistory() returns history object defined by React Router.  
+`useHistory()` returns history object defined by React Router.  
 
 |   properties    |                  description                   |
 | :-------------: | :--------------------------------------------: |
@@ -689,7 +827,7 @@ const { search } = useLocation(); // get value of key: search
 
 ```
 
-### useParams / useRouteMatch
+### useParams() / useRouteMatch()
 
 ```tsx
 import { FC } from 'react';
@@ -715,6 +853,17 @@ const User: FC = () => {
 <br>
 
 # React Router (v6)
+
+- BrowserRouter
+- Routes
+- Route
+- Navigate
+
+- Hooks API
+  - useNavigation
+  - useLocation
+  - useParams
+  - useRouteMatch
 
 ## BrowserRouter
 
@@ -785,7 +934,7 @@ const Users: FC = () => (
   - `history.replace("/")` -> `navigate({ path: "/" }, { replace: true })`
 
   
-## Redirect
+## Navigate
 
 - abolished -> use `<Navigate />` instead  
   - `<Redirect to="/Home" push />` -> `<Navigate to="/Home">`: not overwrite history
@@ -912,7 +1061,10 @@ export const counterReducer: Reducer<CounterState, CounterAction> = (
 
 ## Hooks APIs
 
-### useSelector
+- `useSelector()`
+- `useDispath()`
+
+### useSelector()
 
 - extract values of state from store
 
@@ -922,7 +1074,7 @@ import { useSelector } from 'react-redux';
 const useSelector<StateType, KeyType>(selector: Function)
 ```
 
-### useDispatch
+### useDispatch()
 
 - get function to dispatch actions
 
@@ -1012,6 +1164,11 @@ src/
 
 ## Redux Toolkits
 
+- `createSlice()`
+- PayloadAction
+
+- sample: https://github.com/e5pe0n/rea-ct/tree/main/11-redux/04-toolkit
+
 src/index.tsx
 
 ```ts
@@ -1058,6 +1215,411 @@ export const counterSlice = createSlice({
   },
 });
 ```
+
+# React Query
+
+- fetch, cache and update data in React app without touching `global state` such a Redux  
+
+- QueryClient, QueryClientProvider
+- `useQuery()`
+
+## QueryClient / QueryClientProvider
+
+- sample: https://github.com/e5pe0n/rea-ct/tree/main/13-suspense/02-ready-libs/02-react-query
+
+src/index.tsx
+
+```tsx
+import ReactDOM from 'react-dom';
+import { BrowserRouter } from 'react-router-dom';
+import { QueryClient, QueryClientProvider } from 'react-query';
+import { ReactQueryDevtools } from 'react-query/devtools';
+
+import App from './App';
+import reportWebVitals from './reportWebVitals';
+
+import 'semantic-ui-css/semantic.min.css';
+import './index.css';
+
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      retry: 0,
+      suspense: true,
+      // useErrorBoundary: true,
+    },
+    mutations: {
+      retry: 0,
+      // useErrorBoundary: true,
+    },
+  },
+});
+
+ReactDOM.render(
+  <BrowserRouter>
+    <QueryClientProvider client={queryClient}>
+      <App />
+      {process.env.NODE_ENV === 'development' && (
+        <ReactQueryDevtools initialIsOpen={false} />
+      )}
+    </QueryClientProvider>
+  </BrowserRouter>,
+  document.getElementById('root') as HTMLElement,
+);
+
+reportWebVitals();
+```
+
+## useQuery()
+
+- `useQuery()` throws the Promise until the process is done, and return the result component including fetched data if `suspense: true` in QueryClient.
+- Suspense component catches the Promise and display fallback component until `useQuery` return result, and renders the result component `useQuery` returned.
+
+src/components/pages/Members.tsx
+
+```tsx
+import { FC, Suspense } from 'react';
+import { Helmet } from 'react-helmet';
+import capitalize from 'lodash/capitalize';
+import { Divider } from 'semantic-ui-react';
+
+import Spinner from 'components/molecules/Spinner';
+import HomeButton from 'components/molecules/HomeButton';
+import MemberList from 'containers/organisms/MemberList';
+import ErrorBoundary from 'ErrorBoundary';
+
+const Members: FC<{ orgCode: string }> = ({ orgCode = 'UnknownCompany' }) => {
+  const title = `Dev members of ${capitalize(orgCode)}`;
+
+  return (
+    <>
+      <Helmet>
+        <title>{title}</title>
+      </Helmet>
+      <header className="app-header">
+        <h1>{title}</h1>
+      </header>
+      <ErrorBoundary
+        statusMessages={{
+          404: `Code: ‘${orgCode}’ not Found`,
+        }}
+      >
+        <Suspense fallback={<Spinner size="big" />}>
+          <MemberList orgCode={orgCode} />
+        </Suspense>
+      </ErrorBoundary>
+      <Divider hidden />
+      <HomeButton />
+    </>
+  );
+};
+
+export default Members;
+```
+
+src/containers/organisms/MemberList.tsx
+
+```tsx
+import { FC } from 'react';
+import { useQuery } from 'react-query';
+
+import MemberList from 'components/organisms/MemberList';
+import { getMembers } from 'domains/github';
+
+const EnhancedMemberList: FC<{ orgCode: string }> = ({ orgCode }) => {
+  const { data: users = [] } = useQuery(
+    [orgCode, 'members'],       // key of cache
+    () => getMembers(orgCode),  // fetcher; async function to fetch data
+  );
+
+  return <MemberList users={users} />;
+};
+
+export default EnhancedMemberList;
+```
+
+# Concurrent Mode
+
+## How to Introduce
+
+```
+$ yarn add react@experimental react-dom@experimental
+```
+
+src/react-app-env.d.ts
+- append last two lines
+
+```
+/// <reference types="react-scripts" />
++ /// <reference types="react-dom/experimental" />
++ /// <reference types="react/experimental" />
+```
+
+Use `createRoot()` (`unstable_createRoot()`) method instead of using `ReactDOM.render()` directly.
+
+```tsx
+// const root = document.getElementById('root');
+
+// ReactDOM.render(<App />, root);
+
+
+const root = document.getElementById('root') as HTMLElement;
+
+// ReactDOM.createRoot(root).render(<App />);
+ReactDOM.unstable_createRoot(root).render(<App />); // "unstable_" prefix is needed currently.
+```
+
+## Concurrent Mode API
+
+- SuspenseList
+- `useTransition()`
+- `useDefferedValue()`
+
+### SuspenseList
+
+|    props    |                 params                  |
+| :---------: | :-------------------------------------: |
+| revealOrder | `"forwards" | "backwards" | "together"` |
+|    tail     |  `undefined | "collapsed" | "hidden"`   |
+
+|tail params|description|
+|`undefined`|show `fallback`s of all child `Suspense` components|
+|`"collapsed"`|show `fallback` of the next chlid `Suspense` component in order to reveal|
+|`"hidden"`|show no component that hasn't been loaded|
+
+```tsx
+<SuspenseList revealOrder="forwards">
+  <Suspense fallback={<div>Loading...</div>}>
+    <UserProfile userId={1} />
+  </Suspense>
+  <Suspense fallback={<div>Loading...</div>}>
+    <UserProfile userId={2} />
+  </Suspense>
+  <Suspense fallback={<div>Loading...</div>}>
+    <UserProfile userId={3} />
+  </Suspense>
+</SuspenseList>
+
+```
+
+### `useTransition()`
+
+- Disable showing `fallback` until re-rendering is done to keep current appearance
+
+```tsx
+const App = () => {
+  const [userId, setUserId] = useState(1);
+  const [startTransition, isPending] = useTransition();
+
+  return (
+    <>
+      <div style={isPending ? { opacity: 0.5 } : undefined}>
+        <Suspense fallback={<div>Loading...</div>}>
+          <UserProfile userId={userId} />
+        </Suspense>
+      </div>
+      <button
+        onClick={() => startTransition(() => setUserId(id => id + 1))}
+        disabled={isPending}
+      >
+        次のユーザー
+      </button>
+    </>
+  );
+};
+```
+
+### useDeferredValue()
+
+- Delay updating values
+
+In sample below, `useDeferredValue()` delay changing word to search (`searchWord`) to give priority to rendering by that input word is changed.  
+i.e. To update `searchWord` waits for that busy rendering of input gets stable.
+
+
+```tsx
+const App = () => {
+  const [word, setWord] = useState('');
+  const deferredWord = useDeferredValue(word);
+
+  return (
+    <>
+      <input value={word} onChange={(e) => setWord(e.target.value)} />
+      <SearchResult searchWord={deferredWord} />
+    </>
+  );
+};
+```
+
+## UI Patterns
+
+https://reactjs.org/docs/concurrent-mode-patterns.html
+
+
+## Error Handling
+
+- Use `useRef()` to hold error count.
+  - if you use `useState()`, app falls into infinit loops
+    1. Members component is renderred with ebKey = 0
+    1. Error occurs
+    1. ErrorBounds component catches it and increments ebKey by `onError()`
+    1. Members component is re-renderred because ebKey in state is changed
+    1. ebKey is set to 0
+    1. ebKey is not changed so the same ErrorBoundary component calls `onError()`
+    1. Members component is re-renderred again
+    2. ....
+
+
+src/components/pages/Members.tsx
+
+```tsx
+import {
+  FC,
+  FormEvent,
+  Suspense,
+  unstable_SuspenseList as SuspenseList,
+  useRef,
+  useState,
+  unstable_useTransition as useTransition,
+} from 'react';
+import { Button, Divider, Input, Menu } from 'semantic-ui-react';
+import capitalize from 'lodash/capitalize';
+
+import ErrorBoundary from 'ErrorBoundary';
+import Spinner from 'components/molecules/Spinner';
+import OrgInfo from 'containers/organisms/OrgInfo';
+import MemberList from 'containers/organisms/MemberList';
+import './Members.css';
+
+type Props = {
+  orgCodeList: string[];
+  prefetch?: (orgCode: string) => void;
+};
+
+const Members: FC<Props> = ({ orgCodeList, prefetch = () => undefined }) => {
+  const [orgCode, setOrgCode] = useState('');
+  const [input, setInput] = useState('');
+  const [startTransition, isPending] = useTransition();
+  const ebKey = useRef(0);
+
+  const menuItems = orgCodeList.map((code) => ({
+    key: code,
+    name: capitalize(code),
+    onClick: () => {
+      setInput('');
+
+      if (orgCode) {
+        startTransition(() => setOrgCode(code));
+      } else {
+        setOrgCode(code);
+      }
+    },
+    onMouseOver: () => prefetch(code),
+    active: code === orgCode,
+  }));
+
+  const handleSubmit = (event: FormEvent<HTMLFormElement>): void => {
+    event.preventDefault();
+    setOrgCode(input.toLowerCase().trim());
+  };
+
+  return (
+    <>
+      <header className="app-header">
+        <h1>Member List</h1>
+      </header>
+      <form className="search-form" onSubmit={handleSubmit}>
+        <Input
+          placeholder="type org code..."
+          type="text"
+          value={input}
+          onChange={(_, data) => setInput(data.value)}
+        />
+        <Button type="submit" disabled={isPending} primary>
+          Search
+        </Button>
+      </form>
+      <Menu items={menuItems} text />
+      <Divider />
+      <div className={isPending ? 'loading' : ''}>
+        <ErrorBoundary
+          statusMessages={{
+            404: `Code: ${orgCode} not Found`,
+          }}
+          onError={() => {
+            ebKey.current += 1;
+          }}
+          key={ebKey.current}
+        >
+          <SuspenseList revealOrder="forwards">
+            <Suspense fallback={<Spinner size="small" />}>
+              <OrgInfo orgCode={orgCode} />
+            </Suspense>
+            <Suspense fallback={<Spinner size="large" />}>
+              <MemberList orgCode={orgCode} />
+            </Suspense>
+          </SuspenseList>
+        </ErrorBoundary>
+      </div>
+    </>
+  );
+};
+
+export default Members;
+```
+
+src/ErrorBoundary.tsx
+
+```tsx
+import { ErrorInfo, PureComponent, ReactNode } from 'react';
+import ky from 'ky';
+import { Message } from 'semantic-ui-react';
+
+type StatusMessages = { [status: number]: string };
+type Props = { statusMessages?: StatusMessages; onError?: () => void };
+type State = { hasError: boolean; error: Error | null };
+const DEFAULT_MESSAGES: StatusMessages = { 0: 'Server Error' };
+
+class ErrorBoundary extends PureComponent<Props, State> {
+  constructor(props: Props) {
+    super(props);
+    this.state = { hasError: false, error: null };
+  }
+
+  static getDerivedStateFromError = (error: Error): State => ({
+    hasError: true,
+    error,
+  });
+
+  componentDidCatch = (error: Error, info: ErrorInfo): void => {
+    const { onError } = this.props;
+    if (onError) onError();
+
+    console.error(error, info); // eslint-disable-line no-console
+  };
+
+  render = (): ReactNode => {
+    const { children, statusMessages = {} } = this.props;
+    const { hasError, error } = this.state;
+    const messages = { ...DEFAULT_MESSAGES, ...statusMessages };
+
+    if (hasError) {
+      const statusCode = (error as ky.HTTPError)?.response?.status;
+
+      if (statusCode && Object.keys(messages).includes(String(statusCode))) {
+        return <Message warning>{messages[statusCode]}</Message>;
+      }
+
+      return <Message error>{messages[0]}</Message>;
+    }
+
+    return children;
+  };
+}
+
+export default ErrorBoundary;
+```
+
 
 
 # Difficult Points
