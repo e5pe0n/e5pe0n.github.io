@@ -5,7 +5,7 @@ categories:
 tags:
   - React
   - TypeScript
-last_modified_at: 2021-01-02
+last_modified_at: 2021-01-09
 ---
 
 # Concepts

@@ -105,7 +105,10 @@ tags:
 
 ## DFS
 
+[ABC042 C - Iroha's Obsession](https://atcoder.jp/contests/abc042/tasks/arc058_a)  
 [ABC161 D - Lunlun Number](https://atcoder.jp/contests/abc161/tasks/abc161_d)
+[ABC114 C - 755](https://atcoder.jp/contests/abc114/tasks/abc114_c)  
+[ABC152 D - Handstand 2](https://atcoder.jp/contests/abc152/tasks/abc152_d)  
 
 
 
@@ -222,3 +225,10 @@ K が N より異様に大きいときはループしている部分を抜き出
 [ABC178 E - Dist Max](https://atcoder.jp/contests/abc178/tasks/abc178_e)  
 
 
+# マス目
+
+[ABC129 D - Lamp](https://atcoder.jp/contests/abc129/tasks/abc129_d)  
+
+# 発想
+
+[AGC023 A - Zero-Sum Ranges](https://atcoder.jp/contests/agc023/tasks/agc023_a)  
