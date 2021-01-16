@@ -4,6 +4,7 @@ categories:
   - AtCoder
 tags:
   - Competitive Programming
+last_modified_at: 2021-01-14
 ---
 
 
@@ -44,6 +45,7 @@ tags:
 
 ## BFS
 
+[AGC033 A - Darker and Darker](https://atcoder.jp/contests/agc033/tasks/agc033_a)  
 [ABC168 D - .. (Double Dots)](https://atcoder.jp/contests/abc168/tasks/abc168_d)  
 [ABC184 E - Third Avenue](https://atcoder.jp/contests/abc184/tasks/abc184_e)  
 [ABC176 D - Wizard in Maze](https://atcoder.jp/contests/abc176/tasks/abc176_d)  
@@ -71,6 +73,7 @@ tags:
 [ABC156 E - Roaming](https://atcoder.jp/contests/abc156/tasks/abc156_e)  
 [ABC098 C - March](https://atcoder.jp/contests/abc089/tasks/abc089_c)  
 [AGC031 A - Colorful Subsequence](https://atcoder.jp/contests/agc031/tasks/agc031_a)  
+[ABC132 D - Blue and Red Balls](https://atcoder.jp/contests/abc132/tasks/abc132_d)  
 
 - 何かを固定して考えてみる
 
@@ -208,6 +211,7 @@ K が N より異様に大きいときはループしている部分を抜き出
 ## n 進数
 
 [ABC171 C - One Quadrillion and One Dalmatians](https://atcoder.jp/contests/abc171/tasks/abc171_c)  
+[ABC099 C - Strange Bank](https://atcoder.jp/contests/abc099/tasks/abc099_c)  
 
 
 ## 中央値
@@ -228,6 +232,10 @@ K が N より異様に大きいときはループしている部分を抜き出
 # マス目
 
 [ABC129 D - Lamp](https://atcoder.jp/contests/abc129/tasks/abc129_d)  
+
+# 2 分的な
+
+[ABC115 D - Christmas](https://atcoder.jp/contests/abc115/tasks/abc115_d)  
 
 # 発想
 
