@@ -1301,7 +1301,7 @@ const Members: FC<{ orgCode: string }> = ({ orgCode = 'UnknownCompany' }) => {
       </header>
       <ErrorBoundary
         statusMessages={{
-          404: `Code: ‘${orgCode}’ not Found`,
+          404: `Code: "${orgCode}" not Found`,
         }}
       >
         <Suspense fallback={<Spinner size="big" />}>
