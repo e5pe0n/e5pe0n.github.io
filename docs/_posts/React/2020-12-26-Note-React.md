@@ -1301,7 +1301,7 @@ const Members: FC<{ orgCode: string }> = ({ orgCode = 'UnknownCompany' }) => {
       </header>
       <ErrorBoundary
         statusMessages={{
-          404: `Code: "${orgCode}" not Found`,
+          404: `Code '${orgCode}' not Found`,
         }}
       >
         <Suspense fallback={<Spinner size="big" />}>
@@ -1544,7 +1544,7 @@ const Members: FC<Props> = ({ orgCodeList, prefetch = () => undefined }) => {
       <div className={isPending ? 'loading' : ''}>
         <ErrorBoundary
           statusMessages={{
-            404: `Code: ${orgCode} not Found`,
+            404: `Code ${orgCode} not Found`,
           }}
           onError={() => {
             ebKey.current += 1;
