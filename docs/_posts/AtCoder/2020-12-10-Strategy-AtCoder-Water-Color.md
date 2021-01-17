@@ -212,6 +212,7 @@ K が N より異様に大きいときはループしている部分を抜き出
 
 [ABC171 C - One Quadrillion and One Dalmatians](https://atcoder.jp/contests/abc171/tasks/abc171_c)  
 [ABC099 C - Strange Bank](https://atcoder.jp/contests/abc099/tasks/abc099_c)  
+[ABC105 C - Base -2 Number](https://atcoder.jp/contests/abc105/tasks/abc105_c)  
 
 
 ## 中央値
