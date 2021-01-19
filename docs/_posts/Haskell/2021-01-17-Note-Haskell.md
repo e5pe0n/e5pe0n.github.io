@@ -7,6 +7,510 @@ tags:
 last-modified-at: 2021-01-17
 ---
 
+# Naming Requirements of Functions
+
+These are *keywords*; reversed words.  
+
+```
+case  class  data  default  deriving
+do  else  foreign  if  import  in
+infix  infixl  infixr  instance  let
+module  newtype  of  then  type  where
+```
+
+<br>
+
+# Standard Prelude
+
+```hs
+main = do
+  let x = [1, 2, 3, 4, 5]
+  print (head x) -- 1
+  print (tail x) -- [2, 3, 4, 5]
+  print (init x) -- [1, 2, 3, 4]
+  print (last x) -- 5
+  print (x !! 2) -- 3
+  print (take 3 x) -- [1, 2, 3]
+  print (drop 3 x) -- [4, 5]
+  print (length x) -- 5
+  print (sum x) -- 15
+  print (product x) -- 120
+  print ([1, 2, 3] ++ [4, 5]) -- [1 , 2, 3, 4, 5]
+  print (reverse x) -- [5, 4, 3, 2, 1]
+```
+
+<br>
+
+# Types
+
+A *type* is a collection of related values.  
+
+## Notation 1
+
+`v :: T` means `e` is a value in the type `T`.  
+
+```
+False :: Bool
+True :: Bool
+not :: Bool -> Bool
+```
+
+## Notation 2
+
+`e :: T` means evaluation of the expression `e` will produce a value of type `T`.  
+
+```
+not False :: Bool
+not True :: Bool
+not (not False) :: Bool
+```
+
+Typing rule
+
+```
+f :: A -> B  e :: A
+-------------------
+      f e -> B
+```
+
+## Type Interface and Type Safe
+
+**type interface** that evaluates types under typing rule.  
+type interface precedes evaluation of values so Haskell programs are **type safe**.
+
+## Basic Types
+
+|  types  |                             description                             |
+| :-----: | :-----------------------------------------------------------------: |
+|  Bool   |                                                                     |
+|  Char   |                                                                     |
+| String  |                                                                     |
+|   Int   | fixed-precision intergers <br> the range is $[-2^{63}, 2^{63} - 1]$ |
+| Integer |                    arbitarary-precision integers                    |
+|  Float  |               single-precision floating-point numbers               |
+| Double  |               double-precision floating-point numbers               |
+
+## List Types
+
+```hs
+[['a', 'b'], ['c', 'd', 'e']] :: [[Char]]
+```
+## Tuple Types
+ 
+*arity*: the number of components in a tuple
+- arity zero: `()`; the empty tuple
+- arity one: **Not Permitted**
+- arity two: *pairs*
+- arity three: *triples*
+
+```hs
+("Yes", True, 'a') :: (String, Bool, Char)
+```
+
+## Function Types
+
+A `function` is mapping from arguments of one type to results of another type.
+
+```hs
+add :: (Int, Int) -> Int
+add (x, y) = x + y
+
+add (1, 2)  -- 3
+
+
+zeroto :: Int -> [Int]
+zeroto n = [0..n]
+```
+### Curried Functions
+
+
+```hs
+add' :: Int -> (Int -> Int)
+add' x y = x + y
+
+add' 1 2  -- 3
+
+
+mult :: Int -> (Int -> (Int -> Int))
+mult x y z = x * y * z
+```
+
+Don't confuse currying and partial application
+- Currying: divide a function into functions with only one argument and nest them.
+- Partial Application: create a new function by fixing partial arguments of a original function
+
+```hs
+-- currying
+add' :: Int -> (Int - > Int)
+add' x y = x + y
+
+add' 1 2
+
+-- partial application 1
+add'' = add' 1
+add'' 2 -- 3
+
+-- partial application 2
+add'' y = add (1, y)
+add'' 2 -- 3
+```
+
+## Polymorphic Types
+
+```hs
+fst :: (a, b) -> a
+head :: [a] -> a
+take :: Int -> [a] -> [a]
+zip :: [a] -> [b] -> [(a, b)]
+id :: a -> a
+```
+
+### Type Variable
+
+must begin with a lower-case letter
+
+```hs
+length :: [a] -> Int
+```
+
+## Overloaded Types
+
+contains one or more class constraints
+
+```hs
+(+) :: Num a => a -> a -> a
+negate :: Num a => a -> a
+abs :: Num a => a -> a
+```
+
+### Class Constraint
+
+```
+-- C: class name
+-- a: type variable (an assined type to `a` is called `instance` of class `C`)
+C a
+```
+
+<br>
+
+# Classes
+
+A *class* is a collection of types that support certain overloaded operatoins; *methods* (e.g. `(==), (/=)` in Eq)
+
+## Eq - equality types
+
+```hs
+(==) :: a -> a -> Bool
+(/=) :: a -> a -> Bool
+```
+
+All the basic types Bool, Char, String, Int, Integer, Float and Double are instances of the Eq class.  
+As are list and tuple types, provided that element and component types of the basic types are instances.
+
+## Ord - ordered types
+
+```hs
+(<) :: a -> a -> Bool
+(<=) :: a -> a -> Bool
+(>) :: a -> a -> Bool
+(>=) :: a -> a -> Bool
+min :: a -> a -> a
+max :: a -> a -> a
+```
+
+## Show - showable types
+
+```hs
+show :: a -> String
+```
+
+## Read - readable types
+
+```hs
+read :: String -> a
+```
+
+## Num - numeric types
+
+```hs
+(+) :: a -> a -> a
+(-) :: a -> a -> a
+(*) :: a -> a -> a
+negate :: a -> a
+abs :: a -> a signum :: a -> a
+```
+
+## Integral - integral types
+
+types to support the methods of integer division and integer remainder
+
+```hs
+div :: a -> a -> a
+mod :: a -> a -> a
+```
+
+## Fractional - fractional types
+
+support the methods of fractional division and fractinal reciprocation
+
+```
+(/) :: a -> a -> a
+recip :: a -> a
+```
+
+```hs
+> 7.0 / 2.0
+3.5
+
+> recip 2.0
+0.5
+```
+
+<br>
+
+# Definning Functions
+
+## Conditional Expressions
+
+```hs
+abs :: Int -> Int
+abs n = if n >= 0 then n else -n
+
+signum :: Int -> Int
+signum n = if n < 0 then -1 else
+  if n == 0 then 0 else 1
+```
+
+## Guarded Equations
+
+```hs
+abs n
+  | n >= 0 = n
+  | otherwise = - n
+
+signum n
+  | n < 0 = -1
+  | n == 0 = 0
+  | otherwise = 1
+```
+
+The symbol `|` is read as *such that*.
+
+
+## Pattern matching
+
+```hs
+not :: Bool -> Bool
+not False = True
+not True = False
+
+(&&) :: Bool -> Bool -> Bool
+True && True = True
+_ && _ = False
+```
+
+### Tuple Patterns
+
+```hs
+fst :: (a, b) -> a
+fst (x, _) = x
+
+snd :: (a, b) -> b
+snd (_, y) = y
+```
+
+### List Patterns
+
+matches any list of the same length whose elements all match the corresponding patterns in order.  
+
+```hs
+test :: [Char] -> Bool
+test ['a', _, _] = True
+test _ = False
+```
+
+*cons* operator `:` prepends a new element to an existing list.  
+
+```hs
+[1, 2, 3]
+= 1:[2, 3]
+= 1:(2:[3])
+= 1:(2:(3:[]))
+```
+
+```hs
+test :: [Char] -> Bool
+test ('a':_) = True
+test _ = False
+
+head :: [a] -> a
+head (x:_) = x
+
+tail :: [a] -> [a]
+tail (_:xs) = xs
+```
+
+## Lambda Expressions
+
+```hs
+\x -> x + x
+
+> (\x -> x + x) 2
+4
+```
+
+```hs
+add :: Int -> Int -> Int
+add x y = x + y
+add = \x -> (\y -> x + y)
+```
+
+```hs
+const :: a -> b -> a
+const x _ = x
+const x = \_ -> x
+```
+
+```hs
+odds :: Int -> [Int]
+odds n = map f [0..n-1]
+  where f x = x * 2 + 1
+odds n = map (\x -> x * 2 + 1) [0..n-1]
+```
+
+## Operator Sections
+
+- operators: functions with two arguments
+- sections: operators formed as `(#)`, `(x #)`, or so
+
+```hs
+(#) = \x -> (\y -> x # y)
+(x #) = \y -> x # y
+(# y) = \x -> x # y
+```
+
+<br>
+
+# List Comprehensions
+
+$\{x^2 | x \in \{ 1 .. 5 \} \}$
+
+```hs
+xs = [x^2 | x <- [1..5]]  -- [1, 4, 9, 16, 25]
+```
+
+- `|`: *such that*
+- `<-`: *drawn from*
+- `x <- [1..5]`: **generator**
+
+```hs
+xs2 = [(x, y) | x <- [1, 2, 3,], y <- [4, 5]]
+-- [(1, 4), (1, 5), (2, 4), (2, 5), (3, 4), (3, 5)]
+
+xs3 = [(x, y) | y <- [4, 5], x <- [1, 2, 3]]
+-- [(1, 4), (2, 4), (3, 4), (1, 5), (2, 5), (3, 5)]
+
+xs4 = [(x, y) | x <- [1..3], y <- [x..3]]
+-- [(1, 1), (1, 2), (1, 3), (2, 2), (2, 3), (3, 3)]
+```
+
+```hs
+concat :: [[a]] -> [a]
+concat xss = [x | xs <- xss, x <- xs]
+
+firsts :: [(a, b)] -> [a]
+firsts ps = [x | (x, _) <- ps]
+
+length :: [a] -> Int
+length xs = sum [1 | _ <- xs]
+
+
+main = do
+  print (concat [[1, 2, 3], [4, 5, 6]]) -- [1,2,3,4,5,6]
+  print ([1, 2, 3] ++ [4, 5, 6]) -- [1,2,3,4,5,6]
+  print (firsts [(1, 2), (3, 4), (5, 6)]) -- [1, 3, 5]
+  print (length [1, 2, 3]) -- 3
+```
+
+## Guard
+
+expressions to filter generated values
+
+```hs
+evens :: Integral a => a -> [a]
+evens n = [x | x <- [0 .. n], even x]
+
+factors :: Integral a => a -> [a]
+factors n = [x | x <- [1 .. n], n `mod` x == 0]
+
+prime :: Integral a => a -> Bool
+prime n = factors n == [1, n]
+{- Note:
+  Deciding that a number is prime does not require 
+  the `prime` to produce all of its factors, 
+  because under lazy evaluation the result `False` is returned 
+  as soon as any factor other than one or the number itself is produced.
+  e.g. `prime 15` returns `False` when 3 in its factors `[1, 3, 5, 15]` is produced in `factors`.
+-}
+
+primes :: Integral a => a -> [a]
+primes n = [x | x <- [2 .. n], prime x]
+
+find :: Eq a1 => a1 -> [(a1, a2)] -> [a2]
+find k t = [v | (k', v) <- t, k == k']
+
+main = do
+  print (evens 10) -- [0,2,4,6,8,10]
+  print (factors 12) -- [1,2,3,4,6,12]
+  print (prime 15) -- False
+  print (prime 7) -- True
+  print (primes 40) -- [2,3,5,7,11,13,17,19,23,29,31,37]
+  print (find 'b' [('a', 1), ('b', 2), ('c', 3), ('b', 4)]) -- [2, 4]
+```
+
+## zip function
+
+```hs
+pairs :: [b] -> [(b, b)]
+pairs xs = zip xs (tail xs)
+
+sorted :: Ord a => [a] -> Bool
+sorted xs = and [x <= y | (x, y) <- pairs xs]
+
+positions :: (Num a1, Enum a1, Eq a2) => a2 -> [a2] -> [a1]
+positions x xs = [i | (x', i) <- zip xs [0 ..], x == x']
+
+main = do
+  print (zip ['a', 'b', 'c'] [1, 2, 3, 4]) -- [('a',1),('b',2),('c',3)]
+  print (pairs [1, 2, 3, 4]) -- [(1,2),(2,3),(3,4)]
+  print (sorted [1, 2, 3, 4]) -- True
+  print (sorted [1, 3, 2, 4]) -- False
+  print (positions False [True, False, True, False]) -- [1, 3]
+```
+
+## String comprehensions
+
+*String* is a list of *Char*
+
+```hs
+lowers :: [Char] -> Int
+lowers xs = length [x | x <- xs, x >= 'a' && x <= 'z']
+
+count :: Eq a => a -> [a] -> Int
+count x xs = length [x' | x' <- xs, x == x']
+
+main = do
+  print ("abcde" !! 2) -- 'c'
+  print (take 3 "abcde") -- "abc"
+  print (length "abcde") -- 5
+  print (zip "abc" [1, 2, 3, 4]) -- [('a',1),('b',2),('c',3)]
+
+  print (lowers "Haskell") -- 6
+  print (count 's' "Mississippi") -- 4
+```
+
+
+
 # Lazy Evaluation
 
 ## Concept
