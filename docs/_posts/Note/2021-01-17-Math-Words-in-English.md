@@ -33,6 +33,10 @@ $$
 - 単位元: identity (element)
 - 単一の: identical
   - a list of identical elements: 単一要素のリスト
+- reasoning: 推論，推論の結果，証明
+- predicate
+  - 断定する: predicate 23 to be primitive / predicate that 23 is primitive
+  - 属性 (or property): collect numbers that satisfy the predicate
 - 予想: conjecture
   - The Modularity Conjecture
   - モジュラー性予想

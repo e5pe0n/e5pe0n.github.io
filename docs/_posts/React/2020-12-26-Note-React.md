@@ -1275,44 +1275,9 @@ reportWebVitals();
 - `useQuery()` throws the Promise until the process is done, and return the result component including fetched data if `suspense: true` in QueryClient.
 - Suspense component catches the Promise and display fallback component until `useQuery` return result, and renders the result component `useQuery` returned.
 
-src/components/pages/Members.tsx
-(commented out because github.io cannot render this code)
+src/components/pages/Members.tsx  
+https://github.com/e5pe0n/rea-ct/blob/main/13-suspense/02-ready-libs/02-react-query/src/components/pages/Members.tsx
 
-```tsx
-// import { FC, Suspense } from 'react';
-// import { Helmet } from 'react-helmet';
-// import capitalize from 'lodash/capitalize';
-// import { Divider } from 'semantic-ui-react';
-
-// import Spinner from 'components/molecules/Spinner';
-// import HomeButton from 'components/molecules/HomeButton';
-// import MemberList from 'containers/organisms/MemberList';
-// import ErrorBoundary from 'ErrorBoundary';
-
-// const Members: FC<{ orgCode: string }> = ({ orgCode = 'UnknownCompany' }) => {
-//   const title = `Dev members of ${capitalize(orgCode)}`;
-
-//   return (
-//     <>
-//       <Helmet>
-//         <title>{title}</title>
-//       </Helmet>
-//       <header className="app-header">
-//         <h1>{title}</h1>
-//       </header>
-//       <ErrorBoundary statusMessages={{ 404: `Code: '${orgCode}' not Found` }} >
-//         <Suspense fallback={<Spinner size="big" />}>
-//           <MemberList orgCode={orgCode} />
-//         </Suspense>
-//       </ErrorBoundary>
-//       <Divider hidden />
-//       <HomeButton />
-//     </>
-//   );
-// };
-
-// export default Members;
-```
 
 src/containers/organisms/MemberList.tsx
 
@@ -1467,101 +1432,8 @@ https://reactjs.org/docs/concurrent-mode-patterns.html
     2. ....
 
 
-src/components/pages/Members.tsx
-(commented out because github.io cannot render this page)
-
-```tsx
-// import {
-//   FC,
-//   FormEvent,
-//   Suspense,
-//   unstable_SuspenseList as SuspenseList,
-//   useRef,
-//   useState,
-//   unstable_useTransition as useTransition,
-// } from 'react';
-// import { Button, Divider, Input, Menu } from 'semantic-ui-react';
-// import capitalize from 'lodash/capitalize';
-
-// import ErrorBoundary from 'ErrorBoundary';
-// import Spinner from 'components/molecules/Spinner';
-// import OrgInfo from 'containers/organisms/OrgInfo';
-// import MemberList from 'containers/organisms/MemberList';
-// import './Members.css';
-
-// type Props = {
-//   orgCodeList: string[];
-//   prefetch?: (orgCode: string) => void;
-// };
-
-// const Members: FC<Props> = ({ orgCodeList, prefetch = () => undefined }) => {
-//   const [orgCode, setOrgCode] = useState('');
-//   const [input, setInput] = useState('');
-//   const [startTransition, isPending] = useTransition();
-//   const ebKey = useRef(0);
-
-//   const menuItems = orgCodeList.map((code) => ({
-//     key: code,
-//     name: capitalize(code),
-//     onClick: () => {
-//       setInput('');
-
-//       if (orgCode) {
-//         startTransition(() => setOrgCode(code));
-//       } else {
-//         setOrgCode(code);
-//       }
-//     },
-//     onMouseOver: () => prefetch(code),
-//     active: code === orgCode,
-//   }));
-
-//   const handleSubmit = (event: FormEvent<HTMLFormElement>): void => {
-//     event.preventDefault();
-//     setOrgCode(input.toLowerCase().trim());
-//   };
-
-//   return (
-//     <>
-//       <header className="app-header">
-//         <h1>Member List</h1>
-//       </header>
-//       <form className="search-form" onSubmit={handleSubmit}>
-//         <Input
-//           placeholder="type org code..."
-//           type="text"
-//           value={input}
-//           onChange={(_, data) => setInput(data.value)}
-//         />
-//         <Button type="submit" disabled={isPending} primary>
-//           Search
-//         </Button>
-//       </form>
-//       <Menu items={menuItems} text />
-//       <Divider />
-//       <div className={isPending ? 'loading' : ''}>
-//         <ErrorBoundary statusMessages={{ 404: `Code ${orgCode} not Found` }}
-//           onError={() => {
-//             ebKey.current += 1;
-//           }}
-//           key={ebKey.current}
-//         >
-//           <SuspenseList revealOrder="forwards">
-//             <Suspense fallback={<Spinner size="small" />}>
-//               <OrgInfo orgCode={orgCode} />
-//             </Suspense>
-//             <Suspense fallback={<Spinner size="large" />}>
-//               <MemberList orgCode={orgCode} />
-//             </Suspense>
-//           </SuspenseList>
-//         </ErrorBoundary>
-//       </div>
-//     </>
-//   );
-// };
-
-// export default Members;
-```
+src/components/pages/Members.tsx  
+https://github.com/e5pe0n/rea-ct/blob/main/13-suspense/04-ux/src/components/pages/Members.tsx
 
 src/ErrorBoundary.tsx
 

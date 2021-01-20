@@ -630,13 +630,58 @@ init [_] = []
 init (x:xs) = x:init xs
 ```
 
+<br>
+
 # High-Order Functions
 
 Functions that take a function as an argument or return a function as a result
 
+## Processing Lists
+
 ```hs
+-- list conprehension ver.
 map :: (a -> b) -> [a] -> [b]
 map f xs = [f x | x <- xs]
+
+-- recursive ver.
+map :: (a -> b) -> [a] -> [b]
+map f [] = []
+map f (x : xs) = f x : map f xs
+
+
+-- list conprehension ver.
+filter :: (a -> Bool) -> [a] -> [a]
+filter p xs = [x | x <- xs, p x]
+
+-- recursive ver.
+filter :: (a -> Bool) -> [a] -> [a]
+filter p [] = []
+filter p (x : xs)
+  | p x = x : filter p xs
+  | otherwise = filter p xs
+
+
+main = do
+  print (all even [2, 4, 6, 8]) -- True
+  print (any odd [2, 4, 6, 8]) -- False
+  print (takeWhile even [2, 4, 6, 7, 8]) -- [2, 4, 6]
+  print (dropWhile odd [1, 3, 5, 6, 7]) -- [6, 7]
+```
+
+## foldr()
+
+```hs
+sum :: Num a => [a] -> a
+sum = foldr (+) 0
+
+product :: Num a => [a] -> a
+product = foldr (*) 1
+
+or :: [Bool] -> Bool
+or = foldr (||) False
+
+and :: [Bool] -> Bool
+and = foldr (&&) True
 ```
 
 # Lazy Evaluation
