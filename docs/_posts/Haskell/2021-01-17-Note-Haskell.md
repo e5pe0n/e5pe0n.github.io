@@ -630,6 +630,15 @@ init [_] = []
 init (x:xs) = x:init xs
 ```
 
+# High-Order Functions
+
+Functions that take a function as an argument or return a function as a result
+
+```hs
+map :: (a -> b) -> [a] -> [b]
+map f xs = [f x | x <- xs]
+```
+
 # Lazy Evaluation
 
 ## Concept

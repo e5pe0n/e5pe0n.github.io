@@ -1,5 +1,5 @@
 ---
-title: "体系的に学ぶ Web アプリケーションの作り方"
+title: "体系的に学ぶ 安全な Web アプリケーションの作り方"
 categories:
   - Note
 tags:
