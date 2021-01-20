@@ -1,5 +1,5 @@
 ---
-title: "Note: Math Words in English"
+title: "Note: Words about Programming in English"
 categories:
   - Note
 tags:
