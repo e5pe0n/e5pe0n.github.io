@@ -20,6 +20,7 @@ last-modified-at: 2021-01-17
 - 規約，(互いに)素: primitive
 - ピタゴラス数: Pythagorean triples
 - 微分方程式: differential equation
+- 観測値: observed value
 - カイ 2 乗統計量: chi-square statistic
 - denote: 表す
 

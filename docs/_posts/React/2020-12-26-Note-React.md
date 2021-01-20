@@ -1299,11 +1299,7 @@ const Members: FC<{ orgCode: string }> = ({ orgCode = 'UnknownCompany' }) => {
       <header className="app-header">
         <h1>{title}</h1>
       </header>
-      <ErrorBoundary
-        statusMessages={{
-          404: `Code '${orgCode}' not Found`,
-        }}
-      >
+      <ErrorBoundary statusMessages={{ 404: `Code: '${orgCode}' not Found` }} >
         <Suspense fallback={<Spinner size="big" />}>
           <MemberList orgCode={orgCode} />
         </Suspense>
@@ -1542,10 +1538,7 @@ const Members: FC<Props> = ({ orgCodeList, prefetch = () => undefined }) => {
       <Menu items={menuItems} text />
       <Divider />
       <div className={isPending ? 'loading' : ''}>
-        <ErrorBoundary
-          statusMessages={{
-            404: `Code ${orgCode} not Found`,
-          }}
+        <ErrorBoundary statusMessages={{ 404: `Code ${orgCode} not Found` }}
           onError={() => {
             ebKey.current += 1;
           }}
