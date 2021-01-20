@@ -242,7 +242,8 @@ abs :: a -> a signum :: a -> a
 
 ## Integral - integral types
 
-types to support the methods of integer division and integer remainder
+Types to support the methods of integer division and integer remainder.
+*Int* and *Integer* are *instances* of *Integral*.  
 
 ```hs
 div :: a -> a -> a
@@ -601,6 +602,32 @@ evens (x:xs) = x:odds xs
 odds :: [a] -> [a]
 odds [] = []
 odds (_:xs) = evens xs
+```
+
+## Generalizing and Simplifying
+
+```hs
+-- before
+product :: Num a => [a] -> a
+product [] = 1
+product (n:ns) = n * product ns
+
+-- after
+product :: Num a => [a] -> a
+product = foldr (*) 1
+```
+
+```hs
+-- before
+init :: [a] -> [a]
+init (x:xs)
+  | null xs = []
+  | otherwise = x:init xs
+
+-- after
+init :: [a] -> [a]
+init [_] = []
+init (x:xs) = x:init xs
 ```
 
 # Lazy Evaluation
