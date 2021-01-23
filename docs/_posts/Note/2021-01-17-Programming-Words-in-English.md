@@ -22,3 +22,5 @@ last-modified-at: 2021-01-17
   - *length* function calculates the length of any list, irrespective of the type of the elements of the list
 - prepend: 先頭に追加する
   - prepend a new element to an list
+- auxiliary (オグゼリアリー): 補助の，予備の
+  - auxiliary memory

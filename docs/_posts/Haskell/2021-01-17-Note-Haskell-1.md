@@ -1,11 +1,17 @@
 ---
-title: "Note: Haskell"
+title: "Note: Haskell 1"
 categories:
   - Note
 tags:
   - Haskell
-last-modified-at: 2021-01-17
+last-modified-at: 2021-01-23
 ---
+
+# Lazy Evaluation
+
+## Concept
+
+**No computation should be performed until its result is actually required**
 
 # Naming Requirements of Functions
 
@@ -104,7 +110,12 @@ type interface precedes evaluation of values so Haskell programs are **type safe
 - arity three: *triples*
 
 ```hs
-("Yes", True, 'a') :: (String, Bool, Char)
+tp1 = ("Yes", True, 'a') :: (String, Bool, Char)
+tp2 = (3, "Blue") :: (Int, String)
+
+main = do
+  print (fst tpl) -- 3
+  print (snd tpl) -- "Blue"
 ```
 
 ## Function Types
@@ -632,7 +643,7 @@ init (x:xs) = x:init xs
 
 <br>
 
-# High-Order Functions
+# Higher-Order Functions
 
 Functions that take a function as an argument or return a function as a result
 
@@ -671,7 +682,20 @@ main = do
 ## foldr()
 
 ```hs
+foldr (#) v [x0, x1, ..., xn] = x0 # (x1 # (... (xn # v)))
+
+f v
+
+-- recursive ver.
+foldr :: (a -> b -> b) -> b -> [a] -> b
+foldr f v [] = v
+foldr f v (x : xs) = f x (foldr f v xs)
+```
+
+```hs
 sum :: Num a => [a] -> a
+-- sum [] = 0
+-- sum (x : xs) = x + sum(xs)
 sum = foldr (+) 0
 
 product :: Num a => [a] -> a
@@ -682,10 +706,299 @@ or = foldr (||) False
 
 and :: [Bool] -> Bool
 and = foldr (&&) True
+
+length :: [a] -> Int
+-- length [] = 0
+-- length (_:xs) = 1 + length xs
+length = foldr (\_ n -> 1 + n) 0
+
+
+-- snoc is `cons` backwards
+snoc :: a -> [a] -> [a]
+snoc x xs = xs ++ [x]
+
+reverse :: [a] -> [a]
+-- reverse [] = []
+-- reverse (x : xs) = reverse xs ++ [x]
+reverse :: [a] -> [a]
+reverse = foldr snoc []
 ```
 
-# Lazy Evaluation
+## foldl()
 
-## Concept
+*v* is *accumlator*.  
 
-**No computation should be performed until its result is actually required**
+```hs
+foldl (#) v [x0, x1, ..., xn] = (((v # x0) # x1)...) # xn
+
+-- recursive ver.
+foldl :: (a -> b -> a) -> a -> [b] -> a
+foldl f v [] = v
+fold f v (x : xs) = foldl f (v + x) xs
+```
+
+```hs
+sum' :: Num a => [a] -> a
+sum' = sum'' 0
+  where
+    sum'' v [] = v
+    sum'' v (x : xs) = sum'' (v + x) xs
+
+sum :: Num a => [a] -> a
+sum = foldl (+) 0
+
+product :: Num a => [a] -> a
+product = foldl (*) 1
+
+or :: [Bool] -> Bool
+or = foldl (||) False
+
+and :: [Bool] -> Bool
+and = foldr (&&) True
+
+length :: [a] -> Int
+length = foldl (\n _ -> n + 1) 0
+
+reverse :: [a] -> [a]
+reverse = foldl (\xs x -> x : xs) []
+```
+
+## Composition Operator
+
+`f . g` is read as *f composed with g* .  
+
+```hs
+(.) :: (b -> c) -> (a -> b) -> (a -> c)
+f . g = \x -> f (g x)
+```
+
+```hs
+-- odd n = not (even n)
+odd = not . even
+
+-- twice f x = f (f x)
+twice = f . f
+
+-- sumsqreven ns = sum (map (^2) (filter even ns))
+sumsqreven = sum . map (^2) . filter even
+```
+
+```hs
+-- identity function; id.f = f, f.id = f
+id :: a -> a
+id = \x -> x
+
+compose :: [a -> a] -> (a -> a)
+compose = foldr (.) id  -- make the composition of a list of functions
+```
+
+```hs
+-- produces an infinite list
+iterate f x = [x, f x, f(f x), f(f(f x)), ...]
+
+iterate (*2) 1  -- [1, 2, 4, 8, ...]
+
+
+-- repeat :: a -> [a]: procudes an infinite list of copies of a value
+repeat 0  -- [0, 0, 0, 0, ...]
+take 8 (repeat 0) -- [0, 0, 0, 0, 0, 0, 0, 0] -- lazy evaluation
+```
+
+<br>
+
+# Type Declarations
+
+```hs
+type String = [Char]
+
+type Pos = (Int, Int)
+type Trans = Pos -> Pos
+
+type Pair a = (a, a)
+type Assoc k v = [(k, v)]
+
+find :: Eq k => k -> Assoc k v -> v
+find k t = head [v | (k', v) <- t, k == k']
+```
+
+# Data Declarations
+
+- `|` is read as *or*.  
+- **constructors** new values of the type (e.g. `False` and `True` are constructors of *Bool*)
+
+```hs
+data Bool = False | True
+```
+
+```hs
+data Move = North | South | East | West
+
+move :: Move -> Pos -> Pos
+move North (x, y) = (x, y + 1)
+move South (x, y) = (x, y - 1)
+move East (x, y) = (x + 1, y)
+move West (x, y) = (x - 1, y)
+
+moves :: [Move] -> Pos -> Pos
+moves [] p = p
+moves (m : ms) p = moves ms (move m p)
+```
+
+## Cosntructor Functions
+
+### vs. normal functions
+
+- have no defining equations and exist as data
+- e.g. 
+  - `negate 1.0` can be evaluated to -1.0 by definition of negate
+  - `Circle 1.0` is already fully evaluated and cannot be further simplified
+
+```hs
+-- Circle :: Float -> Shape
+-- Rect :: Float -> Float -> Shape
+data Shape = Circle Float | Rect Float Float
+
+square :: Float -> Shape
+square n = Rect n n
+
+area :: Shape -> Float
+area (Circle r) = pi * r ^ 2
+area (Rect x y) = x * y
+```
+
+type as a argument
+
+```hs
+data Maybe a = Nothing | Just a
+
+safediv :: Int -> Int -> Maybe Int
+safediv _ 0 = Nothing
+safediv m n = Just (m `div` n)
+
+safehead :: [a] -> Maybe a
+safehead [] = Nothing
+safehead xs = Just (head xs)
+```
+
+## Newtype Declarations
+
+newtype declarations are to improve type safety without affecting perfomance
+
+```hs
+newtype Nat = N Int
+
+type Nat = Int
+data Nat = N Int
+```
+
+### vs. type
+
+- Using newtype rather than type means that `Nat` and `Int` are different types rather than synonyms
+- The type system of Haskell ensures that they cannot accidentally be mixed up in programs
+
+### vs. data
+
+- Using newtype rather than data brings an efficiency benefit
+- newtype constructors such as `N` do not incur any cost when programs are evaluated, as they are automatically removed by the compiler once type checking is completed
+
+
+## Recursive Types
+
+```hs
+data Nat = Zero | Succ Nat
+
+nat2int :: Nat -> Int
+nat2int Zero = 0
+nat2int (Succ n) = 1 + nat2int n
+
+int2nat :: Int -> Nat
+int2nat 0 = Zero
+int2nat n = Succ (int2nat (n - 1))
+
+add :: Nat -> Nat -> Nat
+add m n = int2nat (nat2int m + nat2int n)
+
+add' :: Nat -> Nat -> Nat
+add' Zero n = n
+add' (Succ m) n = Succ (add' m n)
+
+
+{- e.g. 2 + 1
+    add (Succ (Succ Zero)) (Succ Zero)
+  = (Succ add (Succ Zero) (Succ Zero))
+  = Succ (Succ (add Zero (Succ Zero)))
+  = Succ (Succ (Succ Zero))
+-}
+```
+
+```hs
+data Tree a = Leaf a | Node (Tree a) a (Tree a)
+
+t :: Tree Int
+t = Node (Node (Leaf 1) 3 (Leaf 4)) 5 (Node (Leaf 6) 7 (Leaf 9))
+
+flatten :: Tree a -> [a]
+flatten (Leaf x) = [x]
+flatten (Node l x r) = flatten l ++ [x] ++ flatten r
+
+occurs :: Eq a => a -> Tree a -> Bool
+occurs x (Leaf y) = x == y
+occurs x (Node l y r) = x == y || occurs x l || occurs x r
+
+occurs' :: Ord a => a -> Tree a -> Bool
+occurs' x (Leaf y) = x == y
+occurs' x (Node l y r)
+  | x == y = True
+  | x < y = occurs' x l
+  | otherwise = occurs' x r
+```
+
+<br>
+
+# Class and Instance Declarations
+
+- type `a` is an instance of the class `Eq`
+- types of instance must support functions; `(==)`, `(/=)`
+- `(/=)` is defined as *default definition*, so declaring an instance only requires a definition of `(==)`
+
+```hs
+class Eq a where
+  (==), (/=) :: a -> a -> Bool
+  x /= y = not (x == y)
+
+instance Eq Bool where
+  False == False = True
+  True == True = True
+  _ == _ = False
+```
+
+- type `a` to be instance of class `Ord` must be an instance of class `Eq`
+
+```hs
+class Eq a => Ord a where
+  (<), (<=), (>), (>=) :: a -> a -> Bool
+  min, max :: a -> a -> a
+  min x y
+    | x <= y = x
+    | otherwise = y
+  max x y
+    | x <= y = y
+    | otherwise = x
+
+instance Ord Bool where
+  False < True = True
+  _ < _ = False
+
+  b <= c = (b < c) || (b == c)
+  b > c = c < b
+  b >= c = c <= b
+```
+
+<br>
+
+# Derived Instances
+
+```hs
+data Bool = False | True  -- this order is reflected on False < True
+  deriving (Eq, Ord, Show, Read)
+```

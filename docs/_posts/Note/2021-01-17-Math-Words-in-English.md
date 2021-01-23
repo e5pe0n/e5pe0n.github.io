@@ -7,6 +7,7 @@ tags:
 last-modified-at: 2021-01-17
 ---
 
+- 適切な: appropreate
 - 分子: numerator
 - 分母: denominator
 - 商: quotient
@@ -14,12 +15,17 @@ last-modified-at: 2021-01-17
   - 余りをとる: taking the remainder
 - 多項式: polynomial
 - 二次方程式: quadratic equation 
+- 微分方程式: differential equation
 - 代入する: substitute
   - Substitute the second equation into the first.
   - 2 つ目の方程式を 1 つ目に代入
-- 規約，(互いに)素: primitive
+- 既約，(互いに)素: primitive
+- 結合法則: associative property, associative law
+  - 加算は結合法則を満たしている: addition is associative.
+- 10 進数: decimal (number)
+- weight, digit
+  - 2345 represents the sum of the products of the weights 1000, 100, 10, 1 with the digits 2, 3, 4, 5.
 - ピタゴラス数: Pythagorean triples
-- 微分方程式: differential equation
 - 観測値: observed value
 - カイ 2 乗統計量: chi-square statistic
 - denote: 表す
@@ -30,13 +36,29 @@ $$
 \sum_{i=0}^{n-1} \frac{(os_i - es_i)^2}{es_i}
 $$
 
+- 可換: commutative
+  - commutative property of addition: 加算の可換性
+- 合成関数: composite function
+  - $f \circ g$ : *f composed with g*
 - 単位元: identity (element)
 - 単一の: identical
   - a list of identical elements: 単一要素のリスト
+- 命題: proposition
+- トートロジー: tautology
+- 含意; $\supset$ or $\implies$: implication
+  - implies; if ... then
+- 演繹する: derive
+  - theorem derived from axioms: 公理から演繹された定理
 - reasoning: 推論，推論の結果，証明
+- 真理値: truth tables
 - predicate
   - 断定する: predicate 23 to be primitive / predicate that 23 is primitive
   - 属性 (or property): collect numbers that satisfy the predicate
+- trivial: objects with a very simple structure
+  - Empty set
+  - Trivial group: contains only the identity element
+  - Trivial ring: defined on a singleton set
+  - $y(x) = 0$ is the trivial solutions of $y' = y$  where $y = y(x)$
 - 予想: conjecture
   - The Modularity Conjecture
   - モジュラー性予想
