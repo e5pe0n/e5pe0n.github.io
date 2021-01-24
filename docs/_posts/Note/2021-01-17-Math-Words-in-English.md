@@ -43,12 +43,20 @@ $$
 - 単位元: identity (element)
 - 単一の: identical
   - a list of identical elements: 単一要素のリスト
+- 仮説: hypothesis
 - 命題: proposition
 - トートロジー: tautology
 - 含意; $\supset$ or $\implies$: implication
   - implies; if ... then
 - 演繹する: derive
   - theorem derived from axioms: 公理から演繹された定理
+- deduce: (結論などを)(基地の事実・仮説・根拠などから)推定する，推論する，演繹する
+  - What consequences can be deduced from this hypothesis?
+  - この仮説からどんな結果を導き出せますか？
+- 推測する: guess, infer
+  - *infer* is more likely to be based on evidence than a *guess*
+  - *infer* is more formal, and not likely to be used in conversation
+- 推論: inference
 - reasoning: 推論，推論の結果，証明
 - 真理値: truth tables
 - predicate

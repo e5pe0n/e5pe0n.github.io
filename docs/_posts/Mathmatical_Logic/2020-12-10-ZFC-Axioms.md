@@ -1,5 +1,5 @@
 ---
-title: "Note: Mathmatical Logic"
+title: "Note: ZFC Axioms"
 categories:
   - Note
 tags:
