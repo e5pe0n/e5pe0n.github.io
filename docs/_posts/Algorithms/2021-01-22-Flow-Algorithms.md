@@ -1,5 +1,5 @@
 ---
-title: "Note: Algorithms"
+title: "Note: Flow Algorithms"
 categories:
   - Note
 tags:

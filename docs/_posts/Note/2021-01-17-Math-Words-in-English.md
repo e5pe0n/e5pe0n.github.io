@@ -36,6 +36,9 @@ $$
 \sum_{i=0}^{n-1} \frac{(os_i - es_i)^2}{es_i}
 $$
 
+- minimux (saddle point): 
+  - 考えられる最大損失を最小限に抑えようとするゲームの手
+  - ある一組の極大値の中の最小値
 - 可換: commutative
   - commutative property of addition: 加算の可換性
 - 合成関数: composite function
@@ -66,7 +69,7 @@ $$
   - Empty set
   - Trivial group: contains only the identity element
   - Trivial ring: defined on a singleton set
-  - $y(x) = 0$ is the trivial solutions of $y' = y$  where $y = y(x)$
+  - $y(x) = 0$ is the trivial solution of $y' = y$  where $y = y(x)$
 - 予想: conjecture
   - The Modularity Conjecture
   - モジュラー性予想

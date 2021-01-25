@@ -1,5 +1,5 @@
 ---
-title: "Note: Algorithms"
+title: "Note: Mathematical Algorithms"
 categories:
   - Note
 tags:

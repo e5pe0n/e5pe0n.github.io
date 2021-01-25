@@ -1,5 +1,5 @@
 ---
-title: "Note: Haskell 1"
+title: "Note: Haskell 2"
 categories:
   - Note
 tags:

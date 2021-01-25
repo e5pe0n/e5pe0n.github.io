@@ -18,6 +18,8 @@ last-modified-at: 2021-01-17
 - `{}`: curly brackets, curly parentheses
 - `[]`: square brackets, square parentheses
 - `<>`: angle brackets, square parentheses
+- 節: clause (クローズ)
+  - *if* clause: if 節
 - irrespective: A に関係なく
   - *length* function calculates the length of any list, irrespective of the type of the elements of the list
 - prepend: 先頭に追加する
