@@ -26,3 +26,5 @@ last-modified-at: 2021-01-17
   - prepend a new element to an list
 - auxiliary (オグゼリアリー): 補助の，予備の
   - auxiliary memory
+- prune: 刈り込む
+  - prune game trees to a particular depth

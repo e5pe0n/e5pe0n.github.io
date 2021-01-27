@@ -95,33 +95,202 @@ strlen = do putStr "Enter a string: "
             putStrLn " characters"
 ```
 
+<br>
+
+# Functors
+
+class of types that support a mapping function.
+
+```hs
+class Functor f where
+  fmap :: (a -> b) -> f a -> f b
+```
+
+- `fmap` takes a function of type `a -> b` and a structure of type `f a` whose elements have type `a`
+- `fmap` applies the function to each element to give a structure of type `f b` whose elements have type `b`
+
+```hs
+instance Functor [] where
+  -- fmap :: (a -> b) -> [a] -> [b]
+  fmap = map
 
 
+instance Functor Maybe where
+  -- fmap :: (a -> b) -> Maybe a -> Maybe b
+  fmap _ Nothing = Nothing
+  fmap g (Just x) = Just (g x)
+
+fmap (+1) Nothing     -- Nothing
+fmap (*2) (Just 3)    -- Just 6
+fmap not (Just False) -- Just True
+```
+
+```hs
+data Tree a = Leaf | Node (Tree a) (Tree a)
+  deriving Show
+
+instance Functor Tree where
+  -- fmap :: (a -> b) -> Tree a -> Tree b
+  fmap g (Leaf x) = Leaf (g x)
+  fmap g (Node l r) = Node (fmap g l) (fmap g r)
+
+fmap length (Leaf "abc")  -- Leaf 3
+fmap even (Node (Leaf 1) (Leaf 2))  -- Node (Leaf False) (Leaf True)
+```
+
+```hs
+instance Functor IO where
+  -- fmap :: (a -> b) -> IO a -> IO b
+  fmap g mx = do {x <- mx; return (g x)}
+
+fmap show (return True) -- "True"
+```
+
+```hs
+inc :: [Int] -> [Int]
+inc = map (+ 1)
+
+inc' :: Functor f => f Int -> f Int
+inc' = fmap (+ 1)
+
+inc' (Just 1) -- Just 2
+inc' [1, 2, 3, 4, 5]  -- [2, 3, 4, 5, 6]
+inc' (Node (Leaf 1) (Leaf 2)) -- Node (Leaf 2) (Leaf 3)
+```
+
+## Functor Laws
+
+```hs
+fmap id = id
+fmap (g . h) = fmap g . fmap h
+```
+
+<br>
+
+# Applicatives
+
+## applicative functors; applicative**
+
+the class of functors that support `pure` and `<*>` functions
+
+```hs
+class Functor f => Applicative f where
+  pure :: a -> f a
+  (<*>) :: f (a -> b) -> f a -> f b
+```
+
+```hs
+pure :: a -> f a
+(<*>) :: f (a -> b) -> f a -> f b
+
+fmap0 :: a -> f a
+fmap0 = pure
+
+fmap1 :: (a -> b) -> f a -> f b
+fmap1 = pure g <*> x
+
+fmap2 :: (a -> b -> c) -> f a -> f b -> f c
+fmap2 = pure g <*> x <*> y
+
+fmap3 :: (a -> b -> c -> d) -> f a -> f b -> f c -> f d
+fmap3 = pure g <*> x <*> y <*> z
+
+...
 
 
+-- type check. fmap2
+-- f (a -> b -> c) -> f a -> f (b -> c)
+--     pure g     <*>  x  =      x'
 
+-- f (b -> c) -> f b -> f c
+--      x'   <*> y  =  res
+```
 
+The applicative style for *Maybe* supports a form of *exceptional* programming in which we can apply pure functions to arguments that may fail without the need to manage the propagation of failure ourselves.  
 
+```hs
+instance Applicative Maybe where
+  -- pure :: a -> Maybe a
+  pure = Just
 
+  -- (<*>) :: Maybe (a -> b) -> Maybe a -> Maybe b
+  Nothing <*> _ = Nothing
+  (Just g) <*> mx = fmap g mx
 
+pure (+ 1) <*> Just 1           -- Just 2
+pure (+) <*> Just 1 <*> Just 2  -- Just 3
+pure (+) <*> Nothing <*> Just 2 -- Nothing
+```
 
+The applicative sytle for lists supports a form of *non-deteministic* programming in which we can apply pure functions to multi-valued arguments without the need to manage the selection of values or the propagation of failure.  
 
+```hs
+instance Applicative [] where
+  -- pure :: a -> [a]
+  pure x = [x]
 
+  -- (<*>) :: [a -> b] -> [a] -> [b]
+  gs <*> xs = [g x | g <- gs, x <- xs]
 
+pure (+ 1) <*> [1, 2, 3]        -- [2, 3, 4]
+pure (+) <*> [1] <*> [2]        -- [3]
+pure (*) <*> [1, 2] <*> [3, 4]  -- [3, 4, 6, 8]
 
+prods :: [Int] -> [Int] -> [Int]
+prods xs ys = [x * y | x <- xs, y <- ys]
 
+prods' :: [Int] -> [Int] -> [Int]
+prods' xs ys = pure (*) <*> xs <*> ys
+```
 
+The applicative style for IO supports a form of *interactive* programming in which we can apply pure functions to impure arguments without the need to manage the sequencing of actions or the extranction of result values.  
 
+```hs
+instance Applicative IO where
+  -- pure :: a -> IO a
+  pure = return
 
+  -- (<*>) :: IO (a -> b) -> IO a -> IO b
+  mb <*> mx = do {g <- mg; x <- mx; return (g x)}
 
+getChars :: Int -> IO String
+getChars 0 = return []
+getChars n = pure (:) <*> getChar <*> getChars (n - 1)
+```
 
+```hs
+sequenceA :: Applicative f => [f a] -> f [a]
+sequenceA [] = pure []
+sequenceA (x : xs) = pure (:) <*> x <*> sequecneA xs
 
+getChars :: Int -> IO String
+getChars n = sequenceA (replicate n getChar)
+```
 
+## Applicative Laws
 
+```hs
+pure id <*> x = x -- pure is complemented
+pure (g x) = pure g <*> pure x  -- occurences of pure can be combined into one
+x <*> pure y = pure (\g -> g y) <*> x -- the order in which we evaluate the two components doesn't matter
+x <*> (y <*> z) = (pure (.) <*> x <*> y) <*> z  -- <*> is associative
+```
 
+these laws ensure that below expression is evaluated  uniquely.  
 
+```hs
+pure g <*> x1 <*> x2 <*> ... <*> xn
+```
 
+## Infix ver.
 
+```hs
+fmap g x = pure g <*> x
+g <$> x = fmap g x
 
+g <$> x1 <*> x2 <*> ... <*> xn
+```
+
+# Monads
 
 

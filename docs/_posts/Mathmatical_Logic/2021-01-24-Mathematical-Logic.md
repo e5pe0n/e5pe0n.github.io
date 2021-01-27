@@ -73,8 +73,24 @@ $\because$ when $U = \{ x_1, x_2 \}$ and $B(x_1) = T, B(x_2) = F$,
 if $(B(x_1) \supset A) = T$ then $\exists x (B \supset A)$  
 if $(B(x_1) \supset A) = F$ but $(B(x_2) \supset A) = T$ then $\exists x (B \supset A)$
 
+## Inference Rules about Quantifier
+
+### $\forall \ left$
+
+「ある特定の一例 $t$ について $A$ が成り立つ」ことを仮定して結論を導いた場合は，「全ての $x$ について $A$ が成り立つ」ことを確かめなければ結論が常に成り立つとはいえない
+
+### $\forall \ right$
+
+「任意の $z$ について $A$ が成り立つ」ことが導かれたなら，「全ての $x$ について $A$ が成り立つ」といってよい
+
+### $\exists \ left$
+
+「任意の $z$ について $A$ が成り立つ」ことを仮定して結論を導いた場合は，「$A$ を成り立たせる $x$ が存在する」と仮定を言い換えてよい
 
 
+### $\exists \ right$
+
+「ある特定の一例 $t$ について $A$ が成り立つ」ことが導かれたなら，「$A$ を成り立たせる $x$ が存在する」と結論を言い換えてよい
 
 
 <br>
