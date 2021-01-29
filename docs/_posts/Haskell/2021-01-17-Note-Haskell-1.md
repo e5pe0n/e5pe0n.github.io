@@ -882,7 +882,8 @@ safehead xs = Just (head xs)
 
 ## Newtype Declarations
 
-newtype declarations are to improve type safety without affecting perfomance
+newtype declarations are to improve type safety without affecting perfomance.  
+it must have *Constructor* such as `N` in below example.  
 
 ```hs
 newtype Nat = N Int

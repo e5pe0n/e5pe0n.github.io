@@ -46,6 +46,7 @@ last_modified_at: 2021-01-14
 ## BFS
 
 [AGC033 A - Darker and Darker](https://atcoder.jp/contests/agc033/tasks/agc033_a)  
+[ABC151 D - Maze Master](https://atcoder.jp/contests/abc151/tasks/abc151_d)  
 [ABC168 D - .. (Double Dots)](https://atcoder.jp/contests/abc168/tasks/abc168_d)  
 [ABC184 E - Third Avenue](https://atcoder.jp/contests/abc184/tasks/abc184_e)  
 [ABC176 D - Wizard in Maze](https://atcoder.jp/contests/abc176/tasks/abc176_d)  
@@ -73,6 +74,7 @@ last_modified_at: 2021-01-14
 [ABC156 E - Roaming](https://atcoder.jp/contests/abc156/tasks/abc156_e)  
 [ABC098 C - March](https://atcoder.jp/contests/abc089/tasks/abc089_c)  
 [AGC031 A - Colorful Subsequence](https://atcoder.jp/contests/agc031/tasks/agc031_a)  
+[ABC 151 E - Max-Min Sums](https://atcoder.jp/contests/abc151/tasks/abc151_e)  
 [ABC132 D - Blue and Red Balls](https://atcoder.jp/contests/abc132/tasks/abc132_d)  
 
 - 何かを固定して考えてみる
@@ -89,7 +91,7 @@ last_modified_at: 2021-01-14
 
 基本
 
-[ABC129 C - Typical Stairs](https://atcoder.jp/contests/abc129/tasks/abc129_c)
+[ABC129 C - Typical Stairs](https://atcoder.jp/contests/abc129/tasks/abc129_c)  
 [ABC178 D - Redistribution](https://atcoder.jp/contests/abc178/tasks/abc178_d)  
 [ABC184 D - increment of coins](https://atcoder.jp/contests/abc184/tasks/abc184_d)  
 [ABC183 E - Queen on Grid](https://atcoder.jp/contests/abc183/tasks/abc183_e)  
@@ -109,7 +111,7 @@ last_modified_at: 2021-01-14
 ## DFS
 
 [ABC042 C - Iroha's Obsession](https://atcoder.jp/contests/abc042/tasks/arc058_a)  
-[ABC161 D - Lunlun Number](https://atcoder.jp/contests/abc161/tasks/abc161_d)
+[ABC161 D - Lunlun Number](https://atcoder.jp/contests/abc161/tasks/abc161_d)  
 [ABC114 C - 755](https://atcoder.jp/contests/abc114/tasks/abc114_c)  
 [ABC152 D - Handstand 2](https://atcoder.jp/contests/abc152/tasks/abc152_d)  
 
