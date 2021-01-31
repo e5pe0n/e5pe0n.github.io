@@ -307,7 +307,7 @@ class Applicative m => Monad m where
 - ensures that such an expression only succeeds if every component $m_i$ in the sequence succeeds
 
 ```hs
-(>>=) :: Maybe a -> (a -> Maybe a) -> Maybe b
+(>>=) :: Maybe a -> (a -> Maybe b) -> Maybe b
 mx >>= f = case mx of
   Nothing -> Nothing
   Just x -> f x
@@ -327,6 +327,14 @@ do x1 <- m1
    ...
    xn <- mn
    f x1 x2 ... xn
+```
+
+## Monad Laws
+
+```hs
+return x >>= f = f x  -- (return x) >>= f = f x
+mx >>= return = mx
+(mx >>= f) >>= g = mx >>= (\x -> (f x >>= g)) -- assosiatative
 ```
 
 ## Usecases
@@ -464,3 +472,86 @@ instance Monad ST where
 ```
 
 
+## Generic Functions
+
+### mapM()
+
+```hs
+-- defined in Control.Monad
+mapM :: Monad m => (a -> m b) -> [a] -> m [b]
+mapM f [] = return []
+mapM f (x : xs) = do
+  y <- f x
+  ys <- mapM f xs
+  return (y : ys)
+```
+
+```hs
+import Data.Char
+
+conv :: Char -> Maybe Int
+conv c
+  | isDigit c = Just (digitToInt c)
+  | otherwise = Nothing
+
+mapM conv "1234"  -- Just [1, 2, 3, 4]
+mapM conv "123a"  -- Nothing
+```
+
+### filterM()
+
+```hs
+-- defined in Control.Monad
+filterM :: Monad m => (a -> m Bool) -> [a] -> m [a]
+filterM p [] = return []
+filterM p (x : xs) = do
+  b <- p x
+  ys <- filter M p xs
+  return (if b then x : ys else ys)
+
+filterM (\x -> [True, False]) [1, 2, 3]
+-- [[1, 2, 3], [1, 2], [1, 3], [1], [2, 3], [2], [3], []]
+```
+
+### join()
+
+```hs
+join :: Monad m => m (m a) -> m a
+join mmx = do
+  mx <- mmx
+  x <- mx
+  return x
+
+join [[1, 2], [3, 4], [5, 6]] -- [1, 2, 3, 4, 5, 6]
+join (Just (Just 1))  -- Just 1
+join (Just Nothing) -- Nothing
+join Nothing  -- Nothing
+```
+
+# Alternative
+
+```hs
+class Applicative f => Alternative f where
+  empty :: f a
+  (<|>) :: f a -> f a -> f a
+```
+
+## Alternative Laws
+
+```hs
+empty <|> x = x
+x <|> empty = x
+x <|> (x <|> y) = (x <|> y) <|> z -- associative
+```
+
+## Alternative Instances
+
+```hs
+instance Alternative Maybe where
+  -- empty :: Maybe a
+  empty = Nothing
+
+  -- (<|>) :: Maybe a -> Maybe a -> Maybe a
+  Nothing <|> my = my
+  (Just x) <|> _ = Just x
+```
