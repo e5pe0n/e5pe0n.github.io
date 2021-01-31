@@ -57,6 +57,7 @@ last_modified_at: 2021-01-14
 
 [ABC183 - C Travel](https://atcoder.jp/contests/abc183/tasks/abc183_c)  
 [ABC180 - E Traveling Salesman among Aerial Cities](https://atcoder.jp/contests/abc180/tasks/abc180_e)  
+[ABC190 - E Magical Ornament](https://atcoder.jp/contests/abc190/tasks/abc190_e)  
 
 
 
@@ -138,6 +139,11 @@ N が小さいときはビット全探索で総当たり
 
 [ABC157 E - Simple String Queries](https://atcoder.jp/contests/abc157/tasks/abc157_e)
 
+## BIT
+
+転倒数  
+
+[ABC190 F - Shift and Inversions](https://atcoder.jp/contests/abc190/tasks/abc190_f)  
 
 
 # グラフ
