@@ -291,6 +291,8 @@ g <$> x = fmap g x
 g <$> x1 <*> x2 <*> ... <*> xn
 ```
 
+<br>
+
 # Monads
 
 ```hs
@@ -528,6 +530,12 @@ join (Just Nothing) -- Nothing
 join Nothing  -- Nothing
 ```
 
+<br>
+
+<hr>
+
+<br>
+
 # Alternative
 
 ```hs
@@ -554,4 +562,353 @@ instance Alternative Maybe where
   -- (<|>) :: Maybe a -> Maybe a -> Maybe a
   Nothing <|> my = my
   (Just x) <|> _ = Just x
+```
+
+<br>
+
+<hr>
+
+<br>
+
+# Monoids
+
+```hs
+class Monoids a where
+  mempty :: a
+  mappend :: a -> a -> a
+
+  mconcat :: [a] -> a
+  mconcat = foldr mappend mempty
+```
+
+## Monoid Laws
+
+```hs
+mempty `mappend` x = x
+x `mappend` mempty = x
+x `mappend` (y `mappend` z) = (x `mappend` y) `mappend` z
+
+-- using <> operator
+mempty <> x = x
+x <> mempty = x
+x <> (y <> z) = (x <> y) <> z
+```
+
+## Data.Monoid
+### Lists
+
+```hs
+instance Monoid [a] where
+  -- mempty :: [a]
+  mempty = []
+
+  -- (<>) :: [a] -> [a] -> [a]
+  mappend = (++)
+```
+
+### Maybe
+
+```hs
+instance Monoid a => Monoid (Maybe a) where
+  -- mempty :: Maybe a
+  mempty = Nothing
+
+  -- (<>) :: Maybe a -> Maybe a -> Maybe a
+  Nothing <> my = my
+  mx <> Nothing = Nothing
+  Just x <> Just y = Just (x <> y)
+```
+
+### Sum
+
+```hs
+newtype Sum a = Sum a
+  deriving (Eq, Ord, Show, Read)
+
+getSum :: Sum a -> a
+getSum (Sum x) = x
+
+
+instance Num a => Monoid (Sum a) where
+  -- mempty :: Sum a
+  mempty = Sum 0
+
+  -- (<>) :: Sum a -> Sum a -> Sum a
+  Sum x <> Sum y = Sum (x + y)
+
+
+mconcat [Sum 2, Sum 3, Sum 4] -- Sum 9
+```
+
+### Product
+
+```hs
+newtype Product a = Product a
+  deriving (Eq, Ord, Show, Read)
+
+getProduct :: Product a -> a
+getProduct (Product x) = x
+
+
+instance Num a => Monoid (Product a) where
+  -- mempty :: Product a
+  mempty = Product 1
+
+  -- (<>) :: Product a -> Product a -> Product a
+  Product x <> Product y = Product (x * y)
+
+
+mconcat [Product 2, Product 3, Product 4] -- Product 24
+```
+
+### All
+
+```hs
+mconcat [All True, All True, All True]  -- All True
+```
+
+### Any
+
+```hs
+mconcat [Any False, Any False, Any False] -- Any False
+```
+
+
+# Foldables
+
+
+**Note:**  
+minimal complete definition for an instance of the *Foldable* class is to define either *foldMap* or *foldr*  
+
+```hs
+class Foldable t where
+  fold :: Monoid a => t a -> a
+  foldMap :: Monoid b => (a -> b) -> t a -> b
+  foldr :: (a -> b -> b) -> b -> t a -> b
+  foldl :: (a -> b -> a) -> a -> t b -> a
+
+  null :: t a -> Bool
+  length :: t a -> Int
+  elem :: Eq a => a -> t a -> Bool
+  maximum :: Ord a => t a -> a
+  minimum :: Ord a => t a -> a
+  sum :: Num a => t a -> a
+  product :: Num a => t a -> a
+
+  foldr1 :: (a -> a -> a) -> t a -> a
+  foldl1 :: (a -> a -> a) -> t a -> a
+
+  toList :: t a -> [a]
+
+  -- default definitions
+  null = null . toList
+  length = length . toList
+  elem x = elem x . toList
+  maximum = maximum . toList
+  minimum = minimum . toList
+  sum = sum . toList
+  product = product . toList
+
+  foldr f v = foldr f v . toList
+  foldl r v = foldl f v . toList
+  foldr1 f = fold1 f . toList
+  foldl1 f = fold1 f . toList
+
+  fold = foldMap id
+  foldMap f = foldr (mappend . f) mempty
+  toList = foldMap (\x -> [x])
+```
+
+## List
+
+```hs
+instance Foldable [] where
+  -- fold :: Monoid a => [a] -> a
+  fold [] = mempty
+  fold (x : xs) = x <> fold xs
+
+  -- foldMap :: Monoid b => (a -> b) -> [a] -> b
+  foldMap _ [] = mempty
+  foldMap f (x : xs) = f x <> foldMap f xs
+
+  -- foldr :: (a -> b -> b) -> b -> [a] -> b
+  foldr _ v [] = v
+  foldr f v (x : xs) = f x (foldr f v xs)
+
+  -- foldl :: (a -> b -> a) -> a -> [b] -> a
+  foldl _ v [] = v
+  foldl f v (x : xs) = foldl f (f v x) xs
+
+
+getSum (foldMap Sum [1..10])  -- 55
+getProduct (foldMap Product [1..10])  -- 3628800
+```
+
+## Tree
+
+```hs
+data Tree a = Leaf a | Node (Tree a) (Tree a)
+  deriving (Show)
+
+instance Foldable Tree where
+  -- fold :: Monoid a => Tree a -> a
+  fold (Leaf x) = x
+  fold (Node l r) = fold l <> fold r
+
+  -- foldMap :: Monoid b => (a -> b) -> Tree a -> b
+  foldMap f (Leaf x) = f x
+  foldMap f (Node l r) = foldMap f l <> foldMap f r
+
+  -- foldr :: (a -> b -> b) -> b -> Tree a -> b
+  foldr f v (Leaf x) = f x v
+  foldr f v (Node l r) = foldr f (foldr f v r) l
+
+  -- foldl :: (a -> b -> a) -> a -> Tree b -> a
+  foldl f v (Leaf x) = f v x
+  foldl f v (Node l r) = foldl f (foldl f v l) r
+
+
+tree :: Tree Int
+tree = Node (Node (Leaf 1) (Leaf 2)) (Leaf 3)
+
+foldr (+) 0 -- 1 + (2 + (3 + 0))
+foldl (+) 0 -- ((0 + 1) + 2) + 3
+foldl (+) (Node (Leaf 1) (Leaf 2))  -- 3
+toList (Node (Leaf 1) (Leaf 2)) -- [1,2]
+```
+
+## Generic Functions
+
+```hs
+import Data.Foldable
+
+data Tree a = Leaf a | Node (Tree a) (Tree a)
+  deriving (Show)
+
+instance Foldable Tree where
+  -- foldMap :: Monoid b => (a -> b) -> Tree a -> b
+  foldMap f (Leaf x) = f x
+  foldMap f (Node l r) = foldMap f l <> foldMap f r
+
+average :: [Int] -> Int
+average ns = sum ns `div` length ns
+
+average' :: Foldable t => t Int -> Int
+average' ns = sum ns `div` length ns
+
+main = do
+  print (average' [1 .. 10])  -- 5
+  print (average' (Node (Leaf 1) (Leaf 3))) -- 2
+```
+
+### and()
+
+```hs
+and :: Foldable t => t Bool -> Bool
+and = getAll . foldMap All
+
+main = do
+  print (and [True, False, True]) -- False
+```
+
+### or()
+
+```hs
+or :: Foldable t => t Bool -> Bool
+or = getAny . foldMap Any
+
+main = do
+  print (or (Node (Leaf True) (Leaf False)))  -- True
+```
+
+### all()
+
+```hs
+all :: Foldable t => (a -> Bool) -> t a -> Bool
+all p = getAll . foldMap (All . p)
+
+main = do
+  print (all even [1, 2, 3])  -- False
+```
+
+### any()
+
+```hs
+any :: Foldable t => (a -> Bool) -> t a -> Bool
+any p = getAny . foldMap (Any . p)
+
+main = do
+  print (any even (Node (Leaf 1) (Leaf 2))) -- True
+```
+
+### concat()
+
+```hs
+concat :: Foldable t => t [a] -> [a]
+concat = fold
+
+main = do
+  print (concat ["ab", "cd", "ef"]) -- "abcdef"
+  print (concat (Node (Leaf [1, 2]) (Leaf [3])))  -- [1,2,3]
+```
+
+<br>
+
+# Traversable
+
+**Note:**  
+A definition of either *traverse* or *sequenceA* is needed but *traverse* is prefarable rather than *sequenceA* because default *traverse* definition is unefficient due to passing through the data structure twice, when *fmap* and *sequenceA*.  
+
+
+```hs
+class (Functor t, Foldable t) => Traversable t where
+  traverse :: Applicative f => (a -> f b) -> t a -> f (t b)
+  traverse g = sequenceA . fmap g
+
+  sequenceA :: Applicative f = t (f a) -> f (t a)
+  sequenceA = traverse id
+
+  mapM :: Monad m => (a -> m b) -> t a -> m (t b)
+  mapM = traverse
+
+  sequence :: Monad m => t (m a) -> m (t a)
+  sequence = sequenceA
+```
+
+## List
+
+```hs
+instance Traversable [] where
+  -- traverse :: Applicative f => (a -> f b) -> [a] -> f [b]
+  traverse g [] = pure []
+  traverse g (x : xs) = pure (:) <*> g x <*> traverse g xs
+
+dec :: Int -> Maybe Int
+dec n = if n > 0 then Just (n - 1) else Nothing
+
+main = do
+  print (traverse dec [1, 2, 3])  -- Just [0,1,2]
+  print (traverse dec [2, 1, 0])  -- Nothing
+
+  print (sequenceA [Just 1, Just 2, Just 3])  -- Just [1, 2, 3]
+  print (sequenceA [Just 1, Nothing, Just 3]) -- Nothing
+```
+
+## Tree
+
+```hs
+instance Traversable Tree where
+  -- traverse :: Applicative f => (a -> f b) -> Tree a -> f (Tree b)
+  traverse g (Leaf x) = pure Leaf <*> g x
+  traverse g (Node l r) = pure Node <*> traverse g l <*> traverse g r
+
+dec :: Int -> Maybe Int
+dec n = if n > 0 then Just (n - 1) else Nothing
+
+main = do
+  print (traverse dec (Node (Leaf 1) (Leaf 2))) -- Just (Node (Leaf 0) (Leaf 1))
+  print (traverse dec (Node (Leaf 0) (Leaf 1))) -- Nothing
+
+  print (sequenceA (Node (Leaf (Just 1)) (Leaf (Just 2))))  -- Just (Node (Leaf 1) (Leaf 2))
+  print (sequenceA (Node (Leaf (Just 1)) (Leaf Nothing))) -- Nothing
 ```
