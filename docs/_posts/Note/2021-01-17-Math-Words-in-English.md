@@ -7,6 +7,8 @@ tags:
 last-modified-at: 2021-01-17
 ---
 
+- （式や性質が）成り立つ: hold
+  - associative property on addition holds for all natural numbers
 - 適切な: appropreate
 - 分子: numerator
 - 分母: denominator
@@ -41,11 +43,17 @@ $$
   - ある一組の極大値の中の最小値
 - 可換: commutative
   - commutative property of addition: 加算の可換性
+  - commutativity of addition: 加算の可換性
 - 合成関数: composite function
   - $f \circ g$ : *f composed with g*
 - 単位元: identity (element)
 - 単一の: identical
   - a list of identical elements: 単一要素のリスト
+- equational reasoning (`=` での式展開)
+  - e.g. $(x + a)(x + b) = (x + a)x + (x + a)b = x^2 + ax + bx + ab = x^2 + (a + b)x + ab$
+- （数学的）帰納法: induction
+  - base case: n = 0
+  - induction case: n = k + 1
 - 仮説: hypothesis
 - 命題: proposition
 - トートロジー: tautology
@@ -61,6 +69,10 @@ $$
   - *infer* is more formal, and not likely to be used in conversation
 - 推論: inference
 - reasoning: 推論，推論の結果，証明
+- 類推: analogy
+  - by analogy: 類推によって
+  - by analogy with A: A から類推して
+  - on the analogy of A: A から類推して
 - 真理値: truth tables
 - predicate
   - 断定する: predicate 23 to be primitive / predicate that 23 is primitive
@@ -73,6 +85,7 @@ $$
 - 予想: conjecture
   - The Modularity Conjecture
   - モジュラー性予想
+- 結合: conjunction
 - `∧` (AND): conjunction
   - operand is called *conjunct*
 - `∨` (OR): disjunction

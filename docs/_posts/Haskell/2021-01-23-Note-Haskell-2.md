@@ -615,7 +615,7 @@ instance Monoid a => Monoid (Maybe a) where
 
   -- (<>) :: Maybe a -> Maybe a -> Maybe a
   Nothing <> my = my
-  mx <> Nothing = Nothing
+  mx <> Nothing = mx
   Just x <> Just y = Just (x <> y)
 ```
 
@@ -911,4 +911,318 @@ main = do
 
   print (sequenceA (Node (Leaf (Just 1)) (Leaf (Just 2))))  -- Just (Node (Leaf 1) (Leaf 2))
   print (sequenceA (Node (Leaf (Just 1)) (Leaf Nothing))) -- Nothing
+```
+
+
+<br>
+
+<hr>
+
+<br>
+
+# Lazy Evaluation
+
+**Lazy evaluation** is the use of *call-by-name* evaluation in conjunction with sharing such as using pointer   
+
+In Haskell, any two different ways of evaluating the same expression will always produce the same final value, provided that they both terminate.  
+
+```hs
+inc :: Int -> Int
+inc n = n + 1
+
+-- from right
+inc (2 * 3)
+= { applying * }
+inc 6
+= { applying inc }
+6 + 1
+= { applying + }
+7
+
+-- from left
+inc (2 * 3)
+= { applying inc }
+(2 * 3) + 1
+= { applying * }
+6 + 1
+= { applying + }
+7
+```
+
+## call-by-value evaluation
+
+*call-by-name* evaluation is preferable to *call-by-value* for ensuring that evaluation terminates as often as possible.  
+
+$\because$ *call-by-name* evaluation will terminate if there exists any evaluation sequence that terminates for a given expression, and produce the same final value.  
+
+```hs
+square :: Int -> Int
+square n = n * n
+```
+
+```
+square (1 + 2)
+= { applying square }
+(1 + 2) * (1 + 2)
+= { applying the first +}
+3 * (1 + 2)
+= { applying + }  -- redundant reduction but can be resolved by using pointer to copy `(1 + 2)`
+3 * 3
+= { applying * }
+9
+```
+
+the following expression terminates in *call-by-name* evaluation.  
+
+```hs
+inf :: Int
+inf = 1 + inf
+```
+
+```
+fst (0, inf)
+= { applying fst }
+0
+```
+
+## call-by-name evaluation
+
+```
+square (1 + 2)
+= { applying + }
+square 3
+= { applying square }
+3 * 3
+= { applying * }
+9
+```
+
+the following expression does not terminate in *call-by-value* evaluation.  
+
+```
+fst (0, inf)
+= { applying inf }
+fst (0, 1 + inf)
+= { applying inf }
+fst (0, 1 + (1 + inf))
+= { applying inf }
+...
+```
+
+## Modular Programming
+
+Lazy evaluation allows us to separate *control* from *data* in our computations.  
+
+```hs
+-- take 3: control
+-- ones: data
+take 3 ones -- [1,1,1]
+
+-- pattern of without lazy evaluation:
+-- need to make (= control) a certain data.
+-- cannot separate control from data.
+replicate 3 1 -- [1,1,1]
+```
+
+*the sieve of Eratosthenes*  
+
+```hs
+primes :: [Int]
+primes = sieve [2 ..]
+
+sieve :: [Int] -> [Int]
+sieve (p : xs) = p : sieve [x | x <- xs, x `mod` p /= 0]
+
+main = do
+  print (take 10 primes) -- [2,3,5,7,11,13,17,19,23,29]
+  print (takeWhile (< 10) primes) -- [2,3,5,7]
+```
+
+![sieve]({{site.url}}{{site.baseurl}}/assets/Haskell_images/sieve.png)
+
+
+## Strict Application
+
+*strict* functions such as built-in arithmetic operator, `*` and `+` cannot be applied until their two arguments have been evaluated to numbers; values  
+
+`f $! x`; `f` is immediately applied to `x` (if x is an expression, after evaluation of x)  
+
+`$!` serves as a stopper for outmost evaluation
+
+```
+square $! (1 + 2)
+= { applying + }
+square $! 3
+= { applying $! }
+square 3
+= { applying square }
+3 * 3
+= { applying * }
+9
+```
+
+**strict application is mainly used to improve the space performance of programs.**  
+
+pattern with lazy evaluation  
+
+```hs
+sumwith :: Int -> [Int] -> Int
+sumwith v [] = v
+sumwith v (x : xs) = sumwith (v + x) xs
+```
+
+```
+sumwith 0 [1, 2, 3]
+= { applying sumwith }
+sumwith (0 + 1) [2, 3]
+= { applying sumwith }
+sumwith ((0 + 1) + 2) [3]
+= { applying sumwith }
+sumwith (((0 + 1) + 2) + 3) []
+= { applying sumwith }
+((0 + 1) + 2) + 3 -- the length is the same with the original list so sumwith requires much space for evaluation if given a long list.  
+= { applying the first + }
+(1 + 2) + 3
+= { applying the first + }
+3 + 3
+= { applying + }
+6
+```
+
+pattern with strict application  
+
+```hs
+sumwith :: Int -> [Int] -> Int
+sumwith v [] = v
+sumwith v (x : xs) = (sumwith $! (v + x)) xs
+```
+
+```
+sumwith 0 [1, 2, 3]
+= { applying sumwith }
+(sumwith $! (0 + 1)) [2, 3]
+= { applying + }
+(sumwith $! 1) [2, 3]
+= { applying $! }
+sumwith 1 [2, 3]
+= { applying sumwith }
+(sumwith $! (1 + 2)) [3]
+= { applying + }
+(sumwith $! 3) [3]
+= { applying $! }
+sumwith 3 [3]
+= { applying sumwith }
+(sumwith $! (3 + 3)) []
+= { applying + }
+(sumwith $! 6) []
+= { applying $! }
+sumwith 6 []
+= { applying sumwith }
+6
+```
+
+## foldl'
+
+```hs
+-- in Data.Foldable
+
+foldl' :: (a -> b -> a) -> a -> [b] -> a
+foldl' f v [] = v
+foldl' f v (x : xs) = ((foldl' f) $! (f v x)) xs
+```
+
+# Reasoning
+
+## Induction
+
+can be used to confirm the logic or propeties of a recursive type or a recursive function is correct.  
+
+e.g.1 (about natural number)
+
+```hs
+replicate :: Int -> a -> [a]
+replicate 0 _ = []
+replicate n x = x : replicate (n - 1) x
+```
+
+```
+-- hypothesis:
+-- replication function produce a list when n elements, that is `length (replicate n x) = n`
+
+-- Base case:
+length (replicate 0 x)
+= { applying replicate }
+length []
+= 0
+
+-- Inductive case
+length (replicate (n + 1) x)
+= { applying replicate }
+length (x : replicate n x)
+= { applying length }
+1 + length (replicate n x)
+= { induction hypothesis }
+1 + n
+= { commutativity of + }
+n + 1
+```
+
+e.g.2 (about list)  
+
+```hs
+reverse :: [a] -> [a]
+reverse [] = []
+reverse (x : xs) = reverse xs ++ x
+```
+
+```
+-- hypothesis 1:
+-- contravariant; reverse (xs ++ ys) = reverse ys ++ reverse xs
+
+-- Base case:
+reverse ([] ++ ys)
+= { applying ++ }
+reverse ys
+= { identity for ++ }
+reverse ys ++ []
+= { unapplying reverse }
+reverse ys ++ reverse []
+
+-- Inductive case:
+reverse ((x : xs) ++ ys)
+= { applying ++ }
+reverse (x : (xs ++ ys))
+= { applying reverse }
+reverse (xs ++ ys) ++ [x]
+= { induction hypothesis }
+(reverse ys ++ reverse xs) ++ [x]
+= { associativity of ++ }
+reverse ys ++ (reverse xs ++ [x])
+= { unapplying the second reverse }
+reverse ys ++ reverse (x : xs)
+```
+
+```
+-- hypothesis 2:
+-- reverse (reverse (x : xs)) = x : xs
+
+-- Base case:
+reverse (reverse [])
+= { applying the inner reverse }
+reverse []
+= { appyling reverse }
+[]
+
+-- Inductive case:
+reverse (reverse (x : xs))
+= { applying the inner reverse }
+reverse (reverse xs ++ [x])
+= { contravariant }
+reverse [x] ++ reverse (reverse xs)
+= { singleton lists }
+[x] ++ reverse (reverse xs)
+= { induction hypothesis }
+[x] ++ xs
+= { applying ++ }
+x : xs
 ```
