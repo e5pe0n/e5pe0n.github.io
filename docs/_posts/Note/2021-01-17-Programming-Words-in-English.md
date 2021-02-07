@@ -28,3 +28,4 @@ last-modified-at: 2021-01-17
   - auxiliary memory
 - prune: 刈り込む
   - prune game trees to a particular depth
+- quadratic time: $O(n^2)$

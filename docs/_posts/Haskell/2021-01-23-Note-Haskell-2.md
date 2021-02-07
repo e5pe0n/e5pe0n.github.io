@@ -1226,3 +1226,177 @@ reverse [x] ++ reverse (reverse xs)
 = { applying ++ }
 x : xs
 ```
+
+e.g.3 (about fmap low on list)
+
+```hs
+fmap id = id
+fmap (g . h) = fmap g . fmap h
+```
+
+```hs
+fmap :: (a -> b) -> [a] -> [b]
+fmap g [] = []
+fmap g (x : xs) = g x : fmap g xs
+```
+
+```
+-- hypothesis 1: fmap id = id
+
+-- Base case:
+fmap id []
+= { applying fmap }
+[]
+
+-- Inductive case:
+fmap id (x : xs)
+= { applying fmap }
+id x : fmap id xs
+= { applying id }
+x : fmap id xs
+= { induction hypothesis }
+x : xs
+```
+
+```
+-- hypothesis 2: 
+-- fmap (g . h) = fmap g . fmap h
+-- i.e. fmap (g . h) xs = fmap g (fmap h xs)
+
+-- Base case:
+fmap (g . h) []
+= { applying fmap }
+[]
+= { unapplying fmap }
+fmap g []
+= { unapplying fmap }
+fmap g (fmap h [])
+
+-- Inductive case:
+fmap (g . h) (x : xs)
+= { applying fmap }
+(g . h) x : fmap (g . h) xs
+= { applying . }
+g (h x) : fmap (g . h) xs
+= { induction hypothesis }
+g (h x) : fmap g (fmap h xs)
+= { unapplying fmap }
+fmap g (h x : fmap h xs)
+= { unapplying fmap }
+fmap g (fmap h (x : xs))
+```
+
+## Improve Computing Time
+
+### reverse()
+
+*reverse* function run by $O(n^2)$ because in general `xs ++ ys` needs `(length xs) + 1` steps to concatinate xs and xs, so `reverse xs ++ [x]` is bottle neck.  
+we try to difine another version *reverse*; *reverse'* to improve computing time.  
+
+```hs
+reverse :: [a] -> [a]
+reverse [] = []
+reverse (x : xs) = reverse xs ++ [x]
+```
+
+```
+-- hypothesis to construct the definition of reverse':
+-- reverse' xs ys = xs ++ ys
+
+-- Base case:
+reverse' [] ys
+= { specification of reverse' }
+reverse [] ++ ys
+= { applying reverse }
+[] ++ ys
+= { applying ++ }
+ys
+
+-- Inductive case:
+reverse' (x : xs) ys
+= { specification of reverse' }
+reveres (x : xs) ++ ys
+= { applying reverse }
+(reverse xs ++ [x]) ++ ys
+= { associativity of ++ }
+reverse xs ++ ([x] ++ ys)
+= { induction hypothesis }
+reverse' xs ([x] ++ ys)
+= { applying ++ }
+reverse' xs (x : ys)
+```
+
+we obtain another definition of *reverse'* .  
+
+```hs
+reverse' :: [a] -> [a] -> [a]
+reverse' [] ys = ys
+reverse' (x : xs) ys = reverse' xs (x : ys)
+
+reverse :: [a] -> [a]
+reverse xs = reverse' xs [] -- = foldl (\xs x -> x : xs) []
+```
+
+```
+reverse [1, 2, 3]
+= { applying reverse }
+reverse' [1, 2, 3] []
+= { applying reverse' }
+reverse' [2, 3] (1 : [])
+= { applying reverse' }
+reverse' [3] (2 : (1 : []))
+= { applying reverse' }
+reverse' [] (3 : (2 : 1 : []))
+= { applying reverse' }
+3 : (2 : 1 : [])
+```
+
+### flatten()
+
+```hs
+data Tree = Leaf Inf | Node Tree Tree
+
+flatten :: Tree -> [Int]
+flatten (Leaf n) = [n]
+flatten (Node l r) = flatten l ++ flatten r
+```
+
+```
+-- hypothesis to construct an improved definition of flatten; flatten'
+-- flatten' t ns = flatten t ++ ns
+
+-- Base case:
+flatten' (Leaf n) ns
+= { specification of flatten' }
+flatten (Leaf n) ++ ns
+= { applying flatten }
+[n] ++ ns
+= { applying ++ }
+n : ns
+
+-- Inductive case:
+flatten' (Node l r) ns
+= { specification of flatten' }
+flatten (Node l r) ++ ns
+= { applying flatten }
+(flatten l ++ flatten r) ++ ns
+= { associativity of }
+flatten l ++ (flatten r ++ ns)
+= { induction hypothesis for l }
+flatten' l (flatten r ++ ns)
+= { induction hypothesis for r }
+flatten' l (flatten' r ns)
+```
+
+we obtain the following definition.  
+
+```hs
+flatten' :: Tree -> [Int] -> [Int]
+flatten' (Leaf n) ns = n : ns
+flatten' (Node l r) ns = flatten' l (flatten' r ns)
+
+flatten :: Tree -> [Int]
+flatten t = flatten' t []
+```
+
+

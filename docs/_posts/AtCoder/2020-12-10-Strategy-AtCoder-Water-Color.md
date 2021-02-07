@@ -182,7 +182,8 @@ K が N より異様に大きいときはループしている部分を抜き出
 
 ## 剰余
 
-[ABC133 C - Remainder Minimization 2019](https://atcoder.jp/contests/abc133/tasks/abc133_c)
+[ABC133 C - Remainder Minimization 2019](https://atcoder.jp/contests/abc133/tasks/abc133_c)  
+[ARC111 A - Simple Math 2](https://atcoder.jp/contests/arc111/tasks/arc111_a)  
 
 
 ## 期待値
