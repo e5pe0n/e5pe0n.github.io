@@ -137,13 +137,15 @@ N が小さいときはビット全探索で総当たり
 
 ## セグ木
 
-[ABC157 E - Simple String Queries](https://atcoder.jp/contests/abc157/tasks/abc157_e)
+[ABC157 E - Simple String Queries](https://atcoder.jp/contests/abc157/tasks/abc157_e)  
+[ABC185 F - Range Xor Query](https://atcoder.jp/contests/abc185/tasks/abc185_f)  
 
 ## BIT
 
 転倒数  
 
 [ABC190 F - Shift and Inversions](https://atcoder.jp/contests/abc190/tasks/abc190_f)  
+[ARC110 C - Exoswap](https://atcoder.jp/contests/arc110/tasks/arc110_c)    
 
 
 # グラフ
@@ -160,6 +162,9 @@ N が小さいときはビット全探索で総当たり
 [ABC160 E - Red and Green Apples](https://atcoder.jp/contests/abc160/tasks/abc160_e)  
 
 
+## Dijkstra
+
+[ABC191 E - Come Back Quickly](https://atcoder.jp/contests/abc191/tasks/abc191_e)  
 
 # ループ
 
