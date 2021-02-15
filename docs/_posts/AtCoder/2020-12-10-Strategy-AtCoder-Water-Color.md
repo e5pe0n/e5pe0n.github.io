@@ -92,6 +92,7 @@ last_modified_at: 2021-01-14
 
 基本
 
+[ABC040 C - 柱柱柱柱柱](https://atcoder.jp/contests/abc040/tasks/abc040_c)  
 [ABC129 C - Typical Stairs](https://atcoder.jp/contests/abc129/tasks/abc129_c)  
 [ABC178 D - Redistribution](https://atcoder.jp/contests/abc178/tasks/abc178_d)  
 [ABC184 D - increment of coins](https://atcoder.jp/contests/abc184/tasks/abc184_d)  
@@ -100,7 +101,7 @@ last_modified_at: 2021-01-14
 
 状態を考慮
 
-
+[CODE FESTIVAL 2014 決勝](https://atcoder.jp/contests/code-festival-2014-final/tasks/code_festival_final_e)  
 [ABC175 E - Picking Goods](https://atcoder.jp/contests/abc175/tasks/abc175_e)  
 
 
@@ -252,6 +253,9 @@ K が N より異様に大きいときはループしている部分を抜き出
 
 [ABC115 D - Christmas](https://atcoder.jp/contests/abc115/tasks/abc115_d)  
 
+# 回文
+
+[ARC053 B - 回文分割](https://atcoder.jp/contests/arc053/tasks/arc053_b)  
 # 発想
 
 [AGC023 A - Zero-Sum Ranges](https://atcoder.jp/contests/agc023/tasks/agc023_a)  

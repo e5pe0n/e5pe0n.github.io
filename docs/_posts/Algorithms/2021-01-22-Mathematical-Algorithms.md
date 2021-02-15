@@ -493,7 +493,7 @@ print(res)
 
 <br>
 
-# Extra GCD
+# Extended GCD
 
 Determine x and y to satisfy $ax + by = 1$ (a, b are primetive. i.e. `gcd(a, b) == 1`).  
 

@@ -10,18 +10,32 @@ last-modified-at: 2021-01-17
 - （式や性質が）成り立つ: hold
   - associative property on addition holds for all natural numbers
 - 適切な: appropreate
+- 数 A が数 B を上回る: go above
+  - at which x goes above 128
 - 分子: numerator
 - 分母: denominator
 - 商: quotient
 - 剰余: remainder
   - 余りをとる: taking the remainder
+- A で B を割る: divide B by A
+- A は B を割り切る:
+  - A divides B
+    - We say that $m$ *divides* $n$ if $n$ is a multiple of $m$, that is, if there is an integer $k$ such that $n = mk$  
+    - $3 \mid 6$ : 3 divides 6
+    - $5 \nmid 7$ : 5 does not divide 7
+  - B is divisible by A
+    - 6 is divisible by 3
 - 多項式: polynomial
 - 二次方程式: quadratic equation 
 - 微分方程式: differential equation
+- A とする: let
+  - we rewrite the first equation as $16 = a - 2b$, where we let $a = 60$ and $b = 22$
 - 代入する: substitute
   - Substitute the second equation into the first.
   - 2 つ目の方程式を 1 つ目に代入
+- 合成数: composite number
 - 既約，(互いに)素: primitive
+- 約分: normalization
 - 結合法則: associative property, associative law
   - 加算は結合法則を満たしている: addition is associative.
 - 10 進数: decimal (number)
@@ -51,9 +65,16 @@ $$
   - a list of identical elements: 単一要素のリスト
 - equational reasoning (`=` での式展開)
   - e.g. $(x + a)(x + b) = (x + a)x + (x + a)b = x^2 + ax + bx + ab = x^2 + (a + b)x + ab$
-- （数学的）帰納法: induction
+- 合同: congruence
+- 合同な: congruent
+  - $m$ を法として $a$ は $b$ と合同である
+  - We say that $a$ is congruent to $b$ modulo $m$, and we write $a \equiv b \pmod m$.  
+- 法: modulus
+  - The number $m$ is called the *modulus* of the congruence.  
+- （数学的）帰納法: induction <-> 演繹法: deduction (<- deduce)
   - base case: n = 0
   - induction case: n = k + 1
+- 背理法: Proof by Contradiction
 - 仮説: hypothesis
 - 命題: proposition
 - トートロジー: tautology
@@ -82,12 +103,42 @@ $$
   - Trivial group: contains only the identity element
   - Trivial ring: defined on a singleton set
   - $y(x) = 0$ is the trivial solution of $y' = y$  where $y = y(x)$
+- lemma: 補題 (auxiliary theorem)
 - 予想: conjecture
   - The Modularity Conjecture
   - モジュラー性予想
+- 主張: assertion
+
+e.g.  
+
+## The Fundamental Theorem of Arithmetic
+
+ Every integer $n \ge 2$ can be factored into a product of primes $n = p_1p_2 \cdots p_r$ in exactly one way.  
+
+### Proof.
+
+The Fundamental Theorem of Arithmetic contains two assertions.  
+
+#### Assertion 1.
+
+The number $n$ can be factored into a product of primes in some way
+
+#### Assertion 2. 
+
+There is only one such factorization (aside from rearranging the factors)  
+
+
+- （証明内で）この方法を続けていって: continuing in this fashion
+  - Continuing in this fashion, we must eventually find some $a_i$ that is divisible by $p$
 - 結合: conjunction
 - `∧` (AND): conjunction
   - operand is called *conjunct*
 - `∨` (OR): disjunction
   - operand is called *disjunct*
-
+- 最後から2番目の: penultimate
+  - 最後から2行目: penultimate line
+- わかる（観測する）: observe
+- to recapitulate (recap**i**tulate):（今まで述べてきたことを）まとめると，要約すると
+  - To recapitulate, We have shown that if Assertion 1 is true for all numbers less than or equal to $N$, then it is true for $N + 1$
+- 円周: circumference
+- 直径: diameter
