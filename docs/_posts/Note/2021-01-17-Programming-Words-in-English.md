@@ -71,3 +71,32 @@ if (!args.isEmpty)
   - we store the resulting array in the *filesHere* variable
 - off-by-one error; OBOE
   - ループが正しい回数より1回多く，または1回少なく実行された場合などに発生する
+
+- nuts and bolts: 基本，基幹
+- 取り除く: get rid of, leave out
+- (構成要素の一部を)取り除く: factor out
+- leave off: やめる，中止する
+  - one way to make a function literal more brief is to leave off the parameter types
+- puzzle out: 見出す，解く
+- invocation: 発動
+  - The Scala compiler translates the expression `a(1, 2, 3)` into an invocation of the function value's `apply` method, passing in the three arguments 1, 2, and 3.
+- condense: 要約する，濃縮する
+- 反対に: by contrast
+
+- loan pattern
+  - loan: 貸与，貸付
+  - an implement technique that define a function for clients (an API function) to open a resource and loan it to a function passed by the client
+    - assure the resource is closed so clients do not need to take care of a preprocess or a postprocess.  
+
+e.g.  
+
+```scala
+def withPrintWriter(fiie: File, op: PrintWriter => Unit) = {  // API function
+  val writer = new PrintWriter(file)  // open file (resource) and loan file to PrintWriter (function passed by the client)
+  try {
+    op(writer)
+  } finally {
+    writer.close()
+  }
+}
+```

@@ -28,6 +28,25 @@ in exactly one way.
 
 <br>
 
+
+# Linear Equation Theorem
+
+Let $a$ and $b$ be nonzero integers, and let $g = \gcd(a, b)$.  
+The equation  
+
+$$
+ax + by = g
+$$
+
+always has a solution $(x_1, y_1)$ in integers, and this solution can be found by the *Euclidean algorithm method*.  
+Then every solution to the equation can be obtained by substituting integers $k$ into the formula  
+
+$$
+(x_1 + k \cdot \frac{b}{g}, \ y_1 - k \cdot \frac{a}{g})
+$$
+
+<br>
+
 # Linear Congruence Theorem
 
 Let $a$, $c$ and $m$ be integers with $m \ge 1$, and let $g = \gcd (a,m)$.  
@@ -38,7 +57,7 @@ Let $a$, $c$ and $m$ be integers with $m \ge 1$, and let $g = \gcd (a,m)$.
 first find a solution $(u_0, v_0)$ to $au + mv = g$ then we obtain a complete set of incongruent solutions given by
 
 $$
-x_0 = \frac{cu_0}{g} \\
+x_0 \equiv \frac{cu_0}{g} \pmod m \\
 x \equiv x_0 + k \cdot \frac{m}{g} \pmod m \ \ for \ k = 1, 2,...,g - 1
 $$
 
@@ -107,3 +126,26 @@ e.g.
 | $10$  |    $4$     |    $\{1, 3, 7, 9\}$    |
 
 
+# Phi Function Formulas
+
+(a) If $p$ is a prime and $k \ge 1$, then      
+
+$$    
+\phi (p^k) = p^k - p^{k - 1}  
+$$      
+  
+
+(b) If $\gcd (m, n) = 1$, then $\phi(mn) = \phi(m) \phi(n)$  
+
+
+
+# Chinese Remainder Theorem
+
+Let $m$ and $n$ be integers satisfying $\gcd(m, n) = 1$, and let $b$ and $c$ be any integers.  
+Then the simultaneous congruences  
+
+$$
+x \equiv b \pmod m \ \ \ \ and \ \ \ \ x \equiv c \pmod n
+$$
+
+have exactly one solution with $0 \le x \le mn$.  

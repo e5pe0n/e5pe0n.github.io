@@ -45,6 +45,7 @@ last_modified_at: 2021-01-14
 
 ## BFS
 
+[ABC007 C - 幅優先探索](https://atcoder.jp/contests/abc007/tasks/abc007_3)  
 [AGC033 A - Darker and Darker](https://atcoder.jp/contests/agc033/tasks/agc033_a)  
 [ABC151 D - Maze Master](https://atcoder.jp/contests/abc151/tasks/abc151_d)  
 [ABC168 D - .. (Double Dots)](https://atcoder.jp/contests/abc168/tasks/abc168_d)  
@@ -92,6 +93,7 @@ last_modified_at: 2021-01-14
 
 基本
 
+[ABC006 B - トリボナッチ数列](https://atcoder.jp/contests/abc006/tasks/abc006_2)  
 [ABC040 C - 柱柱柱柱柱](https://atcoder.jp/contests/abc040/tasks/abc040_c)  
 [ABC129 C - Typical Stairs](https://atcoder.jp/contests/abc129/tasks/abc129_c)  
 [ABC178 D - Redistribution](https://atcoder.jp/contests/abc178/tasks/abc178_d)  
@@ -180,11 +182,12 @@ K が N より異様に大きいときはループしている部分を抜き出
 
 ## 素数 / 約数
 
-[ABC 142 D - Disjoint Set of Common Divisors](https://atcoder.jp/contests/abc142/tasks/abc142_d)  
+[ARC026 B - 完全数](https://atcoder.jp/contests/arc026/tasks/arc026_2)  
+[ABC142 D - Disjoint Set of Common Divisors](https://atcoder.jp/contests/abc142/tasks/abc142_d)  
 
 ## 最大公約数
 
-[AGC 018 A - Getting Difference](https://atcoder.jp/contests/agc018/tasks/agc018_a)  
+[AGC018 A - Getting Difference](https://atcoder.jp/contests/agc018/tasks/agc018_a)  
 
 ## 剰余
 
