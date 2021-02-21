@@ -1,10 +1,12 @@
 ---
 title: AtCoder 水色攻略
 categories:
-  - AtCoder
+  - Note
 tags:
+  - AtCoder
   - Competitive Programming
-last_modified_at: 2021-01-14
+  - Algorithm
+last_modified_at: 2021-02-21
 ---
 
 
