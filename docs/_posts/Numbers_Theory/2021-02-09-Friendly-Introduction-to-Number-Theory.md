@@ -194,24 +194,24 @@ For any prime number $p$ and any positive integer $n$, let $\nu_p (n)$ be the ex
 Then  
 
 $$
-\nu_p (n!) = \sum_{i=1}^{\infin} \left \lfloor \frac{n}{p^i} \right \rfloor
+\nu_p (n!) = \sum_{i=1}^{\infty} \left \lfloor \frac{n}{p^i} \right \rfloor
 $$
 
 e.g.  
 
 $$
-\nu_2(6!) = \sum_{i=1}^{\infin} \left \lfloor \frac{6}{2^i} \right \rfloor
+\nu_2(6!) = \sum_{i=1}^{\infty} \left \lfloor \frac{6}{2^i} \right \rfloor
 = \left \lfloor \frac{6}{2} \right \rfloor + \left \lfloor \frac{6}{4} \right \rfloor
 = 3 + 1 = 4
 $$
 
 $$
-\nu_3(6!) = \sum_{i=1}^{\infin} \left \lfloor \frac{6}{3^i} \right \rfloor
+\nu_3(6!) = \sum_{i=1}^{\infty} \left \lfloor \frac{6}{3^i} \right \rfloor
 = \left \lfloor \frac{6}{3} \right \rfloor = 2
 $$
 
 $$
-\nu_5{6!} = \sum_{i=1}^{\infin} \left \lfloor \frac{6}{5} \right \rfloor
+\nu_5{6!} = \sum_{i=1}^{\infty} \left \lfloor \frac{6}{5} \right \rfloor
 = \left \lfloor \frac{6}{5} \right \rfloor = 1
 $$
 
