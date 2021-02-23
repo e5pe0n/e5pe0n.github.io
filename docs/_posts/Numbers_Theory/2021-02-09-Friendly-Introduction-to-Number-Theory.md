@@ -108,7 +108,7 @@ $$
 
 ## Euler's phi function
 
-$\phi (m) = \\# \{ a: 1 \le a \le m \ and \ \gcd(a, m) = 1 \}$
+$\phi (m) = \\# \\{ a: 1 \le a \le m \ and \ \gcd(a, m) = 1 \\}$
 
 e.g.
 
@@ -126,6 +126,8 @@ e.g.
 | $10$  |    $4$     |    $\{1, 3, 7, 9\}$    |
 
 
+<br>
+
 # Phi Function Formulas
 
 (a) If $p$ is a prime and $k \ge 1$, then      
@@ -138,6 +140,7 @@ $$
 (b) If $\gcd (m, n) = 1$, then $\phi(mn) = \phi(m) \phi(n)$  
 
 
+<br>
 
 # Chinese Remainder Theorem
 
@@ -149,3 +152,12 @@ x \equiv b \pmod m \ \ \ \ and \ \ \ \ x \equiv c \pmod n
 $$
 
 have exactly one solution with $0 \le x \le mn$.  
+
+In general, let $m_1, m_2, ..., m_r$ be integers satisfying $\gcd(m_1, m_2, ..., m_r) = 1$, and let $a_1, a_2, ..., a_r$ be any integers.  
+Then the simultaneous congruences  
+
+$$
+x \equiv a_1 \pmod {m_1}, \ \ \ x \equiv a_2 \pmod {m_2}, \ \ \ ..., \ \ \ x \equiv a_r \pmod {m_r}
+$$
+
+have exactly one solution with $0 \le x \le \prod_{i=1}^{r} m$
