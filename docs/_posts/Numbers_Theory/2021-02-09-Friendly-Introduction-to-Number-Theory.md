@@ -161,3 +161,58 @@ x \equiv a_1 \pmod {m_1}, \ \ \ x \equiv a_2 \pmod {m_2}, \ \ \ ..., \ \ \ x \eq
 $$
 
 have exactly one solution with $0 \le x \le \prod_{i=1}^{r} m$
+
+<br>
+
+# Infinitely Many Primes Theorem
+
+There are infinitely many prime numbers.  
+
+<br>
+
+# Primes 3 (Mod 4) Theorem
+
+There are infinitely many primes that are congruent to 3 module 4.  
+
+
+# Dirichlet's Theorem on Primes in Arithmetic Progresions
+
+Let $a$ and $m$ be integers with $\gcd(a, m) = 1$.  
+Then there are infinitely many primes that are congruent to $a$ module $m$.  
+That is, there are infinitely many prime numbers $p$  satisfying  
+
+$$
+p \equiv a \pmod m
+$$
+
+
+<br>
+
+# Legendre's formula
+
+For any prime number $p$ and any positive integer $n$, let $\nu_p (n)$ be the exponent of the largest power of $p$ that divides $n$.  
+Then  
+
+$$
+\nu_p (n!) = \sum_{i=1}^{\infin} \left \lfloor \frac{n}{p^i} \right \rfloor
+$$
+
+e.g.  
+
+$$
+\nu_2(6!) = \sum_{i=1}^{\infin} \left \lfloor \frac{6}{2^i} \right \rfloor
+= \left \lfloor \frac{6}{2} \right \rfloor + \left \lfloor \frac{6}{4} \right \rfloor
+= 3 + 1 = 4
+$$
+
+$$
+\nu_3(6!) = \sum_{i=1}^{\infin} \left \lfloor \frac{6}{3^i} \right \rfloor
+= \left \lfloor \frac{6}{3} \right \rfloor = 2
+$$
+
+$$
+\nu_5{6!} = \sum_{i=1}^{\infin} \left \lfloor \frac{6}{5} \right \rfloor
+= \left \lfloor \frac{6}{5} \right \rfloor = 1
+$$
+
+![legendre's formula example]({{site.url}}{{site.baseurl}}/assets/Friendly_Introduction_to_Number_Theory_images/legendres_formula_example.png)

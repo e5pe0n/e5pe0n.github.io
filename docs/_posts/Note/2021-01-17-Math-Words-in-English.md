@@ -67,7 +67,7 @@ $$
 - equational reasoning (`=` での式展開)
   - e.g. $(x + a)(x + b) = (x + a)x + (x + a)b = x^2 + ax + bx + ab = x^2 + (a + b)x + ab$
 - 合同: congruence
-- 合同な: congruent
+- A と合同な: congruent to A
   - $m$ を法として $a$ は $b$ と合同である
   - We say that $a$ is congruent to $b$ modulo $m$, and we write $a \equiv b \pmod m$.  
 - 法: modulus
@@ -146,7 +146,8 @@ There is only one such factorization (aside from rearranging the factors)
   - To recapitulate, We have shown that if Assertion 1 is true for all numbers less than or equal to $N$, then it is true for $N + 1$
 - 円周: circumference
 - 直径: diameter
-
+- 楕円: ellipse
+- ellipsis (イリプシス): 省略，省略記号 (-, ...)
 
 # Set
 
