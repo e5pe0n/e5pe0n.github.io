@@ -12,8 +12,8 @@ last-modified-at: 2021-01-17
 - 適切な: appropreate
 - 数 A が数 B を上回る: go above
   - at which x goes above 128
-- 分子: numerator
-- 分母: denominator
+- 分子: n**u**merator (ニュームレイター)
+- 分母: d**e**nominator (ディノミネイター)
 - 商: quotient
 - 剰余: remainder
   - 余りをとる: taking the remainder
@@ -33,6 +33,7 @@ last-modified-at: 2021-01-17
 - 代入する: substitute
   - Substitute the second equation into the first.
   - 2 つ目の方程式を 1 つ目に代入
+- 有理数: rational
 - 合成数: composite number
 - 既約，(互いに)素: primitive
 - 約分: normalization
@@ -75,8 +76,10 @@ $$
   - base case: n = 0
   - induction case: n = k + 1
 - 背理法: Proof by Contradiction
+- 反例: counterexample
 - 仮説: hypothesis
 - 命題: proposition
+- 数学的命題: mathematical statement
 - トートロジー: tautology
 - 含意; $\supset$ or $\implies$: implication
   - implies; if ... then
@@ -104,6 +107,7 @@ $$
   - Trivial ring: defined on a singleton set
   - $y(x) = 0$ is the trivial solution of $y' = y$  where $y = y(x)$
 - lemma: 補題 (auxiliary theorem)
+- 系: corollary
 - 予想: conjecture
   - The Modularity Conjecture
   - モジュラー性予想
@@ -142,3 +146,28 @@ There is only one such factorization (aside from rearranging the factors)
   - To recapitulate, We have shown that if Assertion 1 is true for all numbers less than or equal to $N$, then it is true for $N + 1$
 - 円周: circumference
 - 直径: diameter
+
+
+# Set
+
+- 冪集合: power set
+- Cartesian 積 (Cartesian product) = 直積 (cross product): $A \times B$
+  - when $A = \{1, 2\}$ and $B = \{ x, y, z \}$, $A \times B = \{ (1, x), (1, y), (1, z), (2, x), (2, y), (2, z) \}$
+
+- 写像: mapping
+- 定義域: domain
+- 値域: range
+- 上への関数: onto
+
+- k 個の引数をもつ関数: k-ary function
+- k 項関係: k-ary relation
+  - 2 項関係: binary relation
+- 同値関係: equivalence relation
+  - 反射律: reflexive
+  - 対称律: symmetric
+  - 推移律: transitive
+
+# Others
+
+- k 個組: k-tuple
+  - 2個組 (対): pair

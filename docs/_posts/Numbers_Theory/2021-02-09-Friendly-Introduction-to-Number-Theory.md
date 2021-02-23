@@ -108,7 +108,7 @@ $$
 
 ## Euler's phi function
 
-$\phi (m) = \# \{ a: 1 \le a \le m \ and \ \gcd(a, m) = 1 \}$
+$\phi (m) = \\# \{ a: 1 \le a \le m \ and \ \gcd(a, m) = 1 \}$
 
 e.g.
 

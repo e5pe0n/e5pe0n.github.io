@@ -103,3 +103,12 @@ def withPrintWriter(fiie: File, op: PrintWriter => Unit) = {  // API function
 
 - modifier: 修飾子
   - `override`, `abstract`, `private`, etc.
+- further
+  - traits further to the right take effect first. in the below case, Increment is prior to Filtering.  
+    - `new BasicIntQueue with Increment with Filtering`
+- inherit from A: A を継承する
+  - class *Cat* inherits from *Animal*
+    - `class Cat extends Animal`
+- augment: 増大する，拡大する
+  - access modifiers in Scala can be augmented with *qualifier*s.
+- vice versa: 逆もしかり
