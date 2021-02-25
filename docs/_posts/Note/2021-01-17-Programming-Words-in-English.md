@@ -115,3 +115,8 @@ def withPrintWriter(fiie: File, op: PrintWriter => Unit) = {  // API function
 - Let's say: 例えば
   - What if, Let's suppose
   - Let's say this does not work. Do you have a backup plan?
+- nothing else but: 他ならない
+  - the association `op -> i` is nothing else but the pair `(op, i)`
+- precendence: 優先順位
+  - the multiplication operator `*` takes \[has\] precendence over the addtion operator `+`.  
+  - 最も優先の場合は `over` じゃなくて `of <他のもの>`
