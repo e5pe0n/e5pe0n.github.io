@@ -160,7 +160,7 @@ $$
 x \equiv a_1 \pmod {m_1}, \ \ \ x \equiv a_2 \pmod {m_2}, \ \ \ ..., \ \ \ x \equiv a_r \pmod {m_r}
 $$
 
-have exactly one solution with $0 \le x \le \prod_{i=1}^{r} m$
+have exactly one solution with $0 \le x \le \prod_{i=1}^{r} m_i$
 
 <br>
 
@@ -174,6 +174,7 @@ There are infinitely many prime numbers.
 
 There are infinitely many primes that are congruent to 3 module 4.  
 
+<br>
 
 # Dirichlet's Theorem on Primes in Arithmetic Progresions
 

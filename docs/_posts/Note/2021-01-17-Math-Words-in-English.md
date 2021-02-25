@@ -144,6 +144,8 @@ There is only one such factorization (aside from rearranging the factors)
 - わかる（観測する）: observe
 - to recapitulate (recap**i**tulate):（今まで述べてきたことを）まとめると，要約すると
   - To recapitulate, We have shown that if Assertion 1 is true for all numbers less than or equal to $N$, then it is true for $N + 1$
+- ネイピア数: Napier's constant
+- 円周率: pi
 - 円周: circumference
 - 直径: diameter
 - 楕円: ellipse

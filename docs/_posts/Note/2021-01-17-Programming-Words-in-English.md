@@ -112,3 +112,6 @@ def withPrintWriter(fiie: File, op: PrintWriter => Unit) = {  // API function
 - augment: 増大する，拡大する
   - access modifiers in Scala can be augmented with *qualifier*s.
 - vice versa: 逆もしかり
+- Let's say: 例えば
+  - What if, Let's suppose
+  - Let's say this does not work. Do you have a backup plan?
