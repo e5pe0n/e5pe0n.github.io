@@ -4,7 +4,7 @@ categories:
   - Note
 tags:
   - Programming
-last-modified-at: 2021-01-17
+last-modified-at: 2021-02-26
 ---
 
 - 命令型言語: imperative language
@@ -120,3 +120,23 @@ def withPrintWriter(fiie: File, op: PrintWriter => Unit) = {  // API function
 - precendence: 優先順位
   - the multiplication operator `*` takes \[has\] precendence over the addtion operator `+`.  
   - 最も優先の場合は `over` じゃなくて `of <他のもの>`
+- intermediate: 途中の
+  - an intermediate result of the computation
+- disambiguate: 曖昧さを回避する
+  - to disambiguate, a space should be added on each side to the layout of the nested fraction `a / b`.  
+- unambiguous: 曖昧じゃない
+   - the layout becomes unambiguous.  
+- as is: そのまま
+  - `nullSafeStr` function returns an empty string if null is passed; otherwise the argument string is returned as is.  
+- homogeneous
+  - Like arrays, lists are *homogeneous*: the elements of a list all have the same type.
+- the divide and conquer principle: 分割統治法
+- interplay: 相互作用
+- predicate: 断定する
+  - The operation `xs filter p` takes as operands a list `xs` of type `List[T]` and a predicate function `p` of type `T => Boolean`.  
+- partition: there are both noun and verb
+- be apart: 離れた
+  - `range(from, until, step)` yield list elements that are *step* values apart, starting at *from*.  
+- drawback: 障害，じゃま，欠点
+- as yet: 今のところまだ
+  - I don't know what it is as yet.
