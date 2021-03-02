@@ -26,6 +26,8 @@ val mapped = (List(10, 20) zip List(3, 4, 5)).map { case (x, y) => x * y }
 val lazyMapped = (List(10, 20) lazyZip List(3, 4, 5)).map(_ * _)
 ```
 
+<br>
+
 # Nothing, Null, None, and Nil
 
 ## Nothing
