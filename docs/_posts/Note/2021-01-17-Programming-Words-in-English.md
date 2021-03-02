@@ -4,7 +4,7 @@ categories:
   - Note
 tags:
   - Programming
-last-modified-at: 2021-02-26
+last-modified-at: 2021-03-02
 ---
 
 - 命令型言語: imperative language
@@ -147,3 +147,4 @@ def withPrintWriter(fiie: File, op: PrintWriter => Unit) = {  // API function
   - if *Keyed* is purely functional, then so is *MemoKeyed*.  
 - set A to B: A に B をセットする
   - the *and-gate* sets its output to the conjunction of its inputs.  
+- ならし計算量: amortized complexity

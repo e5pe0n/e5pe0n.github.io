@@ -4,7 +4,7 @@ categories:
   - Note
 tags:
   - Math
-last-modified-at: 2021-01-17
+last-modified-at: 2021-03-02
 ---
 
 - （式や性質が）成り立つ: hold
@@ -158,6 +158,29 @@ There is only one such factorization (aside from rearranging the factors)
 # Calculus
 
 - $\lim_{x \to \infty} \frac{E(x)}{x}$: the limit, as $x$ goes to infinity, of $E(x) / x$ is equal to $1 / 2$.  
+
+<br>
+
+# Analysis
+
+- asymptote
+  - In analytic geometry, an asymptote (/ˈæsɪmptoʊt/) of a curve is a line such that the distance between the curve and the line approaches zero as one or both of the x or y coordinates tends to infinity.
+- asymptotic analysis
+
+Formally, given functions $f(x)$ and $g(x)$, we define a binary relation
+  
+$$
+f(x) \sim g(x) \ \ (as \ x \to \infty)
+$$
+
+if and only if 
+
+$$
+\lim_{x \to \infty} \frac{f(x)}{g(x)} = 1
+$$
+   
+
+<br>
 
 # Set
 
