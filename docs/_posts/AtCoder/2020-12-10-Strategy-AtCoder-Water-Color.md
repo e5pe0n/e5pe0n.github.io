@@ -23,7 +23,8 @@ last_modified_at: 2021-02-21
 [ABC174 E - Logs](https://atcoder.jp/contests/abc174/tasks/abc174_e)
 [ABC109 B - log](https://atcoder.jp/contests/arc109/tasks/arc109_b)  
 [ABC157 E - Simple String Queries](https://atcoder.jp/contests/abc157/tasks/abc157_e)  
-[ABC153 F - Silver Fox vs Monster](https://atcoder.jp/contests/abc153/tasks/abc153_f)
+[ABC153 F - Silver Fox vs Monster](https://atcoder.jp/contests/abc153/tasks/abc153_f)  
+[Indeed なう (予選 A) C - 説明会](https://atcoder.jp/contests/indeednow-quala/tasks/indeednow_2015_quala_3)  
 
 
 ## 貪欲法
@@ -154,6 +155,10 @@ N が小さいときはビット全探索で総当たり
 
 
 # グラフ
+
+## Graph Theory
+
+[AGC032 B - Balanced Neighbors](https://atcoder.jp/contests/agc032/tasks/agc032_b)    
 
 ## Union-Find Tree
 

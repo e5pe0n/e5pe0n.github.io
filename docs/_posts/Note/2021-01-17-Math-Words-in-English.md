@@ -150,6 +150,14 @@ There is only one such factorization (aside from rearranging the factors)
 - 直径: diameter
 - 楕円: ellipse
 - ellipsis (イリプシス): 省略，省略記号 (-, ...)
+- quite a few: かなりの，相当数の
+- quite a lot: とても多く（の）
+
+- $ln(x)$: the natural logarithm of $x$ i.e. the logarithm of $x$ to the base $e$
+
+# Calculus
+
+- $\lim_{x \to \infty} \frac{E(x)}{x}$: the limit, as $x$ goes to infinity, of $E(x) / x$ is equal to $1 / 2$.  
 
 # Set
 
@@ -174,3 +182,4 @@ There is only one such factorization (aside from rearranging the factors)
 
 - k 個組: k-tuple
   - 2個組 (対): pair
+- proposition: A proposition is a theorem of lesser importance.  

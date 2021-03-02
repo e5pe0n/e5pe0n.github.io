@@ -140,3 +140,10 @@ def withPrintWriter(fiie: File, op: PrintWriter => Unit) = {  // API function
 - drawback: 障害，じゃま，欠点
 - as yet: 今のところまだ
   - I don't know what it is as yet.
+- go hand in hand: 伴う
+  - Mutation and $var$s usually go hand in hand.  
+- provided that A: ただし A ならば，A という条件で (stronger than *if*)
+- so is A: A もそう
+  - if *Keyed* is purely functional, then so is *MemoKeyed*.  
+- set A to B: A に B をセットする
+  - the *and-gate* sets its output to the conjunction of its inputs.  

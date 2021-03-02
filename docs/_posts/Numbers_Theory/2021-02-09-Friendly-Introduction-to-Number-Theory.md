@@ -217,3 +217,74 @@ $$
 $$
 
 ![legendre's formula example]({{site.url}}{{site.baseurl}}/assets/Friendly_Introduction_to_Number_Theory_images/legendres_formula_example.png)
+
+
+<br>
+
+# The Prime Number Theorem
+
+When $x$ is large, the number of primes less than $x$ is approximately equal to $x / ln(x)$.  
+In other words,  
+
+$$
+\lim_{x \to \infty} \frac{\pi (x)}{x / \ln (x)} = 1
+$$  
+
+
+<br>
+
+# Goldbach's Conjecture
+
+Every even number $n \ge 4$ is a sum of two primes.  
+
+e.g. 
+
+- 4 = 2 + 2
+- 6 = 3 + 3
+- 8 = 3 + 5
+- 10 = 3 + 7
+
+<br>
+
+# The Twin Primes Conjecture
+
+There are infinitely many prime numbers $p$ such that $p + 2$ is also prime.  
+
+e.g.  (3, 5), (5, 7), (11, 13), (17, 19), (29, 31), (41, 43), ...   
+
+
+<br>
+
+# The $N^2 + 1$ Conjecture
+
+There are infinitely many primes of the form $N^2 + 1$
+
+
+<br>
+
+# Geometric Series Formula
+
+$$
+x^n - 1 = (x - 1)(x^{n - 1} + x^{n - 2} + \cdots + x^2 + x + 1)
+$$
+
+
+<br>
+
+# Mersenne Primes
+
+If $a^n - 1$ is prime for some numbers $a \ge 2$ and $n \ge 2$, then $a$ must equal $2$ and $n$ must be a prime.  
+
+<br>
+
+# Fermat Primes
+
+primes satisfy $F_k = 2^{2^k} + 1$.  
+
+<br>
+
+# Euclid's Perfect Number Formula 
+
+If $2^p - 1$ is a prime number, then $2^{p - 1}(2^p - 1)$ is a perfect number.  
+
+<br>
