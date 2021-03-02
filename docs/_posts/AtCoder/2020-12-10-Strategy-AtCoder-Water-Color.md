@@ -162,6 +162,7 @@ N が小さいときはビット全探索で総当たり
 
 ## Union-Find Tree
 
+[ARC106 C - Values](https://atcoder.jp/contests/arc106/tasks/arc106_b)  
 [ABC177 D - Friends](https://atcoder.jp/contests/abc177/tasks/abc177_d)  
 [ABC157 D - Friend Suggestions](https://atcoder.jp/contests/abc157/tasks/abc157_d)  
 
