@@ -26,7 +26,38 @@ val mapped = (List(10, 20) zip List(3, 4, 5)).map { case (x, y) => x * y }
 val lazyMapped = (List(10, 20) lazyZip List(3, 4, 5)).map(_ * _)
 ```
 
+## filter vs withFilter
+
+*withFilter* returns *FilterMonadic* instead of a collection to avoid creating an extra intermediate data.    
+*for* loop with *yield* is translated to a code using *withFilter*.  
+
+```scala
+case class Person(name: String, isMale: Boolean, children: Person*)
+
+val lara = Person("Lara", false)
+val bob = Person("Bob", true)
+val julie = Person("Julie", false, lara, bob)
+val persons = List(lara, bob, julie)
+
+val motherAndChilds = persons filter (p => !p.isMale) flatMap (p =>
+  (p.children map (c => (p.name, c.name)))
+)
+println(motherAndChilds) // List((Julie,Lara), (Julie,Bob))
+
+// withFilter does not make an intermediate data
+val motherAndChilds2 = persons withFilter (p => !p.isMale) flatMap (p =>
+  (p.children map (c => (p.name, c.name)))
+)
+println(motherAndChilds2) // List((Julie,Lara), (Julie,Bob))
+
+// translated to the above withFilter version
+val motherAndChilds3 =
+  for (p <- persons; if !p.isMale; c <- p.children) yield (p.name, c.name)
+println(motherAndChilds3)
+```
+
 <br>
+
 
 # Nothing, Null, None, and Nil
 

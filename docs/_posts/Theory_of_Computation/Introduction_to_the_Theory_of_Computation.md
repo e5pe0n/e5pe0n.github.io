@@ -5,11 +5,11 @@ categories:
 tags:
   - Programming
   - Theory of Computation
-last-modified-at: 2021-02-25
+last-modified-at: 2021-03-13
 ---
 
 
-# Regualr Expression
+# Regualr Expressions
 
 *Regular expression* is translated to "正規表現", but *expression* means "式" rather than "表現".  
 An expression ("式") evaluates to a value.  
@@ -25,3 +25,19 @@ This means an arithmetic expression evaluates to a number as a value.
 $(0 \cup 1) 0^*$ evaluates to a value, $\{ 0, 1, 00, 10, 000, 1000, \dots \}$.  
 This means a regular expression evaluates to a **language** as a value.  
 
+
+## Applications
+
+- commands
+  - *awk*, *grep*
+- a part of compiler
+  - *lexical analyzer* （字句解析）
+
+<br>
+
+# Context-Free Grammers
+
+## Application
+
+- a part of compiler
+  - *parser*

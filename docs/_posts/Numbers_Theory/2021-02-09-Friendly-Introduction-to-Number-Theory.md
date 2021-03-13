@@ -288,3 +288,32 @@ primes satisfy $F_k = 2^{2^k} + 1$.
 If $2^p - 1$ is a prime number, then $2^{p - 1}(2^p - 1)$ is a perfect number.  
 
 <br>
+
+# Euler's Perfect Number Theorem
+
+If $n$ is an even perfect number, then $n$ looks like  
+
+$$
+n = 2^{p - 1}(2^p - 1)
+$$  
+
+where $2^p - 1$ is a *Mersenne prime*.  
+
+<br>
+
+# Sigma Function Formulas  
+
+(a) If $p$ is a prime and $k \ge 1$, then   
+
+$$
+\sigma(p^k) = 1 + p + p^2 + \cdots + p^k = \frac{p^{k + 1} - 1}{p - 1}
+$$
+
+
+(b) If $\gcd(m, n) = 1$, then  
+
+$$
+\sigma(mn) = \sigma(m) \sigma(n)
+$$
+
+<br>

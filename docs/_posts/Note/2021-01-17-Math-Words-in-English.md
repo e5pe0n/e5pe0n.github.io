@@ -150,6 +150,7 @@ There is only one such factorization (aside from rearranging the factors)
 - 直径: diameter
 - 楕円: ellipse
 - ellipsis (イリプシス): 省略，省略記号 (-, ...)
+  - ellipses: plural
 - quite a few: かなりの，相当数の
 - quite a lot: とても多く（の）
 
@@ -201,8 +202,19 @@ $$
   - 対称律: symmetric
   - 推移律: transitive
 
+
+# Mathmatical Logic
+
+- contradiction: 矛盾
+  - proof by contradiction: 背理法
+- absurdity: 不合理，矛盾
+  - $0 \ge 1$ is an absurdity
+- proposition: A proposition is a theorem of lesser importance.  
+
+<br>
+
 # Others
 
 - k 個組: k-tuple
   - 2個組 (対): pair
-- proposition: A proposition is a theorem of lesser importance.  
+

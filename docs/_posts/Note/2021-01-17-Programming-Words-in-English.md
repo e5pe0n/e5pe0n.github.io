@@ -148,3 +148,16 @@ def withPrintWriter(fiie: File, op: PrintWriter => Unit) = {  // API function
 - set A to B: A に B をセットする
   - the *and-gate* sets its output to the conjunction of its inputs.  
 - ならし計算量: amortized complexity
+- refinement: 改善，改良
+  - make further refinement to A: A に改良を加える
+- covariant
+  - If `S` is a subtype of type `T`, then `Queue[S]` is a subtype of `Queue[T]`. That means Queue is *covariant*.  
+- contravariant
+  - the opposite of *covariant*
+  - If `T` is a **subtype** of type `S`, then `Queue[S]` is a **subtype** of `Queue[T]`.  
+- give rise to A
+  - A (悪いこと) を起こす，生じさせる
+- conform to \[with\]: <物事が>（形・性質などにおいて）（...と）一致する，同じである
+  - conform to the pattern: パターン通りになる
+- d**e**signate（デジグネイト）: 指示する，指定する，指名する
+  
