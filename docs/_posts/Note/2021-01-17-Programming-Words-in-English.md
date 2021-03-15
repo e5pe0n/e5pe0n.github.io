@@ -160,4 +160,10 @@ def withPrintWriter(fiie: File, op: PrintWriter => Unit) = {  // API function
 - conform to \[with\]: <物事が>（形・性質などにおいて）（...と）一致する，同じである
   - conform to the pattern: パターン通りになる
 - d**e**signate（デジグネイト）: 指示する，指定する，指名する
-  
+- 異なる時刻に: at different points in time
+  - Accessing the same immutable collection value repeatedly at different points in time will always yield a collection with the same elements.  
+- predicate
+  - `xs filter p`: The collection consisting of those elements of *xs* that satisfy the predicate *p*.  
+- discriminator \[function\]
+- reduce A to B
+  - `xs.groupMap(f)(g)(h)`: Partitions *xs* into a map of collections according to a **discriminator function** *f*, and applies the transformation function *g* to every element of each collection, and **reduces each collection to a single value** by combining their elements with *h* function.  
