@@ -113,6 +113,21 @@ val motherAndChilds3 =
 println(motherAndChilds3)
 ```
 
+## *View*s
+
+*view* method converts the collection to another collection evaluated lazily, so we can avoid to create unecessary intermediate data.  
+
+```scala
+val v = Vector(1 to 10: _*)
+println(v)
+
+val v2 = v map (_ + 1) map (_ * 2) // creates intermediate vectors, which is waste
+println(v2) // Vector(4, 6, 8, 10, 12, 14, 16, 18, 20, 22)
+
+val v3 = (v.view map (_ + 1) map (_ * 2)).to(Vector) // not creates intermediate vectors
+println(v3) // Vector(4, 6, 8, 10, 12, 14, 16, 18, 20, 22)
+```
+
 <br>
 
 # *for* expressions and loops
@@ -325,3 +340,70 @@ println(m contains 2) // false
 removes entries which are not refered by any others from the map.  
 Main application is caching.  
 
+
+<br>
+
+# *Array*
+
+Scala arrays correspond one-to-one to Java arrays, such as *Array[Int]* and *int[]*, *Array[Double]* and *double[]*, or so.  
+also all sequence methods are available.  
+
+<br>
+
+# *String*
+
+All sequence methods are available.  
+
+<br>
+
+
+# *IterableOnce*
+
+![iterableOnce]({{ site.url }}{{site.baseurl}}/assets/Scala_images/iterableOnce.png
+
+## *Iterator*
+
+Use *Iterator* if you never access an iterator again after invoking a method on it.  
+
+See p.626 for available methods.  
+
+```scala
+def mkIt = Iterator("a", "number", "of", "words")
+
+val it = mkIt
+for (i <- it) println(i)
+// println(it.next()) // Exception in thread "main" java.util.NoSuchElementException: next on empty iterator
+
+val it2 = mkIt
+val it2WithMap = it2.map(_.length)
+println(it2WithMap.hasNext) // true
+it2WithMap foreach println // 1 6 2 5
+println(it2WithMap.hasNext) // false
+
+val it3 = mkIt
+val it3WithDropWhile = it3 dropWhile (_.length < 2)
+println(it3WithDropWhile.next()) // number
+
+val (it4_1, it4_2) =
+  mkIt.duplicate // it4_1 and it4_2 are independent each otehr
+```
+
+## *BufferedIterator*
+
+has *head* method to look at the next value without advancing the iterator.  
+
+```scala
+def skipEmptyWordsNOT(it: Iterator[String]) = while (it.next().isEmpty) {}
+// skip the first string even if it is not empty.
+
+def skipEmptyWords(it: BufferedIterator[String]) =
+  while (it.head.isEmpty) { it.next() }
+
+val it = Iterator(1, 2, 3, 4)
+val bit: BufferedIterator[Int] = it.buffered
+println(bit.head) // 1
+println(bit.next()) // 1
+println(bit.next()) // 2
+```
+
+<br>

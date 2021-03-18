@@ -523,6 +523,36 @@ def extgcd(a, b, x, y):
     return d
 ```
 
+## Inverse of $x$ modulo $m$
+
+Compute $x^{-1}$ where $x \cdot x^{-1} \equiv 1 \pmod m$.  
+$\gcd(x, m) = 1$ is required.  
+
+
+```cpp
+ll extgcd(ll a, ll b, ll &u, ll &v) {
+  ll d = a;
+  if (b != 0) {
+    d = extgcd(b, a % b, v, u);
+    v -= (a / b) * u;
+  } else
+    u = 1, v = 0;
+  return d;
+}
+
+ll pos(ll x, ll m) {
+  x %= m;
+  return (x + m) % m;
+}
+
+ll mod_inv(ll x, ll m) {
+  // returns the inverse of x molulo m
+  ll u, v;
+  extgcd(x, m, u, v);
+  return pos(u, m);
+}
+```
+
 e.g.  
 
 Determine $x$ to satisfy $A x \equiv B \mod M$ by determining $A^{-1}$ (inverse of $A$ modulo $M$).  
@@ -599,6 +629,76 @@ print(x)  # 4
 
 
 <br>
+
+# Eular's phi
+
+```cpp
+map<ll, ll> prime_factorize(ll n) {
+  map<ll, ll> res;
+  for (ll i = 2; i * i <= n; ++i) {
+    while (n % i == 0) {
+      ++res[i];
+      n /= i;
+    }
+  }
+  if (n > 1) res[n] = 1;
+  return res;
+}
+
+ll phi(ll n) {
+  map<ll, ll> ps = prime_factorize(n);
+  ll res = n;
+  for (auto p : ps) {
+    res = res / p.first * (p.first - 1);
+  }
+  return res;
+}
+```
+
+<br>
+
+# Sigma (sum of divisors)
+
+```cpp
+map<ll, ll> prime_factorize(ll n) {
+  map<ll, ll> res;
+  for (ll i = 2; i * i <= n; ++i) {
+    while (n % i == 0) {
+      ++res[i];
+      n /= i;
+    }
+  }
+  if (n > 1) res[n] = 1;
+  return res;
+}
+
+ll _pow(ll x, ll n) {
+  ll res = 1;
+  while (n > 0) {
+    if (n & 1) res *= x;
+    x *= x;
+    n >>= 1;
+  }
+  return res;
+}
+
+ll sigma_p(ll p, ll k) {
+  return ((ll)_pow(p, k + 1) - 1) / (p - 1);
+}
+
+ll sigma(ll n) {
+  map<ll, ll> ps = prime_factorize(n);
+  ll res = 1;
+  for (auto p : ps) {
+    res *= sigma_p(p.first, p.second);
+  }
+  return res;
+}
+```
+
+
+<br>
+
 
 # Enumerating
 

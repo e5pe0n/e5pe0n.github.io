@@ -317,3 +317,87 @@ $$
 $$
 
 <br>
+
+
+# Successive Squaring to Compute $a^k \pmod m$
+
+The following steps compute the value of $a^k \pmod m$.  
+
+## Step 1
+
+Write $k$ as a sum of powers of 2.  
+
+$$
+k = u_0 + u_1 \cdot 2 + u_2 \cdot 2^2 + u_3 \cdot 2^3 + \cdots + u_r \cdot 2^r,  
+$$
+
+where each $u_i$ is either 0 or 1.  (This is called the *binary expansion of k*)  
+
+## Step 2
+
+Make a table of powers of a modulo $m$ using successive squaring.  
+
+$$
+a^1 \equiv A_0 \pmod m \\
+a^2 \equiv (a^1)^2 \equiv A_0^2 \equiv A_1 \pmod m \\
+a^4 \equiv (a^2)^2 \equiv A_1^2 \equiv A_2 \pmod m \\
+a^8 \equiv (a^4)^2 \equiv A_2^2 \equiv A_3 \pmod m \\
+\vdots  \\
+a^{2^r} \equiv (a^{2^{r - 1}})^2 \equiv A_{r - 1}^2 \equiv A_r \pmod m
+$$
+
+Because  
+
+$$
+a^k = a^{u_0 + u_1 \cdot 2 + u_2 \cdot 2^2 + u_3 \cdot 2^3 + \cdots + u_r \cdot 2^r} \\
+= a^{u_0} \cdot (a^2)^{u_1} \cdot (a^{2^2})^{u_2} \cdots (a^{2^r})^{u_r} \\
+= A_0^{u_0} \cdot A_1^{u_1} \cdot A_2^{u_2} \cdots A_r^{u_r} \pmod m
+$$
+
+
+<br>
+
+# How to Compute $k^{th}$ Roots Molulo $m$
+
+Let $b$, $k$ and $m$ be geven integers that satisfy  
+
+$$
+\gcd (b, m) = 1 \ \ \ and \ \ \ \gcd (k, \phi(m)) = 1
+$$
+
+The following steps give a solution to the congruence  
+
+$$
+x^k \equiv b \pmod m
+$$
+
+## 1.
+
+Compute $\phi(m)$
+
+## 2.
+
+Find positive integers $u$ and $v$ that satisfy $ku - \phi(m)v = 1$ (The solutions $u$ and $v$ exist because $\gcd(k, \phi(m)) = 1$).  
+Another way to say that is that $u$ is a positive integers satisfying $ku \equiv 1 \pmod {\phi(m)}$, so **$u$ is the inverse of $k$ modulo $\phi(m)$**.  
+
+## 3.
+
+Compute $b^u \pmod m$ by *successive squaring*.  
+The value obtained gives the solution $x$.  
+Because  
+
+$$
+b^u = (x^k)^u = x^{ku} = x^{1 + \phi(m)v} = x \cdot (x^{\phi(m)})^v \\
+= x \pmod m \ \ \ (\because Euler's formula; if \gcd(x, m) = 1, x^{\phi(m)} \equiv 1 \pmod m)
+$$
+
+Checking the solution      
+
+$$
+x^k = (b^u)^k = b^{ku} = b^{1 + \phi(m)v} = b \cdot (b^{\phi(m)})^v \\
+= b \pmod m \ \ \ (\because Euler's formula; if \gcd(b, m) = 1, b^{\phi(m)} \equiv 1 \pmod m)
+$$
+
+### Note:
+
+$\gcd(x, m) = 1$ is equivalent to $\gcd(b, m) = 1$ since $x = b^k$.  
