@@ -1,5 +1,5 @@
 ---
-title: Basic Usage for Algorithm
+title: Basic Usage for Algorithms
 categories:
   - Note
 tags:
