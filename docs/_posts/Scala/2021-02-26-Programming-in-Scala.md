@@ -5,8 +5,66 @@ categories:
 tags:
   - Programming
   - Scala
-last-modified-at: 2021-02-26
+last-modified-at: 2021-03-22
 ---
+
+# Import
+
+```scala
+import Fruits._ // import any classes or functions
+import Fruits.{Apple, Orange} // import only Apple and Orange
+import Fruits.{Apple => MacIntosh} // import only Apple as MacIntosh
+```
+
+<br>
+
+# Accecibility
+
+## private
+
+visible only inside the class or object that contains the member definition.  
+This applies also for inner classes.  
+
+```scala
+class Outer {
+  class Inner {
+    private def f() = {}
+    class InnerMost {
+      f() // OK
+    }
+  }
+  (new Inner).f() // NG
+}
+
+
+class C {
+  private[this] val v // access only from same object
+
+  def add(that: C) = v + C.v  // NG
+}
+```
+
+## protected
+
+only accesible from subclasses of the class in which the member is defined.  
+
+```scala
+package p {
+  class Super {
+    protected def f() = {}
+  }
+  class Sub extends Super {
+    f()
+  }
+  class Other {
+    (new Super).f() // NG
+  }
+}
+```
+
+
+
+<br>
 
 # Nothing, Null, None, and Nil
 
@@ -42,6 +100,16 @@ val lst = 1 :: 2 :: 3 :: Nil  // List(1, 2, 3)
 
 <br>
 
+# Scala Collections
+
+- Immutable or Mutable
+- Strict or Non-strict
+  - strict: eagerly evaluate the elements
+    - List, Set, etc
+  - non-strict: delay evaluation until each element is needed
+    - LazyList, View, etc
+
+<br>
 
 
 # *Iterable*
@@ -407,3 +475,437 @@ println(bit.next()) // 2
 ```
 
 <br>
+
+
+# The Architecture of Scala Collections
+
+- same-result-type principle
+  - wherever possible, a transformation operation on a collection will yield a collection of the same type.  
+
+```scala
+trait IterableOps[+A, +CC[_], +C] {
+  // A: element type
+  // CC: type constructor
+  // C: complete type
+  def filter(pred: A => Boolean): C = 
+    iterableFactory.fromSpecific(new View.Filter(this, pred))
+
+  def map[B](f: A => B): CC[B] = 
+    iterableFactory.from(new View.Map(this, f))
+
+  def iterableFactory: IterableFactory[CC]
+
+  // these methods are for decision to evaluate the source elements in either a strict or non-strict way.
+  protected def fromSpecific(source: IterableOnce[A]): C
+  protected def from[E](source: IterableOnce[E]): CC[E]
+
+  protected def newSpecificBuilder: Builder[A, C]
+}
+
+trait IterableFactory[++C[_]] {
+  def from[A](source: IterableOnce[A]): CC[A]
+
+  def newBuilder[A]: Builder[A, CC[A]]
+}
+
+
+trait List[+A] extends Iterable[A] with IterableOps[A, List, List[A]] {
+  // List is strict type  
+  def from[E](source: IterableOnce[E]): List[E] = 
+    (new ListBuffer[E] ++= source).toList
+}
+```
+
+```scala
+trait SetOps[A, +CC[_], +C] extends IterableOps[A, CC, C] 
+
+
+trait Set[A] extends Iterable[A] with SetOps[A, Set, Set[A]]
+```
+
+```scala
+trait MapOps[K, +V, +CC[_, _], +C] extends IterableOps[(K, V), Iterable, C] {
+  def map[K2, V2](f: ((K, V)) => (K2, V2)): CC[K2, V2] =
+    mapFactory.from(new View.Map(this, f))
+  
+  def mapFactory: MapFactory[CC]
+}
+
+trait MapFactory[++C[_, _]] {
+  def from[K, V](source: IterableOnce[(K, V)]): CC[K, V]
+}
+
+
+// Map[K, V] trait inherits two overloaded forms of the map operation.
+// Inherited from MapOps
+def map[K2, V2](f: ((K, V)) => (K2, V2)): Map[K2, V2]
+
+// Inherited from IterableOps
+def map[B](f: ((K, V)) => B): Iterable[B]
+```
+
+```scala
+trait SortedSetOps[A, +CC[_], +C] extends SetOps[A, Set, C] {
+  def map[B](f: A => B)(implicit ord: Ordering[B]): CC[B]
+}
+
+
+trait SortedSet[A] extends SortedSetOps[A, SortedSet, SortedSet[A]]
+
+// SortedSet[A] trait inherits two overloaded forms of the map operation.  
+// Inherited from SortedSetOps
+def map[B](f: A => B)(implicit ord: Ordering[B]): SortedSet[B]
+
+// Inherited from IterableOps, by way of SetOps
+def map[B](f: A => B): Set[B]
+```
+
+```scala
+trait View[+A] extends Iterable[A] with IterableOps[A, View, View[A]] {
+  def iterator: Iterator[A]
+}
+```
+
+```scala
+package scala.collection.mutable
+
+trait Builder[-A, +C] {
+  def addOne(elem: A): this.type
+
+  def result(): C
+
+  def clear(): Unit
+}
+```
+
+
+## Collection Implementation Examples
+
+Points to implement original collections  
+
+1. Decide whether the collection should be mutable or immutable.
+2. Pick the right base traits for the collection.
+3. Inherit from the right template trait to implement most collection operations.
+4. Overload desired operations that do not return, by default, a collection as specific as they could.
+
+### Capped Sequences
+
+```scala
+package chapter25_The_Architecture_of_Scala_Collections
+
+import scala.collection._
+
+final class Capped[A] private (
+    val capacity: Int,
+    val length: Int,
+    offset: Int,
+    elems: Array[Any]
+) extends immutable.Iterable[A]
+    with IterableOps[A, Capped, Capped[A]]
+    with StrictOptimizedIterableOps[A, Capped, Capped[A]] {
+  self =>
+
+  def this(capacity: Int) =
+    this(capacity, length = 0, offset = 0, elems = Array.ofDim(capacity))
+
+  def appended[B >: A](elem: B): Capped[B] = {
+    val newElems = Array.ofDim[Any](capacity)
+    Array.copy(elems, 0, newElems, 0, capacity)
+    val (newOffset, newLength) = {
+      if (length == capacity) {
+        newElems(offset) = elem
+        ((offset + 1) % capacity, length)
+      } else {
+        newElems(length) = elem
+        (offset, length + 1)
+      }
+    }
+    new Capped[B](capacity, newLength, newOffset, newElems)
+  }
+
+  @inline def :+[B >: A](elem: B): Capped[B] = appended(elem)
+
+  def apply(i: Int): A = elems((i + offset) % capacity).asInstanceOf[A]
+
+  def iterator: Iterator[A] = view.iterator
+
+  override def view: IndexedSeqView[A] = new IndexedSeqView[A] {
+    def length: Int = self.length
+    def apply(i: Int): A = self(i)
+  }
+
+  override def knownSize: Int = length
+
+  override def className = "Capped"
+
+  override val iterableFactory: IterableFactory[Capped] = new CappedFactory(
+    capacity
+  )
+
+  override protected def fromSpecific(coll: IterableOnce[A]): Capped[A] =
+    iterableFactory.from(coll)
+
+  override protected def newSpecificBuilder: mutable.Builder[A, Capped[A]] =
+    iterableFactory.newBuilder
+
+  override def empty: Capped[A] = iterableFactory.empty
+}
+
+class CappedFactory(capacity: Int) extends IterableFactory[Capped] {
+  def from[A](source: IterableOnce[A]): Capped[A] =
+    source match {
+      case capped: Capped[A] if capped.capacity == capacity => capped
+      case _                                                => (newBuilder[A] ++= source).result()
+    }
+
+  def empty[A]: Capped[A] = new Capped[A](capacity)
+
+  def newBuilder[A]: mutable.Builder[A, Capped[A]] =
+    new mutable.ImmutableBuilder[A, Capped[A]](empty) {
+      def addOne(elem: A): this.type = {
+        elems = elems :+ elem
+        this
+      }
+    }
+}
+```
+
+### RNA sequences
+
+```scala
+package chapter25_The_Architecture_of_Scala_Collections
+
+abstract class Base
+case object A extends Base
+case object U extends Base
+case object G extends Base
+case object C extends Base
+
+object Base {
+  val fromInt: Int => Base = Array(A, U, G, C)
+  val toInt: Base => Int = Map(A -> 0, U -> 1, G -> 2, C -> 3)
+}
+
+
+import scala.collection.{
+  AbstractIterator,
+  SpecificIterableFactory,
+  StrictOptimizedSeqOps,
+  View,
+  mutable
+}
+import scala.collection.immutable.{IndexedSeq, IndexedSeqOps}
+
+final class RNA private (
+    val groups: Array[Int],
+    val length: Int
+) extends IndexedSeq[Base]
+    with IndexedSeqOps[Base, IndexedSeq, RNA]
+    with StrictOptimizedSeqOps[Base, IndexedSeq, RNA] {
+  rna =>
+
+  import RNA._
+
+  def apply(idx: Int): Base = {
+    if (idx < 0 || length <= idx) throw new IndexOutOfBoundsException
+    Base.fromInt(groups(idx / N) >> ((idx % N) * S) & M)
+  }
+
+  override def className = "RNA"
+
+  override protected def fromSpecific(source: IterableOnce[Base]): RNA =
+    RNA.fromSpecific(source)
+
+  override protected def newSpecificBuilder: mutable.Builder[Base, RNA] =
+    RNA.newBuilder
+
+  override def empty: RNA = RNA.empty
+
+  def appended(base: Base): RNA =
+    (newSpecificBuilder ++= this += base).result()
+
+  def appendedAll(suffix: IterableOnce[Base]): RNA =
+    strictOptimizedConcat(suffix, newSpecificBuilder)
+
+  def concat(suffix: IterableOnce[Base]): RNA =
+    strictOptimizedConcat(suffix, newSpecificBuilder)
+
+  def flatMap(f: Base => IterableOnce[Base]): RNA =
+    strictOptimizedFlatMap(newSpecificBuilder, f)
+
+  def map(f: Base => Base): RNA =
+    strictOptimizedMap(newSpecificBuilder, f)
+
+  def prepended(base: Base): RNA =
+    (newSpecificBuilder += base ++= this).result()
+
+  def prependedAll(prefix: IterableOnce[Base]): RNA =
+    (newSpecificBuilder ++= prefix ++= this).result()
+
+  @inline final def ++(suffix: IterableOnce[Base]): RNA =
+    concat(suffix)
+
+  override def iterator: Iterator[Base] =
+    new AbstractIterator[Base] {
+      private var i = 0
+      private var b = 0
+      def hasNext: Boolean = i < rna.length
+      def next(): Base = {
+        b = if (i % N == 0) groups(i / N) else b >>> S
+        i += 1
+        Base.fromInt(b & M)
+      }
+    }
+}
+
+// inheriting from SpecificIterableFactory enable to apply `to` method.
+// SpecificIterableFactory difines abstract methods: `empty`, `newBuilder`, `fromSpecific`
+object RNA extends SpecificIterableFactory[Base, RNA] {
+  private val S = 2
+  private val M = (1 << S) - 1
+  private val N = 32 / S
+
+  def fromSeq(buf: collection.Seq[Base]): RNA = {
+    val groups = new Array[Int]((buf.length + N - 1) / N)
+    for (i <- 0 until buf.length)
+      groups(i / N) |= Base.toInt(buf(i)) << ((i % N) * S)
+    new RNA(groups, buf.length)
+  }
+
+  def empty: RNA = fromSeq(Seq.empty)
+
+  def newBuilder: mutable.Builder[Base, RNA] =
+    mutable.ArrayBuffer.newBuilder[Base].mapResult(fromSeq)
+
+  def fromSpecific(it: IterableOnce[Base]): RNA = it match {
+    case seq: collection.Seq[Base] => fromSeq(seq)
+    case _                         => fromSeq(mutable.ArrayBuffer.from(it))
+  }
+}
+
+object RNAMain extends App {
+  // inheriting from SpecificIterableFactory enable to apply `to` method.
+  val rna = List(U, A, G, C).to(RNA)
+  println(rna) // RNA(U, A, G, C)
+}
+```
+
+### Prefix maps
+
+```scala
+package chapter25_The_Architecture_of_Scala_Collections
+
+import scala.collection._
+import scala.language.implicitConversions
+
+class PrefixMap[A]
+    extends mutable.Map[String, A]
+    with mutable.MapOps[String, A, mutable.Map, PrefixMap[A]]
+    with StrictOptimizedIterableOps[
+      (String, A),
+      mutable.Iterable,
+      PrefixMap[A]
+    ] {
+  private var suffixes: immutable.Map[Char, PrefixMap[A]] =
+    immutable.Map.empty
+
+  private var value: Option[A] = None
+
+  def get(s: String): Option[A] =
+    if (s.isEmpty) value
+    else suffixes get (s(0)) flatMap (_.get(s substring 1))
+
+  def addOne(kv: (String, A)): this.type = {
+    withPrefix(kv._1).value = Some(kv._2)
+    this
+  }
+
+  def subtractOne(s: String): this.type = {
+    if (s.isEmpty) {
+      val prev = value
+      value = None
+      prev
+    } else suffixes get (s(0)) flatMap (_.remove(s substring 1))
+    this
+  }
+
+  def withPrefix(s: String): PrefixMap[A] =
+    if (s.isEmpty) this
+    else {
+      val leading = s(0)
+      suffixes get leading match {
+        case None => suffixes = suffixes + (leading -> empty)
+        case _    =>
+      }
+      suffixes(leading) withPrefix (s substring 1)
+    }
+
+  def iterator: Iterator[(String, A)] =
+    (for (v <- value.iterator) yield ("", v)) ++
+      (for ((chr, m) <- suffixes.iterator; (s, v) <- m.iterator)
+        yield (chr +: s, v))
+
+  override def className = "PrefixMap"
+
+  def map[B](f: ((String, A)) => (String, B)): PrefixMap[B] =
+    strictOptimizedMap(PrefixMap.newBuilder[B], f)
+
+  def flatMap[B](f: ((String, A)) => IterableOnce[(String, B)]): PrefixMap[B] =
+    strictOptimizedFlatMap(PrefixMap.newBuilder[B], f)
+
+  def concat[B >: A](suffix: Iterable[(String, B)]): PrefixMap[B] =
+    strictOptimizedConcat(suffix, PrefixMap.newBuilder[B])
+
+  override def clear(): Unit = suffixes = immutable.Map.empty
+
+  // specify PrefixMap[A] as the return type instead of mutable.Map
+  override protected def fromSpecific(
+      source: IterableOnce[(String, A)]
+  ): PrefixMap[A] = PrefixMap.from(coll)
+
+  // specify PrefixMap[A] as the return type instead of mutable.Map
+  override protected def newSpecificBuilder
+      : mutable.Builder[(String, A), PrefixMap[A]] = PrefixMap.newBuilder
+
+  override def empty: PrefixMap[A] = new PrefixMap
+}
+
+object PrefixMap {
+  def empty[A] = new PrefixMap[A]
+
+  def from[A](source: IterableOnce[(String, A)]): PrefixMap[A] =
+    source match {
+      case pm: PrefixMap[A] => pm
+      case _                => (newBuilder[A] ++= source).result()
+    }
+
+  def apply[A](kvs: (String, A)*): PrefixMap[A] = from(kvs)
+
+  def newBuilder[A]: mutable.Builder[(String, A), PrefixMap[A]] =
+    new mutable.GrowableBuilder[(String, A), PrefixMap[A]](empty)
+
+  // triggered by List("foo" -> 3).to(PrefixMap)
+  // `to` operation takes a `Factory` but the `PrefixMap` companion object does not extend `Factory` and it can not because a `Factory` fixes the type of collection elements, whereas `PrefixMap` has a polymorphic type of values.
+  implicit def toFactory[A](
+      self: this.type
+  ): Factory[(String, A), PrefixMap[A]] =
+    new Factory[(String, A), PrefixMap[A]] {
+      def fromSpecific(source: IterableOnce[(String, A)]): PrefixMap[A] =
+        self.from(source)
+      def newBuilder: mutable.Builder[(String, A), PrefixMap[A]] =
+        self.newBuilder
+    }
+}
+
+object PrefixMapMain extends App {
+  val m = PrefixMap("abc" -> 0, "abd" -> 1, "al" -> 2, "all" -> 3, "xy" -> 4)
+  println(m) // PrefixMap(abc -> 0, abd -> 1, al -> 2, all -> 3, xy -> 4)
+
+  val m2 = m withPrefix "a"
+  println(m2) // PrefixMap(bc -> 0, bd -> 1, l -> 2, ll -> 3)
+
+  m2 += "pple" -> 5
+  println(m)
+  // PrefixMap(abc -> 0, abd -> 1, al -> 2, all -> 3, apple -> 5, xy -> 4)
+}
+```
