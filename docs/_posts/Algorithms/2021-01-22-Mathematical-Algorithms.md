@@ -699,6 +699,104 @@ ll sigma(ll n) {
 
 <br>
 
+# Ternary Search
+
+to find the **minimum** value in `[left, right]`.  
+( https://atcoder.jp/contests/arc054/tasks/arc054_b )
+
+
+```cpp
+#include <bits/stdc++.h>
+using namespace std;
+typedef long long ll;
+typedef long double ld;
+
+ld P;
+const ld MIN_X = 0;
+const ld MAX_X = 1e9;
+
+ld ternary_search(const function<ld(ld)> &f, ld left, ld right, ll iter) {
+  // find the minimum value in [left, right]
+  while (iter--) {
+    ld left_third = left + (right - left) / 3;
+    ld right_third = right - (right - left) / 3;
+
+    if (f(left_third) > f(right_third))
+      left = left_third;
+    else
+      right = right_third;
+  }
+  return (right + left) / 2;
+}
+
+int main() {
+  cin >> P;
+  auto f = [](ld x) { return x + P / pow(2, x / 1.5); };
+  ld x = ternary_search(f, MIN_X, MAX_X, 500);
+  printf("%.9Lf\n", f(x));
+}
+```
+
+```python
+MIN_X = 0.0
+MAX_X = 1e9
+P = float(input())
+
+
+def ternary_search(f, left, right, itr=500):
+  for _ in range(itr):
+      left_third = left + (right - left) / 3
+      right_third = right - (right - left) / 3
+
+      if f(left_third) > f(right_third):
+          left = left_third
+      else:
+          right = right_third
+  return (left + right) / 2
+
+
+def f(x):
+    return x + P * (2**(-x/1.5))
+
+
+x = ternary_search(f, MIN_X, MAX_X)
+print(f"{f(x):.9f}")
+```
+
+to find the **maximum** value in `[left, right]`.  
+
+```cpp
+ld ternary_search(const function<ld(ld)> &f, ld left, ld right, ll iter) {
+  // find the maximum value in [left, right]
+  while (iter--) {
+    ld left_third = left + (right - left) / 3;
+    ld right_third = right - (right - left) / 3;
+
+    if (f(left_third) < f(right_third))
+      left = left_third;
+    else
+      right = right_third;
+  }
+  return (right + left) / 2;
+}
+```
+
+```python
+def ternary_search(f, left, right, itr=500):
+  # find the maximum value in [left, right]
+  for _ in range(itr):
+      left_third = left + (right - left) / 3
+      right_third = right - (right - left) / 3
+
+      if f(left_third) < f(right_third):
+          left = left_third
+      else:
+          right = right_third
+  return (left + right) / 2
+```
+
+
+<br>
 
 # Enumerating
 

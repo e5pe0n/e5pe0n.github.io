@@ -1,5 +1,5 @@
 ---
-title: "Note: Programming in Scala"
+title: "Note: Programming in Scala - 1"
 categories:
   - Note
 tags:
