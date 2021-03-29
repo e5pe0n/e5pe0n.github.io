@@ -70,7 +70,7 @@ def bigMistake() = // ...
 informs the compiler that the variable will be used by multiple thread.  
 such variables implemented so that reads and writes to the variable are slower, but accesses form multiple threads behave more predictably.  
 
-```
+```scala
 @volatile
 ```
 
@@ -84,7 +84,7 @@ to serialize it, mix in the *scala.Serializable* trait.
 @SerialVersionUID(1234)
 ```
 
-`@trasient` specifies the field that you want not to save in binary.  
+`@trasient` specifies the field that you do **not** want to save in binary.  
 The default value is assigned to the field when the object which has it is loaded.  
 
 ```scala
@@ -269,3 +269,14 @@ catalog match {
 // processing: hot dog #5
 // processing: Sprite Boy
 ```
+
+<br>
+
+# Object Equality
+
+
+`x eq y`: whether variables *x* and *y* refer to the same object.  
+`x == y`: 
+  - if *x* and *y* are value types, whether variables *x* and *y* have the same value   
+  - if *x* and *y* are reference types, compare *x* with *y* by the *equals* method
+    - *equals* method is the same `x eq y` by default but can be overridden in the class

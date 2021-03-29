@@ -168,3 +168,4 @@ def withPrintWriter(fiie: File, op: PrintWriter => Unit) = {  // API function
 - reduce A to B
   - `xs.groupMap(f)(g)(h)`: Partitions *xs* into a map of collections according to a **discriminator function** *f*, and applies the transformation function *g* to every element of each collection, and **reduces each collection to a single value** by combining their elements with *h* function.  
 - pragmatic: 実利的，実用的
+- nevertheless, nonetheless: それにもかかわらず，それでもやはり; とは言っても

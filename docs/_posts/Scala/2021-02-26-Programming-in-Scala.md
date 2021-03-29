@@ -18,7 +18,7 @@ import Fruits.{Apple => MacIntosh} // import only Apple as MacIntosh
 
 <br>
 
-# Accecibility
+# Accessibility
 
 ## private
 
@@ -38,9 +38,35 @@ class Outer {
 
 
 class C {
-  private[this] val v // access only from same object
+  private[this] val v // access only from the same object
 
   def add(that: C) = v + C.v  // NG
+}
+```
+
+```scala
+package package1
+
+private class C
+
+object M extends App {
+  private val c = new C // OK
+}
+```
+
+Already defined accessibilities cannot be more open.  
+
+```scala
+class Outer {
+  private class Inner
+  val inner = new Inner() // error!
+}
+```
+
+```scala
+class Outer {
+  private class Inner
+  private val inner = new Inner() // OK
 }
 ```
 

@@ -41,3 +41,22 @@ This means a regular expression evaluates to a **language** as a value.
 
 - a part of compiler
   - *parser*
+
+
+# 6. Decidability of Logical Theories
+
+
+## Theorem 6.17 (p.259)
+
+The sentence $\psi_{unprovable} = \neg \exists{c} \ [\phi_{S, 0}]$ is unprovable.  
+
+$\phi_{unprovable}$ is true iff $S$ does not accept 0.  
+
+### case 1.  
+If $S$ finds a proof of $\psi_{unprovable}$, $S$ must accept 0 to verify whether $\phi_{unprovable}$ is true.  
+So $\phi_{unprovable}$ is false.  
+A false statement cannot be provable so this is absurdity.  
+
+### case 2.
+If $S$ does not find a proof of $\psi_{unprovable}$, i.e. $S$ cannot verify whether $\phi_{unprovable}$ is true, that means $S$ does not accept 0.  
+Thus, we cannot verify whether $\phi_{unprovable}$ is true even if $\phi_{unprovable}$ were true.  
