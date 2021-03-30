@@ -357,7 +357,7 @@ $$
 
 <br>
 
-# How to Compute $k^{th}$ Roots Molulo $m$
+# How to Compute $k^{th}$ Roots Molulo $m$ (RSA public key cryptosystem) described in *Friendly Introduction to Number Theory*
 
 Let $b$, $k$ and $m$ be geven integers that satisfy  
 
@@ -401,3 +401,56 @@ $$
 ### Note:
 
 $\gcd(x, m) = 1$ is equivalent to $\gcd(b, m) = 1$ since $x = b^k$.  
+
+
+# RSA public key cryptosystem (probably more general version)  
+
+1. Chooses large different prime numbers $p$ and $q$.
+2. Calulates $m = pq$.  
+3. Chooses a small odd number $k$, which is relative prime to $\phi(m) = (p - 1)(q - 1)$.  
+4. Calculates $u$, which is the inverse of $k$ modulo $\phi(m)$.  
+5. Exposes the pair $P = (k, m)$ as **RSA public key**.  
+6. Conceal the pair $S = (u, m)$ as **secret key**
+
+## Encrypt
+
+To encrypt the message $M$ by the public key $P = (k, m)$, calculates  
+
+$$
+P(M) = M^k \pmod m
+$$
+
+## Decrypt
+
+To decrypt the chiper $C$ by the secret key $S = (u, m)$, calculates  
+
+$$
+S(C) = C^u \pmod m
+$$
+
+## Verification
+
+$P(S(M))$ is verification for the digital signature, and $S(P(M))$ is decryption to the encrypted message $P(M)$.  
+
+$$
+P(S(M)) = S(P(M)) = M^{ku} \pmod m \\
+$$
+
+$$
+M^{ku} \equiv M^{1 + \phi(m)v} \pmod p \ \ \ \ \ (\because ku - \phi(m)v = 1) \\
+\equiv M^{1 + (p - 1)(q - 1)v} \pmod p \\
+\equiv M(M^{p - 1})^{(q - 1)v} \pmod p \\
+\equiv M \pmod p \ \ \ \ \ (\because Fermat's \ little \ theorem)
+$$
+
+Similarly,  
+
+$$
+M^{ku} \equiv M \pmod q
+$$
+
+By *Chinsese Remainder Theorem*,  
+
+$$
+M^{ku} \equiv M \pmod m
+$$

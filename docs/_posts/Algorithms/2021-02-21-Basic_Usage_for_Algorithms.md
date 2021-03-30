@@ -58,3 +58,23 @@ print(A)  # [4, 3, 2, 1, 0]
 A.sort(key=cmp_to_key(cmp_asc))
 print(A)  # [0, 1, 2, 3, 4]
 ```
+
+
+# Random
+
+```cpp
+#include <bits/stdc++.h>
+using namespace std;
+typedef long long ll;
+typedef chrono::high_resolution_clock hrc;
+
+auto seed = hrc::now().time_since_epoch().count();
+default_random_engine generator(seed);
+uniform_int_distribution<ll> distribution(1, 6);  // 1, 2, 3, 4, 5, 6
+ll x = distribution(generator);
+```
+
+```python
+import random
+x = int(random.uniform(1, 6)) # 1, 2, 3, 4, 5, 6
+```
