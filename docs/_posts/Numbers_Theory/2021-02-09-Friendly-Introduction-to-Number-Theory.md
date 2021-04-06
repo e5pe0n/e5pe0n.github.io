@@ -454,3 +454,53 @@ By *Chinsese Remainder Theorem*,
 $$
 M^{ku} \equiv M \pmod m
 $$
+
+<br>
+
+# Carmichael Numbers
+
+Composite numbers, each $n$ with the property that
+
+$$
+a^n \equiv a \pmod n  \ \ \ \ \ for \ every \ integer \ 1 \le a \le n
+$$
+
+such as 561, 1105, 1729, 2465, 2821, 6601, 8911
+
+
+<br>
+
+# Theorem 19.1 (Korselt's Criterion for Carmichael Numbers)
+
+Let $n$ be a composite number.  
+Then $n$ is a *Carmichael number* iff it is odd and every prime $p$ dividing $n$ satisfies the following two conditions:  
+
+(1) $p^2$ does not divide $n$  
+(2) $p - 1$ divides $n - 1$
+
+
+<br>
+
+# Theorem 19.2 (A Property of Prime Numbers)
+
+Let $p$ be an odd prime and write 
+
+$$
+p - 1 = 2^k q \ \ \ \ \ with \ q \ odd.  
+$$ 
+
+Let $a$ be any number not divisible by $p$.  
+Then one of the following two conditions is true:  
+
+(i) $a^q$ is congruent to 1 modulo $p$.  
+(ii) One of the numbers $a^q, a^{2q}, a^{4q}, ..., a^{2^{k - 1}q}$ is congruent to -1 module $p$.  
+
+<br>
+
+# Theorem 19.3 (Rabin-Miller Test for Composite Numbers)
+
+Let $n$ be an odd interger and write $n - 1 = 2^k q$ with $q$ odd.  
+If both of the following conditions are true for some a not divisible by $n$, then $n$ is a composite number.  
+
+(a) $a^q \not \equiv 1 \pmod n$  
+(b) $\forall i = 0, 1, ..., k - 1 \ \ \ \ \  a^{2^{i}q} \not \equiv -1$
