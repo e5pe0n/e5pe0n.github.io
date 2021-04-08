@@ -103,6 +103,7 @@ last_modified_at: 2021-02-21
 [ABC184 D - increment of coins](https://atcoder.jp/contests/abc184/tasks/abc184_d)  
 [ABC183 E - Queen on Grid](https://atcoder.jp/contests/abc183/tasks/abc183_e)  
 [ABC155 E - Payment](https://atcoder.jp/contests/abc155/tasks/abc155_e)
+[AGC031 B - Reversi](https://atcoder.jp/contests/agc031/tasks/agc031_b)  
 
 状態を考慮
 
@@ -113,6 +114,11 @@ last_modified_at: 2021-02-21
 桁 DP (Digit DP)
 
 [ABC154 E - Almost Everywhere Zero](https://atcoder.jp/contests/abc154/tasks/abc154_e)
+
+LCS  
+
+[CODE FESTIVAL 2015 あさぷろ Middle B - ヘイホー君と削除](https://atcoder.jp/contests/code-festival-2015-morning-middle/tasks/cf_2015_morning_easy_d)  
+
 
 
 ## DFS
@@ -170,7 +176,8 @@ N が小さいときはビット全探索で総当たり
 # Priority Queue
 
 
-[ABC160 E - Red and Green Apples](https://atcoder.jp/contests/abc160/tasks/abc160_e)  
+[ABC160 E - Red and Green Apples](https://atcoder.jp/contests/abc160/tasks/abc160_e)   
+[ABC137 D - Summer Vacation](https://atcoder.jp/contests/abc137/tasks/abc137_d)  
 
 
 ## Dijkstra
