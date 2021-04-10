@@ -492,8 +492,14 @@ $$
 Let $a$ be any number not divisible by $p$.  
 Then one of the following two conditions is true:  
 
-(i) $a^q$ is congruent to 1 modulo $p$.  
+(i) $a^q$ is congruent to 1 modulo $p$, i.e. $a^q \equiv 1 \pmod p$.  
 (ii) One of the numbers $a^q, a^{2q}, a^{4q}, ..., a^{2^{k - 1}q}$ is congruent to -1 module $p$.  
+
+### Note:  
+$a^{p - 1} = a^{2^kq} \equiv 1 \pmod p$,  
+and $x^2 \equiv 1 \pmod n$ has only trivial solutions, $x \equiv -1 \pmod n$ or $x \equiv 1 \pmod n$ if $n$ is prime.  
+Thus, if $n$ is prime, $a^{p - 1} = a^{2^kq} \equiv 1 \pmod n$ and either $a^q \equiv 1 \pmod n$ or one of the squares such as $a^{2q}, a^{4q}, ..., a^{2^{k - 1}q}$ must be congruent to -1 modulo $n$.  
+
 
 <br>
 
