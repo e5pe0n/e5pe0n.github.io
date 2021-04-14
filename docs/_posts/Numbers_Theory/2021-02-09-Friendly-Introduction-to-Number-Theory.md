@@ -88,13 +88,33 @@ has at most $d$ incogruent solutions.
 
 <br>
 
-# Fermat's Little Theorem
+# Theorem 9.1 (Fermat's Little Theorem)
 
 Let $p$ be a prime number, and let $a$ be any number with $a \not \equiv \pmod p$. Then   
 
 $$
 a^{p - 1} \equiv 1 \pmod p
 $$
+
+<br>
+
+# Lemma 9.2.
+
+Let $p$ be a prime number and let $a$ be a number with $a \equiv 0 \pmod p$.  
+Then the numbers  
+
+$$
+a, 2a, 3a, ..., (p - 1)a \ \ \ \pmod p
+$$
+
+are the same as the numbers   
+
+$$
+1, 2, 3, ..., (p - 1) \ \ \ \pmod p
+$$
+
+although they may be in a different order.  
+
 
 <br>
 
@@ -510,3 +530,123 @@ If both of the following conditions are true for some a not divisible by $n$, th
 
 (a) $a^q \not \equiv 1 \pmod n$  
 (b) $\forall i = 0, 1, ..., k - 1 \ \ \ \ \  a^{2^{i}q} \not \equiv -1$
+
+
+<br>
+
+# Theorem 20.1
+
+Let $p$ be an odd prime.  
+Then there are exactly $(p - 1) / 2$ quadratic residues modulo $p$ and exactly $(p - 1) / 2$ nonresidues moduoe $p$.  
+
+**quadratic residue modulo p; QR**: nozero numbers that are congruent to a square modulo $p$  
+**(quadratic) nonresidue modulo p; NQ**: numbers that not congruent to a square modulo $p$
+
+Because $p = (p - b) + b$ and $(p - b)^2 = p^2 - 2pb + b^2 \equiv b^2 \pmod p$, we only need to compute half of them:  
+
+$1^2 \pmod p, \ \ \ \ \ 2^2 \pmod p, \ \ \ \ \ 3^2 \pmod p, \ \ \ \ \ ..., (\frac{p - 1}{2})^2 \pmod p$  
+
+to get a list of quadratic residues modulo $p$.  
+
+
+<br>
+
+# Theorem 20.2 (Quadratic Residue Multiplication Rule). ver.1
+
+Let $p$ be an odd prime. Then:  
+
+(i) $QR * QR = QR$: The product of two quadratic residues modulo $p$ as a quadratic residue.  
+(ii) $QR * NR = NR$: The product of a quadratic residue and a nonresidue is a nonresidue.  
+(iii) $NR * NR = QR$: The product of two nonresidues is a quadratic residue.  
+
+
+<br>
+
+# The *Legendre symbol* of $a$ modulo $p$
+
+$$
+\left(\frac{a}{p} \right) =
+\begin{cases}
+1 \ \ \ \text{if } a \text{ is a quadratic residue modulo } p. \\  
+-1 \ \ \ \text{if } a \text{ is a nonresidue modulo } p.  
+\end{cases}
+$$
+
+e.g.  
+
+$$
+\left(\frac{3}{13} \right) = 1, \ \ \ \left(\frac{11}{13} \right) = -1, \ \ \ \left(\frac{2}{7} \right) = 1, \ \ \ \left(\frac{3}{7} \right) = -1
+$$
+
+<br>
+
+# Theoreom 20.3 (Quadratic Residue Multiplication Rule). ver.2
+
+Let $p$ be an odd prime. Then  
+
+$$
+\left(\frac{a}{p} \right) \left(\frac{b}{p} \right) = \left(\frac{ab}{p} \right)
+$$
+
+
+<br>
+
+
+# Theorem 21.1 (Euler's Criterion)
+
+Let $p$ be an odd prime. Then  
+
+$$
+a^{(p - 1) / 2} \equiv \left(\frac{a}{p} \right) \pmod p
+$$
+
+
+<br>
+
+# Theorem 21.2 (Quadratic Reciprocity)
+
+## Part I
+
+Let $p$ be an odd prime. Then  
+
+$$
+-1 \text{ is a quadratic residue modulo } p \ \ \  \text{if } p \equiv 1 \pmod 4 \text{, and} \\
+-1 \text{ is a nonresidue modulo } p \ \ \ \text{if } p \equiv 3 \pmod 4
+$$
+
+In other words, using the *Legendre symbol*,   
+
+$$
+\left(\frac{-1}{p} \right) =
+\begin{cases}
+1 \ \ \ \ \ \ \text{if } p \equiv 1 \pmod 4 \\
+-1 \ \ \ \text{if } p \equiv 3 \pmod 4
+\end{cases}
+$$
+
+
+## Part II
+
+Let $p$ be an odd prime. Then    
+
+$$
+2 \text{ is a quadratic residue modulo } p \ \ \ \text{if } p \equiv 1 \text{ or } 7 \pmod 8 \\
+2 \text{ is nonresidue modulo } p \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \text{if } p \equiv 3 \text{ or } 5 \pmod 8
+$$
+
+In other words, using the *Legendre symbol* ,  
+
+$$
+\left(\frac{2}{p} \right) =
+\begin{cases}
+1 \ \ \ \text{ if } p \equiv 1 \text{ or } 7 \pmod 8 \\
+-1 \ \ \ \text{ if } p \equiv 3 \text{ or } 5 \pmod 8
+\end{cases}
+$$
+
+<br>
+
+# Theorem 21.3 (Primes 1 (Mod 4) Theorem)
+
+There are infinitely many primes that are congruent to 1 modulo 4.  
+

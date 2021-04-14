@@ -217,4 +217,6 @@ $$
 
 - k 個組: k-tuple
   - 2個組 (対): pair
+- reciprocity: 相互関係
+  - *Quadratic Reciprocity*
 
