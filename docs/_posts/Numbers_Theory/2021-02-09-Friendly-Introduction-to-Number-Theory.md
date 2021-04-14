@@ -610,8 +610,11 @@ $$
 Let $p$ be an odd prime. Then  
 
 $$
--1 \text{ is a quadratic residue modulo } p \ \ \  \text{if } p \equiv 1 \pmod 4 \text{, and} \\
--1 \text{ is a nonresidue modulo } p \ \ \ \text{if } p \equiv 3 \pmod 4
+-1 \text{ is a quadratic residue modulo } p \ \ \  \text{ if } p \equiv 1 \pmod 4 \text{, and}
+$$
+
+$$
+-1 \text{ is a nonresidue modulo } p \ \ \ \ \ \text{ if } p \equiv 3 \pmod 4
 $$
 
 In other words, using the *Legendre symbol*,   
@@ -630,7 +633,10 @@ $$
 Let $p$ be an odd prime. Then    
 
 $$
-2 \text{ is a quadratic residue modulo } p \ \ \ \text{if } p \equiv 1 \text{ or } 7 \pmod 8 \\
+2 \text{ is a quadratic residue modulo } p \ \ \ \text{if } p \equiv 1 \text{ or } 7 \pmod 8
+$$
+
+$$
 2 \text{ is nonresidue modulo } p \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \text{if } p \equiv 3 \text{ or } 5 \pmod 8
 $$
 
@@ -639,7 +645,7 @@ In other words, using the *Legendre symbol* ,
 $$
 \left(\frac{2}{p} \right) =
 \begin{cases}
-1 \ \ \ \text{ if } p \equiv 1 \text{ or } 7 \pmod 8 \\
+1 \ \ \ \ \ \ \text{ if } p \equiv 1 \text{ or } 7 \pmod 8 \\
 -1 \ \ \ \text{ if } p \equiv 3 \text{ or } 5 \pmod 8
 \end{cases}
 $$
