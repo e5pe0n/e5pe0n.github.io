@@ -250,7 +250,7 @@ println(fibs.toList) // List(0, 1, 1, 2, 3, 5, 8, 13, 21, 34)
 # *ArraySeq*
 
 Can access any element of the collection in constant time.  
-On the other hand, **cannot** prepend an *ArraySeq*, add or update a element in constant time, which takes linear time to the length of *ArraySeq*.  
+On the other hand, **cannot** prepend an *ArraySeq*, add or update an element in constant time, which takes linear time to the length of *ArraySeq*.  
 
 
 <br>

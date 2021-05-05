@@ -656,3 +656,94 @@ $$
 
 There are infinitely many primes that are congruent to 1 modulo 4.  
 
+## Proof
+
+Assume $A$ such as  
+
+$$
+A = (2 p_1 p_2 \cdots p_r)^2 + 1
+$$
+
+where $p_1, p_2, \cdots p_r$ are congruent to 1 modulo 4.  
+
+Factorizing $A$, say  
+
+$$
+A = q_1 q_2 \cdots q_s
+$$
+
+Each $q_i$ is different from each $p_i$ because none of $p_i$ divides $A$.  
+Then
+
+$$
+(2 p_1 p_2 \cdots p_r)^2 + 1 = A \equiv 0 \pmod {q_i} \\
+(2 p_1 p_2 \cdots p_r)^2 \equiv -1 \pmod {q_i} \\
+x^2 \equiv -1 \pmod {q_i}
+$$
+
+Since -1 is a quadratic residue modulo $q_i$, each $q_i$ is $\equiv 1 \pmod 4$.  
+Now we obtain new primes $q_i$s that are congruent 1 modulo 4 and different from $p_i$s.
+
+
+<br>
+
+# Theorem 22.1 (Law of Quadratic Reciprocity)
+
+Let $p$ and $q$ be distinct odd primes.  
+
+$$
+\left(\frac{-1}{p} \right) =
+\begin{cases}
+1 \ \ \ \text{ if } p \equiv 1 \pmod 4 \\
+-1 \ \ \ \text{ if } p \equiv 3 \pmod 4
+\end{cases}
+$$
+
+
+
+$$
+\left(\frac{2}{p} \right) =
+\begin{cases}
+1 \ \ \ \text{ if } p \equiv 1 \text{ or } 7 \pmod 8 \\
+-1 \ \ \ \text{ if } p \equiv 3 \text{ or } 5 \pmod 8
+\end{cases}
+$$
+
+$$
+\left(\frac{q}{p} \right) =
+\begin{cases}
+\left(\frac{p}{q} \right) \ \ \ \text{ if } p \equiv 1 \pmod 4 \text{ or } q \equiv 1 \pmod 4 \\
+- \left(\frac{p}{q} \right) \ \ \ \text{ if } p \equiv 3 \pmod 4 \text{ and } q \equiv 3 \pmod 4
+\end{cases}
+$$
+
+
+<br>
+
+# Theorem 22.2 (Generalized Law of Quadratic Reciprocity)
+
+Let $a$ and $b$ be odd positive integers.  
+
+$$
+\left(\frac{-1}{b} \right) =
+\begin{cases}
+1 \ \ \ \ \ \ \text{ if } b \equiv 1 \pmod 4 \\
+-1 \ \ \ \text{ if } b \equiv 3 \pmod 4
+\end{cases}
+$$
+
+$$
+\left(\frac{2}{b} \right) =
+\begin{cases}
+1 \ \ \ \ \ \ \text{ if } b \equiv 1 \text{ or } 7 \pmod 8 \\
+-1 \ \ \ \text{ if } b \equiv 3 \text{ or } 5 \pmod 8
+\end{cases}
+$$
+
+$$
+\left(\frac{a}{b} \right) =
+\begin{cases}
+\left(\frac{b}{a} \right) \ \ \ \ \ \ \ \text{ if } a \equiv 1 \pmod 4 \text{ or } b \equiv 1 \pmod 4 \\
+-\left(\frac{b}{a} \right) \ \ \ \text{ if } a \equiv b \equiv 3 \pmod 4
+\end{cases}
+$$
