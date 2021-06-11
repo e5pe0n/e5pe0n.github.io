@@ -1,11 +1,12 @@
 ---
-title: Basic Usage
+title: Basic Language Features
 categories:
   - Note
 tags:
-  - Competitive Programming
-  - Algorithm
-last_modified_at: 2021-02-21
+  - Programming Language
+  - C++
+  - Python
+last_modified_at: 2021-06-11
 ---
 
 # Sort
@@ -313,3 +314,59 @@ ll x = distribution(generator);
 import random
 x = int(random.uniform(1, 6)) # 1, 2, 3, 4, 5, 6
 ```
+
+<br>
+
+# Read Lines
+
+C++
+
+```cpp
+#include <fstream>
+#include <string>
+using namespace std;
+int main() {
+  ifstream ifs{"01.txt"};
+  string lines{};
+  for (string s; getline(ifs, s);) {
+    lines += s;
+  }
+// line1-1 line1-2 line1-3
+// line2-1 line2-2 line2-3
+}
+```
+
+```01.txt
+// 01.txt
+line1-1 line1-2 line1-3
+line2-1 line2-2 line2-3
+```
+
+Python
+
+```py
+with open("01.txt", "r") as f:
+    lines: str = f.read()
+```
+
+```py
+with open("01.txt", "r") as f:
+    lines: List[str] = f.readlines()  # including newline chars
+# lines = [
+#   "line1-1 line1-2 line1-3\n",
+#   "line2-1 line2-2 line2-3\n"
+# ]
+```
+
+```py
+with open("01.txt", "r") as f:
+    lines: List[str] = list(f)
+# lines = [
+#   "line1-1 line1-2 line1-3\n",
+#   "line2-1 line2-2 line2-3\n"
+# ]
+```
+
+<br>
+
+
