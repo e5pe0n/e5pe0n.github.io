@@ -312,7 +312,7 @@ ll x = distribution(generator);
 
 ```python
 import random
-x = int(random.uniform(1, 6)) # 1, 2, 3, 4, 5, 6
+x = int(random.uniform(1, 7)) # 1, 2, 3, 4, 5, 6
 ```
 
 <br>
