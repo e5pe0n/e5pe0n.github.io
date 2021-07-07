@@ -38,7 +38,6 @@ bool rabin_karp(const string &pat,
     p = (d * p + pat[i]) % q;
     t = (d * t + txt[i]) % q;
   }
-  printf("%lld, %lld\n", p, t);
   for (ll i = 0; i <= n - m; ++i) {
     if (p == t && txt.substr(i, m) == pat) return true;
     if (i < n - m) {

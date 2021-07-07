@@ -14,7 +14,7 @@ last-modified-at: 2021-01-22
 
 ## Bellman-Ford Algorithm
 
-- $O(\lvert V \rvert)$
+- $O(\lvert V \rvert \lvert E \rvert)$
 - **detect negative loop**
 - relax edges for $\lvert V \rvert - 1$
   - see all vertexes in each loop

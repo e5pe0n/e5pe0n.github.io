@@ -4,8 +4,8 @@ categories:
   - Note
 tags:
   - Programming Language
-	- C++
-	- Python
+  - C++
+  - Python
 last_modified_at: 2021-06-11
 ---
 
