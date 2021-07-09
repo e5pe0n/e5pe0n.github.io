@@ -189,3 +189,43 @@ $h_{\boldsymbol W, \boldsymbol b}(\boldsymbol{X}) = \phi(\boldsymbol{X} \boldsym
 - Regression
 - Classification
 
+<br>
+
+# Chapter 11: Training Deep Neural Networks
+
+## Optimizers
+
+- modify gradient updating for fast converge and better performance
+- learning rate is constant
+
+<br>
+
+- Momemtum Optimization
+- Nesterov Accelerated Gradient
+- AdaGrad
+- RMSProp
+- Adam
+  - AdaMax
+  - Nadam
+
+## Learning Rate Schedules
+
+- learning rate is variable
+  - update learning rate per epochs or iterations
+
+<br>
+
+- Power scheduling
+- Exponential scheduling
+- Piecewise constant scheduling
+- Performance scheduling
+- 1cycle sheduling
+
+<br>
+
+## Regularization to avoid overfitting
+
+- $l_1$, $l_2$ regularization
+- dropout
+- mote carlo (MC) dropout
+- max-norm regularization
