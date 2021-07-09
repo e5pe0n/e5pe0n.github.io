@@ -4,6 +4,7 @@ categories:
   - Note
 tags:
   - Machine Learning
+last-modified-at: 2021-07-10
 ---
 
 # Chapter 02: End-to-End Machine Learning Project
@@ -228,4 +229,4 @@ $h_{\boldsymbol W, \boldsymbol b}(\boldsymbol{X}) = \phi(\boldsymbol{X} \boldsym
 - $l_1$, $l_2$ regularization
 - dropout
 - mote carlo (MC) dropout
-- max-norm regularization
+- max-norm
