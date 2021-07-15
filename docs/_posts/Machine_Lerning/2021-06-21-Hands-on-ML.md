@@ -190,6 +190,14 @@ $h_{\boldsymbol W, \boldsymbol b}(\boldsymbol{X}) = \phi(\boldsymbol{X} \boldsym
 - Regression
 - Classification
 
+
+## Loss Functions
+
+- MSE; Mean Squared Error
+- MAE: Mean Absolute Error
+- Huber: mix MSE and MAE
+
+
 <br>
 
 # Chapter 11: Training Deep Neural Networks
@@ -230,3 +238,6 @@ $h_{\boldsymbol W, \boldsymbol b}(\boldsymbol{X}) = \phi(\boldsymbol{X} \boldsym
 - dropout
 - mote carlo (MC) dropout
 - max-norm
+
+
+
