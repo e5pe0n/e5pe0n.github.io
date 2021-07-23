@@ -240,4 +240,81 @@ $h_{\boldsymbol W, \boldsymbol b}(\boldsymbol{X}) = \phi(\boldsymbol{X} \boldsym
 - max-norm
 
 
+<br>
 
+# Chapter 14: Deep Computer Vision Using Convolutional Neural Networks
+
+## Computer Vision Tasks
+
+- classification
+- localization
+- object detection = classification + localization for moltiple objects
+  - non-max suppression
+  - FCN; Fully Convolutional Network
+  - bounding box
+- segmentation: each pixel is classified
+  - semantic segmentation
+  - instance segmentation
+
+
+## Classification
+### Layers
+
+- Convolutional layers
+- Pooling layers
+  - max pooling*
+  - average pooling
+  - global average pooling
+
+### Architechtures
+
+- LeNet-5 (1998)
+- AlexNet (2012)
+  - local response normalization; LRN
+- GoogLeNet (2014)
+  - inception modules
+- VGGNet (2014)
+- ResNet (2015)
+  - residual unit; RU
+- Xception (2016)
+  - depthwise separable convolution layer
+- SENet; Squeeze-and-Excitation Network (2017)
+  - SE block
+
+
+## Object Detection
+
+- non-max suppression
+- FCN; Fully Convolutional Network
+### Architechtures
+
+- YOLO; You Only Look Once
+
+### Metrics
+
+- mAP; Mean Average Precision
+
+
+## Semantic Segmentation
+
+- upsampling layer
+  - transpose convolution layer
+
+
+
+<br>
+
+# Chapter 15: Processing Sequences Using RNNs and CNNs
+
+- BPTT; backpropagation through time
+
+## Unstable Gradient Problem
+
+- layer normalization
+
+## Short-Term Memory Problem
+
+- LSTM (Long Short-Term Memory) cells
+  - GRU cells
+- 1D convolution layers to shorten sequences
+- WaveNet
