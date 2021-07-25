@@ -315,6 +315,18 @@ $h_{\boldsymbol W, \boldsymbol b}(\boldsymbol{X}) = \phi(\boldsymbol{X} \boldsym
 ## Short-Term Memory Problem
 
 - LSTM (Long Short-Term Memory) cells
-  - GRU cells
+  - GRU (Gated Recurrent Unit) cells
 - 1D convolution layers to shorten sequences
 - WaveNet
+
+<br>
+
+# Chapter 16: Natural Language Processing with RNNs and Attention
+
+- RNNs
+- truncated backpropagation through time
+
+## Architechtures
+
+- Char-RNN
+- Stateful RNN
