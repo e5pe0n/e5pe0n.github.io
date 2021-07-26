@@ -330,3 +330,9 @@ $h_{\boldsymbol W, \boldsymbol b}(\boldsymbol{X}) = \phi(\boldsymbol{X} \boldsym
 
 - Char-RNN
 - Stateful RNN
+- Encoder-Decoder
+- Bidirectional RNN
+- Beam Search
+
+- Attention mechanisms
+  - can translate long sentences
