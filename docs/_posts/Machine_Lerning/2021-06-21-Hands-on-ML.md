@@ -336,3 +336,33 @@ $h_{\boldsymbol W, \boldsymbol b}(\boldsymbol{X}) = \phi(\boldsymbol{X} \boldsym
 
 - Attention mechanisms
   - can translate long sentences
+
+
+<br>
+
+# Chapter 17: Representation Learning and Generative Learning Using Autoencoders and GANs
+
+- Autoencoder
+- GANs; generative adversarial networks
+
+## GANs
+
+- generator
+- descriminator
+
+## Architecture
+
+- deep convolutional GANs; DCGANs
+
+## Algorithms
+
+- on-policy algorithms
+  - PC (policy gradients) algorithms
+    - Q-Value Iteration
+- off-policy algorithms
+  - Q-Learning
+
+<br>
+
+- DQN; Deep Q-Network (DNN using Q-Values)
+  - DQL; Deep Q-Learning (DQN using Approximate Q-Learning)
