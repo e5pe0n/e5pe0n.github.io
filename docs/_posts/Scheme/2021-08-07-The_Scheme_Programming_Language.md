@@ -66,3 +66,87 @@ Scheme expressions are evaluated in any order.
 (eqv? (cons 'a 'b) (cons 'a 'b)) => #f
 ```
 
+
+# Chapter 03
+
+## Section 3.2. More Recursion
+
+> One restriction on the expressions must be obeyed. It must be possible to evaluate each expr without evaluating any of the variables var .... This restriction is always satisfied if the expressions are all lambda expressions, since even though the variables may appear within the lambda expressions, they cannot be evaluated until the resulting procedures are invoked in the body of the letrec. 
+
+```scheme
+; OK
+(letrec ([f (lambda () (+ x 2))]
+         [x 1])
+  (f)) <graphic> 3
+```
+
+```scheme
+; NG
+(letrec ([y (+ x 2)]
+         [x 1])
+  y)
+```
+
+### Tail-Recursions
+
+> When a procedure call is in tail position (see below) with respect to a lambda expression, it is considered to be a tail call, and Scheme systems must treat it properly, as a "goto" or jump. When a procedure tail-calls itself or calls itself indirectly through a series of tail calls, the result is tail recursion. Because tail calls are treated as jumps, tail recursion can be used for indefinite iteration in place of the more restrictive iteration constructs provided by other programming languages, without fear of overflowing any sort of recursion stack.
+
+## Section 3.4. Continuation Passing Style
+
+- Continuation Passing Style; CPS
+
+```scheme
+(define print
+  (lambda (x)
+    (for-each display `(,x "\n"))
+  )
+)
+
+(define implicit
+  (lambda ()
+    (letrec (
+      [f (lambda (x) (cons 'a x))]
+      [g (lambda (x) (cons 'b (f x)))]
+      [h (lambda (x) (g (cons 'c x)))]
+    )
+      (cons 'd (h `()))
+    )
+  )
+)
+
+(define cps
+  (lambda ()
+    (letrec (
+      [f (lambda (x k) (k (cons 'a x)))]
+      [g (lambda (x k) (f x (lambda (v) (k (cons 'b v)))))]
+      [h (lambda (x k) (g (cons 'c x) k))]
+    )
+      (h `() (lambda (v) (cons 'd v)))
+    )
+  )
+)
+
+(print (implicit))  ; (d b a c)
+(print (cps)) ; (d b a c)
+```
+
+<br>
+
+# Chapter 4. Procedures and Variable Bindings
+
+## Section 4.6 Variable Definitions
+
+lazy evaluation of top-level definitions in case that the program are separated into files is allowed only for variables, not keywords for syntax extensions
+
+```scheme
+; OK because g is variable binding to procedure
+; (NG if g is defined as a syntax extension)
+(define f
+  (lambda (x)
+    (g x)))
+
+(define g
+  (lambda (x)
+    (+ x x)))
+(f 3) => 6
+```
