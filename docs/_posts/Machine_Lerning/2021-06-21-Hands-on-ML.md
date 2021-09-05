@@ -182,7 +182,7 @@ $h_{\boldsymbol W, \boldsymbol b}(\boldsymbol{X}) = \phi(\boldsymbol{X} \boldsym
 
 - $\boldsymbol{X}$: $instances \times features$
 - $\boldsymbol{W}$: $input neuron \times artificial \ neuron \ in \ the \ layer$
-- $\boldsymbol{b}$: vias
+- $\boldsymbol{b}$: bias
 - $\phi$: *activation function*
 
 ## Use Cases
