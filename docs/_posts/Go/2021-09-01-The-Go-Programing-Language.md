@@ -188,3 +188,232 @@ func Signum(x int) int {
 ## Pointers
 
 no pointer arithmetic
+
+
+# Chapter 2. Program Structure
+
+## Names
+
+- camel case
+- package name: begins with a letter
+- *exported* names from package: begins with a Upper-case
+
+
+## Variables
+
+### The *new* Function
+
+- `new(T)` creates an *unnamed variable* of type *T*, initializes it to the zero value of *T*, and returns its address, which is a value of type *T*
+
+```go
+p := new(int)
+fmt.Println(*p) // 0
+
+*p = 2
+fmt.Println(*p) // 2
+```
+
+## Scope
+
+|                          scope                          |                                           lietime                                           |
+| :-----------------------------------------------------: | :-----------------------------------------------------------------------------------------: |
+| a region of the program text; **compile-time property** | the range of time during execution when the variable can be referred; **run-time property** |
+
+
+```go
+package ifscope
+
+import (
+	"fmt"
+)
+
+var fname string
+
+func main() {
+	if x := f(); x == 0 {
+		fmt.Println(x)
+	} else if y := g(x); x == y {
+		fmt.Println(x, y)
+	} else {
+		fmt.Println(x, y)
+	}
+}
+
+func f() int {
+	return 1
+}
+
+func g(x int) int {
+	return x * 2
+}
+```
+
+
+<br>
+
+# Chapter 3. Basic Data Types
+
+|   data types    |                  instances                  |
+| :-------------: | :-----------------------------------------: |
+|   basic types   |         numbers, strings, booleans          |
+| aggregate types |               arrays, structs               |
+| reference types | pointers, slices, maps, functions, channels |
+| interface types |                                             |
+
+## Integers
+
+`^`: bitwise XOR as binary operator, or bitwise negation as unary operator
+`&^`: bit clear (used to get different bits between numbers)
+`>>`: fill the vacated bits with copies of the sign bit for signed ints
+
+```go
+package main
+
+import "fmt"
+
+func main() {
+	var x uint8 = 1<<1 | 1<<5
+	var y uint8 = 1<<1 | 1<<2
+
+	fmt.Printf("%08b\n", x) // 00100010
+	fmt.Printf("%08b\n", y) // 00000110
+
+	fmt.Printf("%08b\n", ^x)   // 11011101
+	fmt.Printf("%08b\n", x&^y) // 00100000
+}
+```
+
+## Booleans
+
+there is no implicit conversion from any type to bool, and bools cannot be treated as ints without explicit conversion.  
+
+
+## Strings
+
+- immutable sequence of bytes
+- the i-th byte of a string is not necessarily the i-th character of a string
+- *substring* operation creates a new reference to the original string
+
+```go
+s := "hello, world"
+fmt.Println(len(s))	// 12
+fmt.Println(s[0:5])	// hello
+```
+
+Raw string literals: enclosed in backquotes
+
+```go
+const GoUsage = `Go is a tool for managing Go source code.
+
+Usage:
+	go command [arguments]
+	`
+```
+
+Be aware for unicode characters
+
+```go
+package main
+
+import (
+	"fmt"
+	"unicode/utf8"
+)
+
+func main() {
+	s := "Hello, 世界"
+	fmt.Println(len(s))                    // 13
+	fmt.Println(utf8.RuneCountInString(s)) // 9
+
+	for i := 0; i < len(s); {
+		r, size := utf8.DecodeRuneInString(s[i:])
+		fmt.Printf("%d\t%c\n", i, r)
+		i += size
+	}
+}
+
+// 0       H
+// 1       e
+// 2       l
+// 3       l
+// 4       o
+// 5       ,
+// 6
+// 7       世
+// 10      界
+```
+
+### Strings and Byte Slices
+
+main packages to manipulate strings
+
+- bytes
+- strings
+- strconv
+
+
+### Constants
+
+#### iota
+
+```go
+package main
+
+import "fmt"
+
+type Weekday int
+
+const (
+	Sunday Weekday = iota
+	Monday
+	Tuesday
+	Wednesday
+	Thursday
+	Friday
+	Saturday
+)
+
+func main() {
+	fmt.Println("Sunday", Sunday)
+	fmt.Println("Monday", Monday)
+	fmt.Println("Tuesday", Tuesday)
+	fmt.Println("Wednesday", Wednesday)
+	fmt.Println("Thursday", Thursday)
+	fmt.Println("Friday", Friday)
+	fmt.Println("Saturday", Saturday)
+}
+
+// Sunday 0
+// Monday 1
+// Tuesday 2
+// Wednesday 3
+// Thursday 4
+// Friday 5
+// Saturday 6
+```
+
+
+```go
+type Flags uint
+
+const (
+	FlagUp Flags = 1 << iota  // LSB
+	FlagBroadcast             // last 1st bit
+	FlagLoopback              // last 2nd bit
+	FlagPointToPoint          // last 3rd bit
+	FlagMulticast             // last 4th bit
+)
+```
+
+## Untyped Constants
+
+see p.144
+
+```go
+// size is not determined
+i := 0    // untyped integer; implicit int(0)
+
+// size is fixed
+f := 0.0  // untyped floating-point; implicit flaot64(0.0)
+c := 0i   // untyped complex; implicit complex128(0i)
+```
