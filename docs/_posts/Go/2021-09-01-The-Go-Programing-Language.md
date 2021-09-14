@@ -417,3 +417,78 @@ i := 0    // untyped integer; implicit int(0)
 f := 0.0  // untyped floating-point; implicit flaot64(0.0)
 c := 0i   // untyped complex; implicit complex128(0i)
 ```
+
+<br>
+
+# Chapter 4. Composite Types
+
+## Arrays
+
+- fixed-length sequence
+- homogeneous
+- usually used *Slices* than *Arrays*
+### `Array1 == Array2`
+
+- Array1 and Array2 must have the same length
+- if an array's element type is *comparable* then the array tyep is comparable too.  
+- *true* if each elements of two arrays return *true* on `==` 
+
+### Function call
+
+- **an array as an argument is copied and the copy is passed to calling function**
+
+```go
+package main
+
+import "fmt"
+
+func main() {
+	var a [3]int
+	fmt.Println(a[0])        // 0
+	fmt.Println(a[len(a)-1]) //0
+
+	for i, v := range a {
+		fmt.Printf("%d %d\n", i, v)
+	}
+
+	var q [3]int = [3]int{1, 2, 3}
+	var r [3]int = [3]int{1, 2}
+	fmt.Printf("%x\n", q) // [1 2 3]
+	fmt.Println(r[2])     // 0
+
+	q2 := [...]int{1, 2, 3}
+	fmt.Printf("%T\n", q2)      // [3]int
+	fmt.Printf("%t\n", q == q2) // true
+}
+```
+
+## Slices
+
+- variable-length sequence
+- homogeneous
+- three components
+  - pointer
+    - can modify original elements through *Slices*
+  - length
+  - capacity
+- creating *Slices* takes constant time
+
+### `nil`
+
+- slice having no underlying array
+- a slice, which is length 0 and capacity 0, is **necessarily not** `nil`
+
+```go
+// nil
+var s []int // len(s)
+s = nil
+s = []int(nil)
+
+// not nil
+s = []int{}
+```
+
+### Comparison
+
+- ***Slices* are not compariable**; we cannot use `==` to *Slices* except for `nil`
+
