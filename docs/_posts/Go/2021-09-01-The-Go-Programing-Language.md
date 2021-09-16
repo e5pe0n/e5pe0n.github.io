@@ -476,7 +476,7 @@ func main() {
 ### `nil`
 
 - slice having no underlying array
-- a slice, which is length 0 and capacity 0, is **necessarily not** `nil`
+- an empty slice, which is length 0 and capacity 0, is **necessarily not** `nil`
 
 ```go
 // nil
@@ -488,7 +488,199 @@ s = []int(nil)
 s = []int{}
 ```
 
+- range can treat `nil`
+
+```go
+package main
+
+import "fmt"
+
+func main() {
+	var s []int // nil
+	for i, v := range s {
+		fmt.Println(i, v)
+	}
+}
+```
+
 ### Comparison
 
 - ***Slices* are not compariable**; we cannot use `==` to *Slices* except for `nil`
 
+
+### `make()`
+
+- creates a lice of a specified element type, length and capacity
+  - creates an unnamed array and returns a slice of it
+
+```go
+make([]T, len)
+make([]T, len, cap) // i.e. make([]T, cap)[:len]
+```
+
+### `append()`
+
+- returns a new slice which is appended a element passed as the second argument
+  - the original slice (the first argument) is not modified
+- **we cannot assume that the original slice refers to the same array as the resulting slice, nor that it refers to a different one** (you can notice there is `make()` in `appendInt()` below)
+  - so **an old slice passed as an argument is not used** usually after functions such as `append()`
+
+```go
+package main
+
+import "fmt"
+
+func main() {
+	var x []int
+	x = append(x, 1)  // use the new slice instead of the old one
+	fmt.Println(x) // [1]
+
+	x = append(x, 2, 3)
+	fmt.Println(x) // [1 2 3]
+
+	x = append(x, 4, 5, 6)
+	fmt.Println(x) // [1 2 3 4 5 6]
+
+	x = append(x, x...)
+	fmt.Println(x) // [1 2 3 4 5 6 1 2 3 4 5 6]
+}
+```
+
+- Be careful for the order of arguments of `copy()`
+
+```go
+package main
+
+import "fmt"
+
+func appendInt(x []int, y int) []int {
+	var z []int
+	zlen := len(x) + 1
+	if zlen <= cap(x) {
+		z = x[:zlen]
+	} else {
+		zcap := zlen
+		if zcap < 2*len(x) {
+			zcap = 2 * len(x)
+		}
+		z = make([]int, zlen, zcap)
+		copy(z, x) // dst: z <- src: x
+	}
+	z[len(x)] = y
+	return z
+}
+
+func main() {
+	var x, y []int
+	for i := 0; i < 10; i++ {
+		y = appendInt(x, i)
+		fmt.Printf("%d cap=%d %v\n", i, cap(y), y)
+		x = y
+	}
+}
+
+// 0 cap=1 [0]
+// 1 cap=2 [0 1]
+// 2 cap=4 [0 1 2]
+// 3 cap=4 [0 1 2 3]
+// 4 cap=8 [0 1 2 3 4]
+// 5 cap=8 [0 1 2 3 4 5]
+// 6 cap=8 [0 1 2 3 4 5 6]
+// 7 cap=8 [0 1 2 3 4 5 6 7]
+// 8 cap=16 [0 1 2 3 4 5 6 7 8]
+// 9 cap=16 [0 1 2 3 4 5 6 7 8 9]
+```
+
+## Maps
+
+- reference to a hash table
+- the order of iteration is unspecified
+- zero value of maps is `nil`
+- not comparable to maps except for comparison to `nil`
+
+## Set
+
+- **Go does not support *Sets*! use *Maps***
+
+## Struct
+
+- field order is one of the property in *struct* to identify the struct
+  - i.e. even the structs, which are the same field names and types, are different if their field orders are different
+- struct can be compared by `==` if the every field is comparable
+  - can be used a key of *map*
+
+```go
+package main
+
+type Employee struct {
+	ID            int
+	Name, Address string
+	string
+	DoB       string
+	Position  string
+	Salary    int
+	ManagerID int
+}
+
+func main() {
+	var dilbert Employee
+
+	dilbert.Salary -= 5000
+
+	position := &dilbert.Position
+	*position = "Senior" + *position
+
+	var employeeOfTheMonth *Employee = &dilbert
+	employeeOfTheMonth.Position += " (proactive team player)"
+}
+```
+
+- A named struct type S cannot declare a field of the same type S
+  - pointer type *S is allowed
+
+### struct literal
+
+```go
+type Point struct{ X, Y int }
+
+p := Point{1, 2}
+q := Point{X: 1} // Y := 0
+```
+
+### Struct Embedding and Anonymous Field
+
+```go
+package main
+
+import "fmt"
+
+type Point struct{ X, Y int }
+
+type Circle struct {
+	Point  // embedding struct Point as anonymous field
+	Radius int
+}
+
+type Wheel struct {
+	Circle // embedding struct Circle as anonymous field
+	Spokes int
+}
+
+func main() {
+	var w Wheel
+
+	w = Wheel{Circle{Point{8, 8}, 5}, 20}
+
+	w = Wheel{
+		Circle: Circle{
+			Point:  Point{X: 8, Y: 8},
+			Radius: 5,
+		},
+		Spokes: 20,
+	}
+
+	fmt.Printf("%#v\n", w) // main.Wheel{Circle:main.Circle{Point:main.Point{X:8, Y:8}, Radius:5}, Spokes:20}
+	w.X = 42
+	fmt.Printf("%v\n", w) // {{{42 8} 5} 20}
+}
+```
