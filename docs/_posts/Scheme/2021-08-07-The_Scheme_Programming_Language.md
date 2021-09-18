@@ -77,7 +77,7 @@ Scheme expressions are evaluated in any order.
 ; OK
 (letrec ([f (lambda () (+ x 2))]
          [x 1])
-  (f)) <graphic> 3
+  (f)) ; 3
 ```
 
 ```scheme
@@ -149,4 +149,55 @@ lazy evaluation of top-level definitions in case that the program are separated 
   (lambda (x)
     (+ x x)))
 (f 3) => 6
+```
+
+
+<br>
+
+# Chapter 6. Operations on Objects
+
+## Generic Equivalence and Type Predicates
+
+### `eq?`
+
+- returns `#t` if *obj1* and *obj2* are identical, otherwise returns `#f`
+  - identical means the same address their objects are
+- **cannot be used to compare numbers and characters reliably.**
+
+### `eqv?`
+
+- returns `#t` if *obj1* and *obj2* are equivalent
+
+```scheme
+(= -0.0 +0.0)     ; #t
+
+(eqv? -0.0 +0.0)  ; #f
+; because
+(/ 1.0 -0.0)  ; -inf.0
+(/ 1.0 +0.0)  ; +inf.0
+```
+
+```scheme
+(eqv? '(a) '(b)) ; #f
+(eqv? '(a) '(a)) ; unspecified
+(let ([x '(a . b)]) (eqv? x x)) ; #t
+(let ([x (cons 'a 'b)])
+  (eqv? x x)) ; #t
+(eqv? (cons 'a 'b) (cons 'a 'b)) ; #f
+```
+
+### `equal?`
+
+- returns `#t` if *obj1* and *obj2* have the same structure and contents, otherwise returns `#f`
+
+```scheme
+(equal? 3 3.0)  ; #f
+
+
+(equal? '(a) '(b)) ; #f
+(equal? '(a) '(a)) ; #t
+(let ([x '(a . b)]) (equal? x x)) ; #t
+(let ([x (cons 'a 'b)])
+  (equal? x x)) ; #t
+(equal? (cons 'a 'b) (cons 'a 'b)) ; #t
 ```
