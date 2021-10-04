@@ -201,3 +201,112 @@ lazy evaluation of top-level definitions in case that the program are separated 
   (equal? x x)) ; #t
 (equal? (cons 'a 'b) (cons 'a 'b)) ; #t
 ```
+
+## Lists and Pairs
+
+- empty list `'()` is not a pair
+  - cannot apply `(car)` or so
+
+### `memq`, `memv`, `member`
+
+```scheme
+(memq obj list)
+(memv obj list)
+(member obj list)
+```
+
+- returns the first *tail* whose the first element evaluates to `#t` by the comparison procedure, otherwise returns `#f`
+- returned *tail* is reference; not a copy of the list passed as an argument
+
+| procedure | comparison precedure |
+| :-------: | :------------------: |
+|  `memq`   |        `eq?`         |
+|  `memv`   |        `eqv?`        |
+| `member`  |       `equal?`       |
+
+
+### `remq`, `remv`, `remove`
+
+```scheme
+(remq obj list)
+(remv obj list)
+(remove obj list)
+```
+
+- remove all elements evaluted to `#t` by comparison precedure to the *obj* from the passed the *list*
+
+| procedure | comparison precedure |
+| :-------: | :------------------: |
+|  `remq`   |        `eq?`         |
+|  `remv`   |        `eqv?`        |
+| `remove`  |       `equal?`       |
+
+
+### `assq`, `assv`, `assoc`
+
+```scheme
+(assq obj alist)
+(assv obj alist)
+(assoc obj alist)
+```
+
+- *alist* must be an *association list* (a proper list of key-value pairs)
+- returns the first key-value pair evaluated to `#t` by comparison precedure to *obj*, otherwise returns `#f`
+
+| procedure | comparison precedure |
+| :-------: | :------------------: |
+|  `assq`   |        `eq?`         |
+|  `assv`   |        `eqv?`        |
+|  `assoc`  |       `equal?`       |
+
+
+```scheme
+(define print
+  (lambda (x)
+    (for-each display `(,x "\n"))
+  )
+)
+
+; assq
+(print
+  (assq 'b '((a . 1) (b . 2)))
+) ; (b . 2)
+(print
+  (cdr (assq 'b '((a . 1) (b . 2))))
+) ; 2
+(print
+  (assq 'c '((a . 1) (b . 2)))
+) ; #f
+
+; assv
+(print
+  (assv 2/3 '((1/3 . 1) (2/3 . 2)))
+) ; (2/3 . 2)
+(print
+  (assv 2/3 '((1/3 . a) (3/4 . b)))
+) ; #f
+
+; assoc
+(print
+  (assoc '(a) '(((a) . a) (-1 . b)))
+) ; ((a) . a)
+(print
+  (assoc '(a) '(((b) . b) (a . c)))
+) ; #f
+(print
+  (let ([alist (list (cons 2 'a) (cons 3 'b))])
+    (set-cdr! (assv 3 alist) 'c)
+    alist
+  )
+) ; ((2 . a) (3 . c))
+```
+
+## Section 6.9. Vectors
+
+- the length; the number of elements is fixed
+- can access any element in constant time
+  - c.f. *list* takes linear time
+
+## Section 6.14. Enumerations
+
+- ordered set of symbols
