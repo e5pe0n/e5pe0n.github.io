@@ -695,3 +695,479 @@ const p = {
 console.log(p.r);
 console.log(p.theta);
 ```
+
+
+<br>
+
+# Chapter 7. Arrays
+
+- JavaScript *array*s are simply a special type of object
+  - index is a property whose name is an integer between 0 to 2^32 - 1
+    - `a[1]` is equivalent to `a["1"]`
+  - *out of bounds* error does not exist because arrays simply return `undefined` if accessed to an index greater than the length
+
+## The Spread Operator
+
+```js
+const letters = [..."hello world"];
+const rem_dups = [...new Set(letters)];
+console.log(rem_dups); // ['h', 'e', 'l','o', ' ', 'w', 'r', 'd']
+```
+
+## *Array.from()*
+
+- *Array.from()* can copy not only *array*s but also array-like object
+
+```js
+const copy = [...iterable]
+
+const copy = Array.from(arraylike);
+```
+
+## *Array.length*
+
+- こマ？ｗ
+
+```js
+const a = [1, 2, 3, 4, 5];
+
+a.length = 3;
+console.log(a); // [ 1, 2, 3 ]
+
+a.length = 0;
+console.log(a); // []
+
+a.length = 5;
+console.log(a); // [ <5 empty items> ]
+```
+
+## *entries()*
+
+```js
+const letters = [..."Hello world"];
+let everyother = "";
+for (const [index, letter] of letters.entries()) {
+  if (index % 2 === 0) {
+    everyother += letter;
+  }
+}
+console.log(everyother); // Hlowrd
+```
+
+## *forEach()*
+
+- cannot break the loop in the middle
+
+## *find()*
+
+- return `undefined` if the matching element does not exist in the array
+
+## *findIndex()*
+
+- return `-1` if the matching element does not exist in the array
+
+## *every()*
+
+- return `false` as soon as a falsy value is found
+- return `true` for an empty array
+
+## *some()*
+
+- return `true` as soon as a truthy value is found
+- return `true` for an empty array
+
+
+## *slice()*
+
+```js
+const a = [1, 2, 3, 4, 5];
+const b = a.slice(-4, -1);
+console.log(`a=${a}, b=${b}`); // a=1,2,3,4,5, b=2,3,4
+b[0] = 100;
+console.log(`a=${a}, b=${b}`); // a=1,2,3,4,5, b=100,3,4
+```
+
+## *splice()*
+
+- return deleted elements as an array
+
+### Note:
+
+the second arg is a **length (or the num of elements to be deleted)**, not an end position.
+
+```
+splice(start, length)
+```
+
+```js
+const a = [1, 2, 3, 4, 5, 6, 7, 8];
+const x = a.splice(4);    // x=5,6,7,8, a=1,2,3,4
+const y = a.splice(1, 2); // y=5,6,7,8, a=1,4
+const z = a.splice(1, 1); // z=4, a=1
+
+const a = [1, 2, 3, 4, 5];
+a.splice(2, 0, 100, 200);             // [1, 2, 100, 200, 3, 4, 5]
+a.splice(2, 2, [1, 2], 3);            // [ 1, 2, [ 1, 2 ], 3, 3, 4, 5 ]
+a.splice(a.length, 0, ...[300, 400]); // [ 1, 2, [ 1, 2 ], 3, 3, 4, 5, 300, 400 ]
+```
+
+## *indexOf()*
+
+- compare elements by `===`
+- but **cannot** find `NaN`
+
+## *includes()*
+
+- compare elements by `===`
+- can find `NaN`
+
+```js
+const a = [1, true, 3, NaN];
+
+a.includes(NaN); // true
+a.indexOf(NaN); // -1
+```
+
+## *sort()*
+
+- sorts an array by **alphabetical** order as default
+- *function(a, b)* as the second argument
+  - returns greater than 0 -> should replace *a* and *b*
+  - returns 0 -> order of *a* and *b* is irrelevant
+  - returns less than 0 -> should not replace *a* and *b*
+
+```js
+const a = [33, 4, 1111, 222];
+a.sort(); // [ 1111, 222, 33, 4 ] <- be careful!!
+
+a.sort((a, b) => a - b); // [ 4, 33, 222, 1111 ]
+
+a.sort((a, b) => b - a); // [ 1111, 222, 33, 4 ]
+```
+
+```js
+const ss = ["ant", "Bug", "cat", "Dog"];
+ss.sort(); // [ 'Bug', 'Dog', 'ant', 'cat' ]
+
+ss.sort((s: string, t: string) => {
+  const a = s.toLowerCase();
+  const b = t.toLowerCase();
+
+  if (a < b) return -1;
+  if (a > b) return 1;
+  return 0;
+}); // [ 'ant', 'Bug', 'cat', 'Dog' ]
+```
+
+## *reverse()*
+
+- in-place
+
+<br>
+
+# Chapter 8. Functions
+
+JavaScript functions are simply a kind of JavaScript obects.  
+
+## Properties
+
+- length: arity of the function
+- name: the name of the function
+
+
+## Declarations
+
+- **function declarations are hoisted** to the top of the code
+  - functions defined as expression are **not** hoisted
+- a function defined within a block only exists within that block
+
+## `this`
+
+**`this` is a *keyward*, not a variable**
+
+## Arrows vs. Others
+
+||arrows|others|
+|:---:|:---:|:---:|
+|`this`|the environment in which they are defined|invocation context|
+|`prototype`|not exist|exists|
+
+
+```js
+const o = {
+  m: function () {
+    const self = this;
+    console.log("this === o in m:", this === o); // true
+
+    function f() {
+      console.log("this === o in f:", this === o); // false
+      console.log("self === o in f:", self === o); // true
+    }
+
+    const g = () => {
+      console.log("this === o in g:", this === o); // true
+    };
+
+    f();
+    g();
+  },
+};
+o.m();
+```
+
+## Constructor
+
+- parentheses can be omitted
+
+```js
+o = new Object();
+o = new Object; // equivalent to new Object()
+```
+
+## Indirect Invocation
+
+- JavaScript functions are objects which has two methods
+  - *call()*
+  - *apply()*
+- **a function is callable as a method of any object** even if it is not actually a method of the object
+
+### *call()* and *apply()*
+
+- first argument: invocation context which becomes the value of the `this` within the body of the function
+  - cannot override `this` of array funcitons
+
+
+```js
+function compose(f, g) {
+  return function (...args) {
+    return f.call(this, g.apply(this, args));
+  };
+}
+```
+
+```js
+const trace = (o, m) => {
+  const original = o[m];
+  o[m] = function (...args) {
+    console.log(new Date(), "Entering:", m);
+    const result = original.apply(this, args);
+    console.log(new Date(), "Exiting:", m);
+    return result;
+  };
+};
+
+const o = {
+  sum: function (start, end) {
+    let s = 0;
+    for (let i = start; i < end; i++) {
+      s += i;
+    }
+    return s;
+  },
+};
+
+trace(o, "sum", 3, 7);
+console.log(o["sum"](3, 7));
+// 2021-10-24T13:28:43.769Z Entering: sum
+// 2021-10-24T13:28:43.773Z Exiting: sum
+// 18
+```
+
+### *bind()*
+
+- binds function *f* to *object* (i.e. let *f* to be a method of *object*)
+- apply *args* to the parameters of *f* partially
+
+```
+f.bind(object, ...args)
+```
+
+```js
+function f(y) {
+  return this.x + y;
+}
+const o = { x: 1 };
+const g = f.bind(o); // bind f to o
+console.log(g(2)); // 3; equivalent to o.f(2)
+
+const p = { x: 10, g };
+console.log(p.g(2)); // 3; g is still bound to o
+```
+
+```js
+const sum = (x, y) => x + y;
+const succ = sum.bind(null, 1);
+console.log(succ(2)); // 3
+```
+
+
+## Implicit Function Invocation
+
+JavaScript language features implicitly invoke functions.  
+
+see p.191
+
+## Parameter Defaults
+
+- since ES6
+- default arguments are evaluated **when the function is called**, not defined
+
+```js
+const rectangle = (width, height = width * 2) => ({ width, height });
+
+rectangle(1); // { width: 1, height: 2 }
+```
+
+## Rest Parameters
+
+- since ES6
+  - `arguments` object used before
+- if there is no any rest argument, the value of the parameter get to be an empty array.
+
+```js
+const max = (first = -Infinity, ...rest) => {
+  let maxValue = first;
+  for (const n of rest) {
+    if (n > maxValue) maxValue = n;
+  }
+  return maxValue;
+};
+
+max(1, 10, 100, 2, 3, 1000, 4, 5, 6); // 1000
+```
+
+```js
+const timed = (f) => {
+  return (...args) => {
+    console.log(`Entering function ${f.name}`);
+    const startTime = Date.now();
+    try {
+      return f(...args);
+    } finally {
+      console.log(`Exiting ${f.name} after ${Date.now() - startTime}ms`);
+    }
+  };
+};
+
+const benchmark = (n) => {
+  let sum = 0;
+  for (let i = 1; i <= n; ++i) sum += i;
+  return sum;
+};
+
+console.log(timed(benchmark)(1_000_000));
+// Entering function benchmark
+// Exiting benchmark after 3ms
+// 500000500000
+```
+
+## Destructing Function Arguments into Parameters
+
+
+```js
+const vectorMultiply = ({ x, y, z=0 }, scalar) => (
+  { x: x * scalar, y: y * scalar , z: z * scalar}
+);
+
+console.log(vectorMultiply({ x: 1, y: 2 }, 2)); // { x: 2, y: 4, z: 0 }
+
+
+// {property name: parameter name}
+const vectorAdd = ({ x: x1, y: y1 }, { x: x2, y: y2 }) => ({
+  x: x1 + x2,
+  y: y1 + y2,
+});
+
+console.log(vectorAdd({ x: 1, y: 2 }, { x: 3, y: 4 })); // { x: 4, y: 6 }
+```
+
+rest props are spreadable
+- since ES2018
+
+```js
+const vectorMultiply = ({ x, y, z = 0, ...props }, scalar) => ({
+  x: x * scalar,
+  y: y * scalar,
+  z: z * scalar,
+  ...props,
+});
+```
+
+## Function Properties
+
+なるほど～
+
+```js
+const uniqueInteger = () => uniqueInteger.counter++;
+uniqueInteger.counter = 0;
+
+console.log(uniqueInteger()); // 0
+console.log(uniqueInteger()); // 1
+```
+
+```js
+const factorial = (n) => {
+  if (Number.isInteger(n) && n > 0) {
+    if (!(n in factorial)) {
+      factorial[n] = n * factorial(n - 1);
+    }
+    return factorial[n];
+  } else {
+    return NaN;
+  }
+};
+
+factorial[1] = 1; // initialize factorial function
+
+console.log(factorial(6)); // 720
+console.log(factorial[5]); // 120; cached value
+```
+
+## Closures
+
+### lexical scope
+
+functions are executed using the variable scope that was in effect **when they were defined**, not the variable scope that is in effect when they are invoked.  
+
+おもしろい
+
+```js
+const counter = () => {
+  let n = 0;
+  return {
+    count: () => ++n,
+    reset: () => {n = 0;},
+  };
+};
+
+const c1 = counter(), c2 = counter();
+
+console.log(c1.count()); // 1
+console.log(c2.count()); // 1
+
+c1.reset();
+
+console.log(c1.count()); // 1
+console.log(c2.count()); // 2
+```
+
+
+```js
+const counter = (n) => ({
+  get count() {
+    return ++n;
+  },
+  set count(m) {
+    if (m > n) n = m;
+    else throw Error("count can only be set to a larger value");
+  },
+});
+
+const c = counter(1000);
+
+console.log(c.count); // 1001
+console.log(c.count); // 1002
+c.count = 2000;
+console.log(c.count); // 2001
+c.count = 2000; // Error: count can only be set to a larger value
+```
