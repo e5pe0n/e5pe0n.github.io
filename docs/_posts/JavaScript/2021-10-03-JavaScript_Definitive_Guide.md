@@ -1197,3 +1197,104 @@ const factorial = memoize(function (n) {
 
 console.log(factorial(5)); // 120
 ```
+
+<br>
+
+# Chapter 9. Classes
+
+> it is bast to understand up front that JavaScript's classes and prototype-based inheritance mechanism are substantially different from the classes and class-based inheritance mechanism of Java and similar languages.  
+
+- in JavaScript, a class is a set of objects that inherit properties from the same prototype object; *prototype-based inheritance*
+
+
+## Constructors
+
+**constructors are the public identity of a class**
+- in JavaScript, which of a class a object is which from a constructor the object is created
+
+```js
+function range(from, to) {
+  const r = Object.create(range.methods);
+
+  r.from = from;
+  r.to = to;
+
+  return r;
+}
+
+range.methods = {
+  includes(x) {
+    return this.from <= x && x <= this.to;
+  },
+  *[Symbol.iterator]() {
+    for (let x = Math.ceil(this.from); x <= this.to; x++) {
+      yield x;
+    }
+  },
+  toString() {
+    return "(" + this.from + "..." + this.to + ")";
+  },
+};
+
+const r = range(1, 3);
+console.log(r.includes(2)); // true
+console.log(r.toString()); // (1...3)
+const a = [...r];
+console.log(a); // [ 1, 2, 3 ]
+```
+
+if you use a constructor with *new* keyword
+- a new object is created automatically before the constructor is called
+- the new object inherits from *prototype* property of the function
+- the constructor can access the new object through `this`
+  - i.e. the constructor is called as a method of the object
+- the new object is returned automatically
+
+### Note:
+
+arrow functions cannot be used as constructor as this way because arrows inherit `this` from the context in which the arrows are defined, which means that the `this` of an arrow refers to the prototype object, not a new object.  
+
+```js
+function Range(from, to) {
+  this.from = from;
+  this.to = to;
+}
+
+Range.prototype = {
+  includes: function (x) {
+    return this.from <= x && x <= this.to;
+  },
+  [Symbol.iterator]: function* () {
+    for (let x = Math.ceil(this.from); x <= this.to; x++) {
+      yield x;
+    }
+  },
+  toString: function () {
+    return "(" + this.from + "..." + this.to + ")";
+  },
+};
+
+const r = new Range(1, 3);
+console.log(r.includes(2)); // true
+console.log(r.toString()); // (1...3)
+const a = [...r];
+console.log(a); // [ 1, 2, 3 ]
+```
+
+### *instanceof()*
+
+```js
+o instanceof C
+```
+
+- returns `true` if `o` inherits from `C.prototype`
+- the inheritance need not be direct
+  - e.g. `true` when right-hand side is a subclass of `C`
+
+### *isPrototypeOf()*
+
+```js
+range.methods.isPrototypeOf(r);
+```
+
+- a way to test the prototype chain of an object without the constructor
