@@ -1281,6 +1281,49 @@ const a = [...r];
 console.log(a); // [ 1, 2, 3 ]
 ```
 
+## *class* keyword
+
+- **class declarations are NOT hoisted**
+
+
+```js
+class Range {
+  constructor(from, to) {
+    this.from = from;
+    this.to = to;
+  }
+
+  static parse(s) {
+    const matches = s.match(/^\((\d+)\.\.\.(\d+)\)$/);
+    if (!matches) {
+      throw new TypeError(`Cannot parse Range from "${s}".`);
+    }
+    return new Range(parseInt(matches[1]), parseInt(matches[2]));
+  }
+
+  includes(x) {
+    return this.from <= x && x <= this.to;
+  }
+  *[Symbol.iterator]() {
+    for (let x = Math.ceil(this.from); x <= this.to; x++) {
+      yield x;
+    }
+  }
+  toString() {
+    return `(${this.from}...${this.to})`;
+  }
+}
+
+const r = new Range(1, 3);
+console.log(r.includes(2)); // true
+console.log(r.toString()); // (1..3)
+const a = [...r];
+console.log(a); // [ 1, 2, 3 ]
+
+const r2 = Range.parse("(1...10)");
+console.log(r2); // Range { from: 1, to: 10 }
+```
+
 ### *instanceof()*
 
 ```js
@@ -1298,3 +1341,204 @@ range.methods.isPrototypeOf(r);
 ```
 
 - a way to test the prototype chain of an object without the constructor
+
+## Static Methods
+
+- static methods are **defined as properties of the constructor** rather than properties of the prototype object
+  - in *Range* class example above, we call static method *parse* such as `Range.parse()` rather than `Range.prototype.parse()`
+
+
+## Static Fields
+
+- static fields must be defined out of the class body
+  - the class should be defined already
+
+```js
+class Complex {
+  constructor(real, imaginary) {
+    this.r = real;
+    this.i = imaginary;
+  }
+
+  plus(that) {
+    return new Complex(this.r + that.r, this.i + that.i);
+  }
+  times(that) {
+    return new Complex(
+      this.r * that.r - this.i * that.i,
+      this.r * that.i + this.i * that.r
+    );
+  }
+
+  static sum(c, d) {
+    return c.plus(d);
+  }
+  static product(c, d) {
+    return c.times(d);
+  }
+
+  get real() {
+    return this.r;
+  }
+  get imaginary() {
+    return this.i;
+  }
+  get magnitude() {
+    return Math.hypot(this.r, this.i);
+  }
+
+  toString() {
+    return `{${this.r}, ${this.i}}`;
+  }
+
+  equals(that) {
+    return that instanceof Complex && this.r === that.r && this.i === that.i;
+  }
+}
+
+// static fields
+Complex.ZERO = new Complex(0, 0);
+Complex.ONE = new Complex(1, 0);
+Complex.I = new Complex(0, 1);
+
+const c = new Complex(2, 3);
+const d = new Complex(c.i, c.r);
+console.log(c.plus(d).toString()); // {5, 5}
+console.log(c.magnitude); // 3.6055512754639896
+console.log(Complex.product(c, d)); // Complex { r: 0, i: 13 }
+console.log(Complex.ZERO.toString()); // {0, 0}
+```
+
+
+## Adding Methods to Existing Classes
+
+- JavaScript inheritance is to refer to a prototype object
+- therefore an object inherits properties from its prototype **even if the properties of the prototype change after the object is created.**
+
+
+## Subclasses
+
+you can create subclass to share the behavior of an object, but **prefer *composition* (or *delegation*)** to *inheritance*
+
+### JavaScript Inheritance Mechanism
+
+```js
+function Range(from, to) {
+  this.from = from;
+  this.to = to;
+}
+
+Range.prototype = {
+  includes: function (x) {
+    return this.from <= x && x <= this.to;
+  },
+  [Symbol.iterator]: function* () {
+    for (let x = Math.ceil(this.from); x <= this.to; x++) {
+      yield x;
+    }
+  },
+  toString: function () {
+    return "(" + this.from + "..." + this.to + ")";
+  },
+};
+
+function Span(start, span) {
+  if (span >= 0) {
+    this.from = start;
+    this.to = start + span;
+  } else {
+    this.to = start;
+    this.from = start + span;
+  }
+}
+
+// Span prototype object inherits properties of Range prototype object
+Span.prototype = Object.create(Range.prototype);
+Span.prototype.constructor = Span;
+
+Span.prototype.toString = function () {
+  return `(${this.from}... +${this.to - this.from})`;
+};
+
+// Span instance s inherits not only the properties of the prototype of Span
+// but also the properties of the prototype of Range
+// because Span prototype object inherits the properties of the Range prototype object
+const s = new Span(0, 10);
+console.log(s.toString()); // (0... +10)
+```
+
+### *extends* and *super*
+
+- since ES6
+
+```js
+class TypedMap extends Map {
+  constructor(keyType, valueType, entries) {
+    if (entries) {
+      for (const [k, v] of entries) {
+        if (typeof k !== keyType || typeof v !== valueType) {
+          throw new TypeError(`Wrong type for entry [${k}, ${v}]`);
+        }
+      }
+    }
+    super(entries);
+
+    // `this` must be placed after `super`
+    this.keyType = keyType;
+    this.valueType = valueType;
+  }
+
+  set(key, value) {
+    if (this.keyType && typeof key !== this.keyType) {
+      throw new TypeError(`${key} is not of type ${this.keyType}`);
+    }
+    if (this.valueType && typeof value !== this.valueType) {
+      throw new TypeError(`${value} is not of type ${this.valueType}`);
+    }
+    return super.set(key, value);
+  }
+}
+```
+
+## Delegation Instead of Inheritance
+
+```js
+class Histogram {
+  constructor() {
+    this.map = new Map();
+  }
+
+  count(key) {
+    return this.map.get(key) || 0;
+  }
+  has(key) {
+    return this.count(key) > 0;
+  }
+  get size() {
+    return this.map.size;
+  }
+  add(key) {
+    this.map.set(key, this.count(key) + 1);
+  }
+  delete(key) {
+    const cnt = this.count(key);
+    if (cnt === 1) {
+      this.map.delete(key);
+    } else if (cnt > 1) {
+      this.map.set(key, cnt - 1);
+    }
+  }
+  [Symbol.iterator]() {
+    return this.map.keys();
+  }
+  keys() {
+    return this.map.keys();
+  }
+  values() {
+    return this.map.values();
+  }
+  entries() {
+    return this.map.entries();
+  }
+}
+```
