@@ -1542,3 +1542,531 @@ class Histogram {
   }
 }
 ```
+
+<br>
+
+# Chapter 10. Modules
+
+## Node Modules
+
+### Exports one by one
+
+```
+dir/
+  - stats.js
+  - main.js
+```
+
+```js
+// stats.js
+const sum = (x, y) => x + y;
+const square = (x) => x * x;
+
+exports.mean = (data) => data.reduce(sum) / data.length;
+exports.stddev = function (d) {
+  const m = exports.mean(d);
+  return Math.sqrt(
+    d
+      .map((x) => x - m)
+      .map(square)
+      .reduce(sum) /
+      (d.length - 1)
+  );
+};
+```
+
+```js
+// main.js
+const stats = require("./stats.js");
+console.log(stats.mean([1, 2, 3, 4, 5])); // 3
+
+const { stddev } = require("./stats");  // js ext can be omit
+console.log(stddev([1, 2, 3, 4, 5])); // 1.5811388300841898
+```
+
+### Exports all together
+
+```
+dir/
+  - stats2.js
+  - main2.js
+```
+
+```js
+// stats2.js
+const sum = (x, y) => x + y;
+const square = (x) => x * x;
+const mean = (data) => data.reduce(sum) / data.length;
+const stddev = (d) => {
+  const m = mean(d);
+  return Math.sqrt(
+    d
+      .map((x) => x - m)
+      .map(square)
+      .reduce(sum) /
+      (d.length - 1)
+  );
+};
+
+module.exports = { mean, stddev };
+```
+
+```js
+// main2.js
+const stats = require("./stats2.js");
+console.log(stats.mean([1, 2, 3, 4, 5])); // 3
+
+const { stddev } = require("./stats2");
+console.log(stddev([1, 2, 3, 4, 5])); // 1.5811388300841898
+```
+
+## ES6 Modules
+
+- *import* and *export* are static
+  - *import*s are hoisted to the top of the code
+
+### Re-Exports
+
+```js
+import { mean } from "./stats/mean.js";
+import { stddev } from "./stats/stddev.js";
+export { mean, stddev };
+
+// re-export statement equivalent to above
+export { mean } from "./stats/mean.js";
+export { stddev } from "./stats/stddev.js";
+```
+
+
+<br>
+
+# Chapter 11. The JavaScript Standard Library
+
+## Sets
+
+- members are distinguished by `===`
+  - it determines object equality by reference (arrays are compared by reference too)
+- holds insertion order
+
+### Constructor
+
+```js
+const s = new Set(iterable);
+```
+
+
+### size
+
+```js
+s.size  // array.length like
+```
+
+### *add()*
+
+returns the set itself
+
+```js
+s.add("a").add("b").add("c")
+```
+
+### *delete()*
+
+returns `true` if an element is deleted from the set
+
+
+### *has()*
+
+### iteration
+
+```js
+const s = new Set([1, 2, 3]);
+for (const x of s) {
+  console.log(x); // 1 2 3
+}
+
+const arr = [...s];
+const ma = Math.max(...s);
+```
+
+## Maps
+
+- holds insertion order (at iteration)
+
+### Constructor
+
+```js
+const m = new Map([
+  ["one", 1],
+  ["two", 2],
+]);
+
+const clone = new Map(m);
+
+const o = { x: 1, y: 2 };
+const p = new Map(Object.entries(o)); // new Map([["x", 1], ["y", 2]])
+```
+
+### size
+
+```js
+m.size  // array.length like
+```
+
+### *set()*
+
+```js
+m.set("one", 1).set("two", 2);
+```
+
+### *get()*
+
+returns `undefined` if given a key does not exist in the map.
+
+### *delete()*
+
+returns `true` if the deletion succeeded.
+
+### iteration
+
+```js
+const m = new Map([
+  ["one", 1],
+  ["two", 2],
+]);
+
+for (const [key, value] of m) {
+  console.log(`${key}: ${value}`);
+}
+// one: 1
+// two: 2
+
+const arr = [...m]; // [["one", 1], ["two", 2]]
+```
+
+## Typed Arrays
+
+- since ES6
+- `Array.isArray(typedArray)` returns `false`
+
+### Constructors
+
+- *Int8Array()*
+- *Uint8Array()*
+- *Uint8ClampedArray()*
+- *Int16Array()*
+- *Uint16Array*
+- *Int32Array()*
+- *Uint32Array()*
+- *BigInt64Array()*
+- *BigUint64Array()*
+- *Float32Array()*
+- *Float64Array()*
+
+### Initialization
+
+```js
+const bytes = new Uint8Array(1024); // 1024 bytes
+
+const white = Uint8ClampedArray.of(255, 255, 255, 0)
+
+const ints = Uint32Array.from(white);
+```
+
+#### Array Buffer
+
+- a *TypedArray* object has *buffer* property holding an *ArrayBuffer* object
+- *ArrayBuffer* object itself cannot be accessed to read and write the bytes
+
+```js
+const buf = new ArrayBuffer(1024 * 1024);
+buf.size  // 1 MB
+
+const asbytes = new Uinit8Array(buf);
+const asints = new Int32Array(buf);
+const lastKB = new Uint8Array(buf, 1023 * 1024)
+const ints2ndKB = new Int32Array(buf, 1024, 256);
+```
+
+### Methods
+
+- *slice()*: returns **new** array
+- *subarray()*: returns a reference
+
+```js
+const bytes = new Uint8Array(12);
+const pattern = new Uint8Array([0, 1, 2, 3]);
+
+bytes.set(pattern);
+console.log(bytes.slice(0, 12));
+// Uint8Array(12) [0, 1, 2, 3, 0, 0, 0, 0, 0, 0, 0, 0]
+
+bytes.set(pattern, 4);
+console.log(bytes.slice(0, 12));
+// Uint8Array(12) [0, 1, 2, 3, 0, 1, 2, 3, 0, 0, 0, 0]
+
+bytes.set([0, 1, 2, 3], 8);
+console.log(bytes.slice(0, 12));
+// Uint8Array(12) [0, 1, 2, 3, 0, 1, 2, 3, 0, 1, 2, 3]
+
+const last3 = bytes.subarray(bytes.length - 3, bytes.length);
+console.log(last3); // Uint8Array(3) [ 1, 2, 3 ]
+```
+
+## RegExp
+
+### *replace()*
+
+- g-flag: replace all occurence
+- i-flag: case-insensitive
+
+```js
+const s = "JAVASCRIPT\tjavaSCRIPT\nJAVAscript";
+const t = s.replace(/javascript/gi, "JavaScript");
+console.log(t);
+// JavaScript      JavaScript
+// JavaScript
+
+const quote = /"([^"]*)"/g;
+const text = 'He said "stop"';
+const res = text.replace(quote, "!!$1!!");
+console.log(res); // He said !!stop!!
+
+const quote2 = /"(?<quotedText>[^"]*)"/g;
+const res2 = text.replace(quote2, "!!$<quotedText>!!");
+console.log(res2); // He said !!stop!!
+
+const d = "15 times 15 is 225";
+console.log(d.replace(/\d+/gu, (n) => parseInt(n).toString(16)));
+// f times f is e1
+```
+
+### *match()*
+
+- if g-flag is given, returns an array containing all matched substrings;
+  - otherwise returns an *match* object
+
+#### *match* Object
+
+- `m[0]`: entire matching substring
+- `m[1]`, `m[2]`, ...: groups in `m[0]`
+- `m.input`
+- `m.index`
+- `m.gruops.<group_name>`
+
+```js
+const ms = "7 plus 8 equals 15".match(/\d+/g);
+console.log(ms); // [ '7', '8', '15' ]
+
+
+const urlPattern = /(?<protocol>\w+):\/\/(?<host>[\w.]+)\/(?<path>\S*)/;
+const text = "Visit my blog at http://www.example.com/~david";
+const m = text.match(urlPattern);
+
+console.log(m[0]); // http://www.example.com/~david
+console.log(m[1]); // http
+console.log(m[2]); // www.example.com
+console.log(m[3]); // ~david
+
+console.log(m.input); // Visit my blog at http://www.example.com/~david
+console.log(m.index); // 17
+
+console.log(m.groups.protocol); // http
+console.log(m.groups.host); // www.example.com
+console.log(m.groups.path); // ~david
+```
+
+### *matchAll()*
+
+- returns an array of match objects
+  - c.f. *match()* with g-flag returns an array of matched substrings
+- prefer *matchAll* to *exec()* because *lastIndex* property of *RegExp* object that *exec()* uses makes your code error prone
+
+```js
+const wordsPattern = /\b\p{Alphabetic}+\b/gu;
+const text = "This is a naïve test of the matchAll() method.";
+for (const w of text.matchAll(wordsPattern)) {
+  console.log(`${w.index}: ${w[0]}`);
+}
+
+// 0: This
+// 5: is
+// 8: a
+// 10: naïve
+// 16: test
+// 21: of
+// 24: the
+// 28: matchAll
+// 39: method
+```
+
+
+## Dates and Times
+
+### Date
+
+- **Be careful that month starts with 0 but day of a month starts with 1!!**
+- use *Date.UTC()* constructor to create a Date object from UTC datetime
+- *console.log(dateObject)* display the datetime as local time zone by default
+  - use *dateObject.toUTCString()* to display datetime as UTC
+- use whether to use *getXXX* and *setXXX*, or *getUTCXXX* and *setUTCXXX* properly
+
+- use *performance* object (such as *perf_hooks* in Node.js) for high-precision timer
+
+```js
+const now = new Date();
+
+const epoch = new Date(0); // given interger is interpreted as milliseconds from epoch
+console.log(epoch); // 1970-01-01T00:00:00.000Z
+
+const century = new Date(
+  2100, // year
+  0, // January; month starts with 0!
+  1, // 1st; day of a month starts with 1!
+  2, // hour
+  3, // minute
+  4, // second
+  5 // millisecond
+);
+console.log(century); // 2100-01-01T02:03:04.005Z
+
+console.log(`day of month: ${century.getDate()}`); // day of month: 1
+// Sunday is 0, Saturday is 6
+console.log(`day of week: ${century.getDay()}`); // day of week: 5; Friday
+
+
+const utcCentury = new Date(Date.UTC(2100, 0, 1));
+console.log(utcCentury.toUTCString()); // Fri, 01 Jan 2100 00:00:00 GMT
+
+// get and set year as local time zone
+utcCentury.setFullYear(utcCentury.getFullYear() + 1);
+
+// set and set year as UTC
+utcCentury.setUTCFullYear(utcCentury.getUTCFullYear() + 1);
+
+console.log(`timestamp [ms]: ${century.getTime()}`); // timestamp [ms]: 4102452184005
+console.log(`current time as timestamp [ms]: ${Date.now()}`); // current time as timestamp [ms]: 1635766448134
+
+start = Date.now();
+// something do
+end = Date.now();
+const duration_ms = end - start;
+```
+
+## Error Classes
+
+- JavaScript *throw* and *catch* statement can throw and catch any JavaScript value, including primitive values
+
+### Constructor
+
+```js
+throw new Error(message);
+```
+
+### properties
+
+- *name*: constructor name such as `Error`
+- *message*
+- *toString()*: `<name>: <message>`
+- *stack*: a multi-line string of a stack trace
+
+```js
+class HTTPError extends Error {
+  constructor(status, statusText, url) {
+    super(`${status} ${statusText}: ${url}`);
+    this.status = status;
+    this.statusText = statusText;
+    this.url = url;
+  }
+
+  get name() {
+    return "HTTPError";
+  }
+}
+
+const err = new HTTPError(404, "Not Found", "http://example.com/");
+```
+
+## JSON
+
+```js
+JSON.parse(string, revivier)
+```
+
+### *JSON.parse()*
+
+```js
+const data = JSON.parse(text, (k, v) => { // revivier function
+  if (key[0] === "_") return undefined; // exclude properties like `_internal_prop`
+  if (
+    typeof v === "string" &&
+    /^\d\d\d\d-\d\d-\d\dT\d\d:\d\d:\d\d.\d\d\dZ$/.test(value)
+  ) {
+    return new Date(v);
+  }
+});
+```
+### *JSON.stringify()*
+
+```js
+JSON.stringify(object, filter: string[] | int[], indent: number)
+JSON.stringify(object, replacer:  (string, any) => object, indent: number)
+```
+
+- it uses a *toJSON()* method of a serialized object which is not json serializable as default
+
+- when an array of strings or ints is given as the second argument, stringify only specified properties holding the order
+- when an replacer function is given as the second argument, stringify properties filtered with the replacer
+
+
+
+```js
+const address = {
+  city: "Sapporo",
+  prefecture: "Hokkaido",
+  country: "Japan",
+  zip: "000-0000",
+  id: 0,
+};
+
+const text = JSON.stringify(address, ["country", "zip", "city"]);
+console.log(text);
+// {"country":"Japan","zip":"000-0000","city":"Sapporo"}
+// holding the order of properties in the passed array
+
+const json = JSON.stringify(address, (k, v) =>
+  typeof v === "string" ? undefined : v // exclude strings
+);
+console.log(json); // {"id":0}
+```
+
+## URL APIs
+
+### URL class
+
+```js
+const url = new URL("https://example.com:8000/path/name?q=term#fragment");
+
+console.log(url.href); // https://example.com:8000/path/name?q=term#fragment
+console.log(url.origin); // https://example.com:8000
+console.log(url.protocol); // https:
+console.log(url.host); // example.com:8000
+console.log(url.hostname); // example.com
+console.log(url.port); // 8000
+console.log(url.pathname); // /path/name
+console.log(url.search); // ?q=term
+console.log(url.hash); // #fragment
+```
+
+see also *url.searchParams* property (p.321)
+
+```js
+const url = new URL("https://example.com");
+
+url.pathname = "path with spaces";
+url.search = "q=foo#bar";
+
+// automatically escaping
+console.log(url.pathname); // /path%20with%20spaces
+console.log(url.search); // ?q=foo%23bar
+console.log(url.href); // https://example.com/path%20with%20spaces?q=foo%23bar
+```
