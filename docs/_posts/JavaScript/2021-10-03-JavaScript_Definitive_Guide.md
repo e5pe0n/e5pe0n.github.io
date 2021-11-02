@@ -2070,3 +2070,259 @@ console.log(url.pathname); // /path%20with%20spaces
 console.log(url.search); // ?q=foo%23bar
 console.log(url.href); // https://example.com/path%20with%20spaces?q=foo%23bar
 ```
+
+<br>
+
+# Chapter 12. Iterators and Generators
+
+- since ES6
+
+## Iterator
+
+- *iterable* objects
+  - any object with a special iterator method that returns an iterator object
+- *iterator* objects
+  - any object with a *next()* method that returns an iteration result object
+  - we can implement clean up processes as *return()* optionally
+    - *return()* is called when a iterator object returns before it exhausts
+- *iteration result* object
+  - an object with *value* property and *done* property
+
+```js
+const iterable = [99, 100, 101];
+const iterator = iterable[Symbol.iterator]();
+for (let res = iterator.next(); !res.done; res = iterator.next()) {
+  console.log(res.value); // 99, 100, 101
+}
+
+const list = [1, 2, 3, 4, 5];
+const iter = list[Symbol.iterator]();
+const head = iter.next().value;
+const tail = [...iter];
+console.log(tail); // [ 2, 3, 4, 5 ]
+```
+
+```js
+class Range {
+  constructor(from, to) {
+    this.from = from;
+    this.to = to;
+  }
+
+  has(x) {
+    return typeof x === "number" && this.from <= x && x <= this.to;
+  }
+
+  toString() {
+    return `{ x | ${this.from} <= x <= ${this.to} }`;
+  }
+
+  [Symbol.iterator]() {
+    let next = Math.ceil(this.from);
+    const last = this.to;
+    return {
+      next() {
+        return next <= last ? { value: next++ } : { done: true };
+      },
+      [Symbol.iterator]() {
+        return this;
+      },
+    };
+  }
+}
+
+for (const x of new Range(1, 10)) {
+  console.log(x);
+}
+
+const a = [...new Range(-2, 2)];
+console.log(a); // [ -2, -1, 0, 1, 2 ]
+```
+```js
+function map(iterable, f) {
+  const iterator = iterable[Symbol.iterator]();
+  return {
+    [Symbol.iterator]() {
+      return this;
+    },
+    next() {
+      const v = iterator.next();
+      if (v.done) {
+        return v;
+      } else {
+        return { value: f(v.value) };
+      }
+    },
+  };
+}
+
+const a = [...map(new Range(1, 4), (x) => x * x)];
+console.log(a); // [ 1, 4, 9, 16 ]
+```
+
+```js
+const { Range } = require("./Range");
+
+function filter(iterable, predicate) {
+  const iterator = iterable[Symbol.iterator]();
+  return {
+    [Symbol.iterator]() {
+      return this;
+    },
+    next() {
+      for (;;) {
+        const v = iterator.next();
+        if (v.done || predicate(v.value)) {
+          return v;
+        }
+      }
+    },
+  };
+}
+
+const a = [...filter(new Range(1, 10), (x) => x % 2 === 0)];
+console.log(a); // [ 2, 4, 6, 8, 10 ]
+```
+
+## Generators
+
+- a kind of iterator defined with ES6 syntax
+
+<br>
+
+- *generator function*
+  - returns *generator* object when invoked, instead of executing the body
+- *generator* object
+  - runs to the next *yield* expression in the body when *next()* is called
+  - returns the value of *yield* expression each call
+  - we **cannot** implement *return()* as with iterator objects
+
+
+```js
+// generator function
+function* oneDigitPrimes() {
+  yield 2;
+  yield 3;
+  yield 5;
+  yield 7;
+}
+
+// generator
+const primesGenerator = oneDigitPrimes();
+
+console.log(primesGenerator.next().value); // 2
+console.log(primesGenerator.next().value); // 3
+console.log(primesGenerator.next().value); // 5
+console.log(primesGenerator.next().value); // 7
+console.log(primesGenerator.next().done); // true
+
+const primes = [...oneDigitPrimes()];
+console.log(primes); // [ 2, 3, 5, 7 ]
+
+let sum = 0;
+for (const prime of oneDigitPrimes()) {
+  sum += prime;
+}
+console.log(sum); // 17
+```
+
+```js
+const seq = function* (from, to) {
+  for (let i = from; i <= to; i++) {
+    yield i;
+  }
+};
+
+const a = [...seq(3, 5)];
+console.log(a); // [ 3, 4, 5 ]
+```
+
+```js
+const o = {
+  x: 1,
+  y: 2,
+  z: 3,
+  *g() {
+    for (const key of Object.keys(this)) {
+      yield key;
+    }
+  },
+};
+
+const a = [...o.g()];
+console.log(a); // [ 'x', 'y', 'z', 'g' ]
+```
+
+such lazy evaluation
+
+```js
+function* fibonacciSequence() {
+  let x = 0,
+    y = 1;
+  for (;;) {
+    yield y;
+    [x, y] = [y, x + y];
+  }
+}
+
+function* take(n, iterable) {
+  const it = iterable[Symbol.iterator]();
+  while (n-- > 0) {
+    const next = it.next();
+    if (next.done) {
+      return;
+    } else {
+      yield next.value;
+    }
+  }
+}
+
+const head_5 = [...take(5, fibonacciSequence())];
+console.log(head_5); // [ 1, 1, 2, 3, 5 ]
+```
+
+```js
+function* zip(...iterables) {
+  const iterators = iterables.map((i) => i[Symbol.iterator]());
+  let index = 0;
+  while (iterators.length > 0) {
+    if (index >= iterators.length) {
+      index = 0;
+    }
+    const item = iterators[index].next();
+    if (item.done) {
+      iterators.splice(index, 1);
+    } else {
+      yield item.value;
+      index++;
+    }
+  }
+}
+
+const a = [...zip([1, 2, 3], ["a", "b"], [100])];
+console.log(a); // [ 1, 'a', 100, 2, 'b', 3 ]
+```
+
+### *yield**
+
+```js
+function* sequence(...iterables) {
+  for (const iterable of iterables) {
+    for (const item of iterable) {
+      yield item;
+    }
+  }
+}
+
+function* sequence2(...iterables) {
+  // equivalent to sequence() above
+  for (const iterable of iterables) {
+    yield* iterable;
+  }
+}
+
+const a = [...sequence2([1, 2, 3], ["a", "b"], [100])];
+console.log(a); // [ 1, 2, 3, 'a', 'b', 100 ]
+```
+
+### *yield* Expression
