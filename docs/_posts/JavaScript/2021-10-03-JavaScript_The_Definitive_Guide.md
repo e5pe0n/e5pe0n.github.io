@@ -2325,4 +2325,82 @@ const a = [...sequence2([1, 2, 3], ["a", "b"], [100])];
 console.log(a); // [ 1, 2, 3, 'a', 'b', 100 ]
 ```
 
-### *yield* Expression
+<br>
+
+# Chapter 13. Asynchronous JavaScript
+
+- *Promise*
+  - since ES6
+- *async* and *await*
+  - since ES2017
+- *for/await* loop
+  - since ES2018
+
+
+## Promise
+
+- represent the future results of single asynchronous computations
+  - e.g. *setTimeout()*, *load* event handler
+- **cannot** represent **repeated** asynchronous computations
+  - e.g. *setInterval()*, *click* event handler
+
+<br>
+
+### Terminologies
+
+- *fulfilled*
+- *rejected*
+- *pending*
+- *settled*
+- *resolved*
+  - assume that `const p: Promise = f.then(c)`
+    - `c` is a callback function which takes an Promise an arugment
+    - `then()` returns a Promise `p`
+    - `c` returns a value `v` after `c` is asynchronously invoked
+      - when the callback returns, `p` is *resolved* with the value `v`
+        - if `v` is not a Promise, `p` is *fulfilled* as well
+        - if `v` itself is a Promise, `p` is *resolved but not yet fulfilled*
+          - if `v` is fulfilled, then `p` will be fulfilled to the same value
+          - if `v` is rejected, then `p` will be rejected for the same reason
+
+e.g.  
+
+```js
+function c1(response) {
+  const p4 = response.json();
+  return p4;
+}
+
+function c2(json) {
+  displayUser(json);
+}
+
+fetch("/api/user/profile").then(c1).then(c2);
+```
+
+break it down to promises
+
+```js
+const p1: Promise = fetch("/api/user/profile");
+const p2: Promise = p1.then(c1);
+const p3: Promise = p2.then(c2);
+```
+
+![promises]({{site.url}}{{site.baseurl}}/assets/jtdg_images/promises.png)
+
+
+### Error Handlings
+
+- we cannot handle an error caused in an asynchronous function at the point of calling the asynchronous function because the point is not on a call stack already when the asynchronous function runs
+
+```js
+getJson("/api/user/profile").then(displayUserProfile, handleProfileError)
+```
+
+- *catch()* is equivalent to *then(null, error)*
+- *catch()* can catch an error thrown in both *getJson()* and *displayUserProfile()*
+
+```js
+// better way
+getJSON("/api/user/profile").then(displayUserProfile).catch(handleProfileError);
+```
