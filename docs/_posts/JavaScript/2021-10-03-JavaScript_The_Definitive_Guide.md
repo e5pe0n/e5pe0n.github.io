@@ -2391,7 +2391,8 @@ const p3: Promise = p2.then(c2);
 
 ### Error Handlings
 
-- we cannot handle an error caused in an asynchronous function at the point of calling the asynchronous function because the point is not on a call stack already when the asynchronous function runs
+- normal *try/catch* does not work for an asynchronous code
+  - we cannot handle an error caused in an asynchronous function at the point of calling the asynchronous function because the point is not on a call stack already when the asynchronous function runs
 
 ```js
 getJson("/api/user/profile").then(displayUserProfile, handleProfileError)
@@ -2403,4 +2404,610 @@ getJson("/api/user/profile").then(displayUserProfile, handleProfileError)
 ```js
 // better way
 getJSON("/api/user/profile").then(displayUserProfile).catch(handleProfileError);
+```
+
+#### multi-catch methods
+
+```js
+startAsyncOperation()
+  .then(doStageTwo)
+  .catch(recoverFromStageTwoError)
+  .then(doStageThree)
+  .then(doStageFour)
+  .then(logStageThreeAndFourErrors);
+```
+
+- when *startAsyncOperation()* or *doStageTwo()* throws and error, *recoverFromStageTwoError()* is called
+  - if *recoverFromStageTwoError()* returns a value, *doStageThree()* is called
+  - if *recoverFromStageTwoError()* throws a new error, *logStageThreeAndFourErrors* is called
+
+
+<br>
+
+this can be used to retry an asynchronous process
+
+```js
+queryDatabase()
+  .catch(e => wait(500).then(queryDatabase))
+  .then(displayTable)
+  .catch(displayDatabaseError);
+```
+
+### *Promise.all()*
+
+- fulfills if all promises are fulfilled; otherwise rejects
+- rejects if any promise is rejected immediately
+
+
+```js
+const urls = [...]
+
+const promises = urls.map(url => fetch(url).then(r => r.text()));
+
+Promise.all(promises)
+  .then(bodies => {/* do something */})
+  .catch(e => console.error(e));
+```
+
+### *Promise.allSettled()*
+
+```js
+Promise.allSettled([Promise.resolve(1), Promise.reject(2), 3])
+  .then(res => {
+    res[0]; // { status: "fulfilled", value: 1 }
+    res[1]; // { status: "rejected", value: 2 }
+    res[2]; // { status: "fulfilled", value: 3 }
+  })
+```
+
+### *Promise.race()*
+
+- resolves when any promise is resolved
+
+### Handmade Promise
+
+```js
+function wait(duration) {
+  return new Promise((resolve, reject) => {
+    if (duration < 0) {
+      reject(new Error("Time travel not yet implemented"));
+    }
+    setTimeout(resolve, duration);
+  });
+}
+```
+
+```js
+const http = require("http");
+
+function getJSON(url) {
+  return new Promise((resolve, reject) => {
+    request = http.get(url, (response) => {
+      if (response.statusCode !== 200) {
+        reject(new Error(`HTTP status ${response.statusCode}`));
+        response.resume();
+      } else if (response.headers["content-type"] !== "application/json") {
+        reject(new Error("Invalid content-type"));
+        response.resume();
+      } else {
+        let body = "";
+        response.setEncoding("utf-8");
+        response.on("data", (chunk) => {
+          body += chunk;
+        });
+        response.on("end", () => {
+          try {
+            const parsed = JSON.parse(body);
+            resolve(parsed);
+          } catch (e) {
+            reject(e);
+          }
+        });
+      }
+    });
+    request.on("error", (error) => {
+      reject(error);
+    });
+  });
+}
+```
+
+### Promise Sequence
+
+```js
+function fetchSequentially(urls) {
+  const bodies = [];
+
+  function fetchOne(url) {
+    return fetch(url)
+      .then((response) => response.text())
+      .then((body) => {
+        bodies.push(body);
+      });
+  }
+
+  let p = Promise.resolve(undefined);
+  for (url of urls) {
+    p = p.then(() => fetchOne(url));
+  }
+  return p.then(() => bodies);
+}
+```
+
+```js
+function promiseSequence(input, promiseMaker) {
+  inputs = [...inputs];
+
+  function handleNextInput(outputs) {
+    if (inputs.length === 0) {
+      return outputs;
+    } else {
+      const nextInput = inputs.shift();
+      return promiseMaker(nextInput)
+        .then((output) => outputs.concat(output))
+        .then(handleNextInput);
+    }
+  }
+  return Promise.resolve([]).then(handleNextInput);
+}
+
+function fetchBody(url) {
+  return fetch(url).then((r) => r.text());
+}
+
+promiseSequence(urls, fetchBody)
+  .then((bodies) => {
+    /* do something */
+  })
+  .catch(console.error);
+```
+`promiseSequence()` above is recursive such as
+
+```js
+Promise.resolve([])
+  .then((outputs) => {
+    ...
+    return promiseMaker(nextInput)
+      .then((output) => outpus.concat(output))
+      .then((outputs) => {
+        ...
+        return promiseMaker(nextInput)
+          .then((output) => outputs.concat(output))
+          .then((outputs) => {
+            ...
+            return outputs
+          })
+      })
+  })
+```
+
+### *await* and *async*
+
+- since ES2017
+
+```js
+async function f(x) { /* body */ }
+
+function f(x) {
+  return new Promise(function(resolve, reject) {
+    try {
+      resolve(function(x) {/* body */})
+    } catch(e) {
+      reject(e);
+    }
+  })
+}
+```
+
+```js
+async function getJSON(url) {
+  const response = await fetch(url);
+  const body = await response.json();
+  return body;
+}
+
+// parallel fetch
+const [value1, value2] = await Promise.all([getJSON(url1), getJSON(url2)])
+```
+
+### *for/await*
+
+- since ES2018
+
+```js
+for (const promise of promises) {
+  response = await promise;
+  handle(response);
+}
+
+// using for/await
+for await (const response of promises) {
+  handle(response);
+}
+```
+
+### Asynchronous Iterators and Generators
+
+
+```js
+class AsyncQueue {
+  constructor() {
+    this.value = [];
+    this.resolvers = [];
+    this.closed = false;
+  }
+  enqueue(value) {
+    if (this.closed) {
+      throw new Error("AsyncQueue closed");
+    }
+    if (this.resolvers.length > 0) {
+      const resolve = this.resolvers.shift();
+      resolve(value);
+    } else {
+      this.values.push(value);
+    }
+  }
+  dequeue() {
+    if (this.values.length > 0) {
+      const value = this.values.shift();
+      return Promise.resolve(value);
+    } else if (this.closed) {
+      return Promise.resolve(AsyncQueue.EOS);
+    } else {
+      return new Promise((resolve) => {
+        this.resolvers.push(resolve);
+      });
+    }
+  }
+  close() {
+    while (this.resolvers.length > 0) {
+      this.resolvers.shift()(AsyncQueue.EOS);
+    }
+    this.closed = true;
+  }
+  [Symbol.asyncIterator]() {
+    return this;
+  }
+  next() {
+    return this.dequeue().then((value) =>
+      value === AsyncQueue.EOS
+        ? { value: undefined, done: true }
+        : { value: value, done: false }
+    );
+  }
+}
+
+AsyncQueue.EOS = Symbol("end-of-stream");
+```
+
+```js
+const { AsyncQueue } = require("AsyncQueue");
+
+function eventStream(elt, type) {
+  const q = new AsyncQueue();
+  elt.addEventListener(type, (e) => q.enqueue(e));
+  return q;
+}
+
+async function handleKeys() {
+  for await (const event of eventStream(document, "keypress")) {
+    console.log(event.key);
+  }
+}
+```
+
+<br>
+
+# Chapter 14. Metaprogramming
+
+## Property Attributes
+
+- *writable*
+  - whether or not the value can be changed
+- *enumerable*
+  - whether or not it can be enumerated by *for/in* loop and *Object.keys()*
+- *configurable*
+  - whether or not it can be deleted and the property's attributes can changed
+
+### *property descriptor* object
+
+- JavaScript methods for querying and setting the attributes of a property use a *property descriptor* object
+
+properties of a property descriptor of a data property
+- value
+- writable
+- enumerable
+- configurable
+
+properties of a property descriptor of a accessor property
+- get
+- set
+- enumerable
+- configurable
+
+```js
+const o = Object.getOwnPropertyDescriptor({ x: 1 }, "x");
+console.log(o); // { value: 1, writable: true, enumerable: true, configurable: true }
+
+const random = {
+  get octet() {
+    return Math.floor(Math.random() * 256);
+  },
+};
+
+console.log(Object.getOwnPropertyDescriptor(random, "octet"));
+// {
+//   get: [Function: get octet],
+//   set: undefined,
+//   enumerable: true,
+//   configurable: true
+// }
+
+console.log(Object.getOwnPropertyDescriptor({}, "x")); // undefined
+console.log(Object.getOwnPropertyDescriptor({}, "toString")); // undefined
+```
+
+```js
+"use strict";
+const o = {};
+
+Object.defineProperty(o, "x", {
+  value: 1,
+  writable: true,
+  enumerable: false,
+  configurable: true,
+});
+
+console.log(o.x); // 1
+console.log(Object.keys(o)); // []
+
+Object.defineProperty(o, "x", { writable: false });
+try {
+  o.x = 2;
+} catch (err) {
+  console.log(err);
+  // TypeError: Cannot assign to read only property 'x' of object '#<Object>'
+}
+console.log(o.x); // 1
+
+Object.defineProperty(o, "x", { value: 2 });
+console.log(o.x); // 2
+
+// change x from a data property to accessor property
+Object.defineProperty(o, "x", {
+  get: function () {
+    return 0;
+  },
+});
+console.log(Object.getOwnPropertyDescriptor(o, "x"));
+// {
+//   get: [Function: get],
+//   set: undefined,
+//   enumerable: false,
+//   configurable: true
+// }
+```
+
+```js
+const p = Object.defineProperties(
+  {},
+  {
+    x: { value: 1, writable: true, enumerable: true, configurable: true },
+    y: { value: 1, writable: true, enumerable: true, configurable: true },
+    r: {
+      get() {
+        return Math.sqrt(this.x * this.x + this.y * this.y);
+      },
+      enumerable: true,
+      configurable: true,
+    },
+  }
+);
+console.log(p.r); // 1.4142135623730951
+```
+
+```js
+Object.defineProperty(Object, "assignDescriptors", {
+  writable: true,
+  enumerable: false,
+  configurable: true,
+  value: function (target, ...sources) {
+    for (const source of sources) {
+      for (const name of Object.getOwnPropertyNames(source)) {
+        const desc = Object.getOwnPropertyDescriptor(source, name);
+        Object.defineProperty(target, name, desc);
+      }
+      for (const symbol of Object.getOwnPropertySymbols(source)) {
+        const desc = Object.getOwnPropertyDescriptor(source, symbol);
+        Object.defineProperty(target, symbol, desc);
+      }
+    }
+    return target;
+  },
+});
+
+const o = {
+  c: 1,
+  get count() {
+    return this.c++;
+  },
+};
+const p = Object.assign({}, o);
+const q = Object.assignDescriptors({}, o);
+
+console.log(p.count); // 1
+console.log(p.count); // 1; because of just a data property
+
+console.log(q.count); // 2
+console.log(q.count); // 3; because copied as getter
+```
+
+## Object Extensibility
+
+whether new properties can be added to an object or not
+
+- *Object.isExtensible()*
+  - return `true` if an object is extensible
+- *Object.preventExtensions()*
+  - makes an object non-extensible
+  - a non-extensible object cannot be extensible
+
+
+### *Object.seal()*
+
+- makes the object non-extensible and all the properties noncofiguable
+  - new properties cannot be added to the object
+  - existing properties cannot be deleted or configured
+  - existing writable properties can still be set
+
+### *Object.freeze()*
+
+- makes the object non-extensible and all the properties nonconfigurable and read-only
+
+
+## Symbols
+
+### *Symbol.toStringTag*
+
+```js
+function classof(o) {
+  return Object.prototype.toString.call(o).slice(8, -1);
+}
+
+console.log(classof(null)); // Null
+console.log(classof(undefined)); // Undefined
+console.log(classof(1)); // Number
+console.log(classof(10n ** 100n)); // BigInt
+console.log(classof("")); // String
+console.log(classof(false)); // Boolean
+console.log(classof(Symbol())); // Symbol
+console.log(classof({})); // Object
+console.log(classof([])); // Array
+console.log(classof(/./)); // RegExp
+console.log(classof(() => {})); // Function
+console.log(classof(new Map())); // Map
+console.log(classof(new Set())); // Set
+console.log(classof(new Date())); // Date
+
+class Range {
+  constructor(from, to) {
+    this.from = from;
+    this.to = to;
+  }
+  get [Symbol.toStringTag]() {
+    return "Range";
+  }
+}
+const r = new Range(1, 10);
+console.log(classof(r)); // Range
+```
+
+## Pattern-Matching Symbols
+
+```js
+class Glob {
+  constructor(glob) {
+    this.glob = glob;
+    const regexpText = glob.replace("?", "([^/])").replace("*", "([^/]*)");
+    this.regexp = new RegExp(`^${regexpText}`, "u");
+  }
+  toString() {
+    return this.glob;
+  }
+  [Symbol.search](s) {
+    return s.search(this.regexp);
+  }
+  [Symbol.match](s) {
+    return s.match(this.regexp);
+  }
+  [Symbol.replace](s, replacement) {
+    return s.replace(this.regexp, replacement);
+  }
+}
+
+module.exports = { Glob };
+```
+
+```js
+const { Glob } = require("./Glob");
+
+const pattern = new Glob("docs/*.txt");
+
+console.log("docs/sample.txt".search(pattern)); // 0
+console.log("docs/sample.htlm".search(pattern)); // -1
+
+const m = "docs/sample.txt".match(pattern);
+console.log(m[0]); // docs/sample.txt
+console.log(m[1]); // sample
+console.log(m.index); // 0
+
+console.log("docs/sample.txt".replace(pattern, "web/$1.html")); // web/sample.html
+```
+
+
+## *Symbol.toPrimitive*
+
+- define how to convert an object to primitive value
+
+```js
+class Vector {
+  constructor(x, y) {
+    this.x = x;
+    this.y = y;
+  }
+  [Symbol.toPrimitive](arg) {
+    if (arg == "string") {
+      return `(${this.x}, ${this.y})`;
+    } else if (arg == "number") {
+      return this.x * this.x + this.y * this.y;
+    } else {
+      return this.x * this.x + this.y * this.y;
+    }
+  }
+}
+
+const v = new Vector(3, 4);
+console.log(`v=${v}`); // v=(3, 4)
+console.log(v + v); // 50
+console.log(v + 100); // 125
+console.log(v + "100"); // 25100
+```
+
+## Proxy Class
+
+```js
+new Proxy(target, handler)
+```
+
+```js
+function readOnlyProxy(o) {
+  function readonly() {
+    throw new TypeError("Readonly");
+  }
+  return new Proxy(o, {
+    set: readonly,
+    defineProperty: readonly,
+    deleteProperty: readonly,
+    setPrototypeOf: readonly,
+  });
+}
+
+const o = { x: 1, y: 2 };
+const p = readOnlyProxy(o);
+console.log(p.x); // 1
+try {
+  p.x = 2;
+} catch (err) {
+  console.log(err); // TypeError: Readonly
+}
+try {
+  delete p.y;
+} catch (err) {
+  console.log(err); // TypeError: Readonly
+}
+try {
+  p.z = 3;
+} catch (err) {
+  console.log(err); // TypeError: Readonly
+}
 ```
