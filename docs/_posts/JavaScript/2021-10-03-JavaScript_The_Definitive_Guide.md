@@ -20,13 +20,13 @@ last-modified-at: 2021-08-07
 
 ## ECMAScript
 
-|version|released|
-|:---:|:---:|
-|ES5|2010|
-|ES6|2015|
-|ES2016|2016|
-|ES2017|2017|
-|...|...|
+| version | released |
+| :-----: | :------: |
+|   ES5   |   2010   |
+|   ES6   |   2015   |
+| ES2016  |   2016   |
+| ES2017  |   2017   |
+|   ...   |   ...    |
 
 # Chapter 3. Types, Values, and Variables
 
@@ -186,10 +186,10 @@ x-0     // => Number(x)
 !!x     // => Boolean(x)
 ```
 
-|Algorithms|Method|
-|:---:|:---:|
-|prefer-string|`toString()` -> `ValueOf()`|
-|prefer-number|`ValueOf()` -> `toString()`|
+|  Algorithms   |           Method            |
+| :-----------: | :-------------------------: |
+| prefer-string | `toString()` -> `ValueOf()` |
+| prefer-number | `ValueOf()` -> `toString()` |
 
 
 ## *var*
@@ -887,10 +887,10 @@ JavaScript functions are simply a kind of JavaScript obects.
 
 ## Arrows vs. Others
 
-||arrows|others|
-|:---:|:---:|:---:|
-|`this`|the environment in which they are defined|invocation context|
-|`prototype`|not exist|exists|
+|             |                  arrows                   |       others       |
+| :---------: | :---------------------------------------: | :----------------: |
+|   `this`    | the environment in which they are defined | invocation context |
+| `prototype` |                 not exist                 |       exists       |
 
 
 ```js
@@ -3011,3 +3011,230 @@ try {
   console.log(err); // TypeError: Readonly
 }
 ```
+
+<br>
+
+
+# Chapter 15. JavaScript in Web Browsers
+
+## Namespace
+
+- with non-module scripts, the contents such as variables, functions, classes defined in top-level code are shared with all other scripts in the same document.
+
+
+## Web Worker
+
+- a controlled form of concurrency 
+- background thread for performing computationally intensive tasks
+- the thread does not share any state with the main thread or with other workers
+
+## The same-origin policy
+
+- `origin = protocol + host + port` of a loaded **document**, not a script
+
+## Custom Event
+
+```js
+document.dispatchEvent(new CustomEvent(
+  "busy",   // custom event type
+  { detail: true }  // custom properties
+));
+
+fetch(url)
+  .then(handleNetworkResponse)
+  .catch(handleNetworkError)
+  .finally(() => {
+    document.dispatchEvent(new CustomEvent("bosy", { detail: false }));
+  })
+
+document.addEventListener("busy", (e) => {
+  if (e.detail) {
+    showSpinner();
+  } else {
+    hideSpinner();
+  }
+});
+```
+
+## The *class* attribute
+
+- *className*
+- *classList*
+
+```js
+const spinner = document.querySelector("#spinner");
+spinner.classList.remove("hidden");
+spinner.classList.add("animated");
+```
+
+## Dataset attributes
+
+```html
+<h2 id="title" data-section-number="16.1">Attributes</h2>
+```
+
+```js
+const number = document.querySelector("#title").dataset.sectionNumber;  // 16.1
+```
+
+## Coordinate Systems
+
+- document coordinates
+- viewport coordinates (window coordinates)
+  - *viewport*
+    - the portion of the browser that actually displays document content
+  - preferred to document coordinates
+
+
+## *Location* Object
+
+
+```js
+const url = new URL(window.location);
+
+// just assign a string to load new page
+window.location = "http://www.oreilly.com";
+
+// replace a current page with a passed URL in browser history
+document.location.replace("staticpage.html");
+```
+
+## *fetch* API
+
+- *Headers* object
+  - *headers* property of Response object
+  - *has()* and *get()* are case-**in**sensitive
+
+- rejects the *Promise* if it cannot contact the web server.  
+  - the user's computer is offline
+  - the server is unresponsive
+  - the URL specifies a hostname that does not exist
+- recommended to put *fetch()* in try-catch clause
+
+```js
+try {
+  const res = await fetch();
+} catch (err) {
+
+}
+```
+
+a streaming API example
+
+```js
+fetch("big.json")
+  .then(response => streamBody(response, updateProgress))
+  .then(bodyText => JSON.parse(bodyText))
+  .then(handleBigJSONObject);
+
+async function streamBody(response, reportProgress, processChunk) {
+  const expectedBytes = parseInt(response.headers.get("Content-Length"));
+  let bytesRead = 0;
+  const reader = response.body.getReader();
+  const decoder = new TextDecoder("utf-8");
+  let body = "";
+
+  while (true) {
+    const {done, value} = await reader.read();
+
+    if (value) {
+      if (processChunk) {
+        const processed = processChunk(value);
+        if (processed) {
+          body += processed;
+        }
+      } else {
+        body += decoder.decode(value, {stream: true});
+      }
+
+      if (reportProgress) {
+        bytesRead += value.length;
+        reportProgress(bytesRead, bytesRead / expectedBytes);
+      }
+    }
+    if (done) {
+      break;
+    }
+  }
+  return body;
+}
+```
+
+### Aborting a request
+
+```js
+function fetchWithTimeout(url, options={}) {
+  if (options.timeout) {
+    const controller = new AbortController();
+    options.signal = controller.signal;
+    setTimeout(() => { controller.abort(); }, options.timeout);
+  }
+  return fetch(url, options);
+}
+```
+
+## *LocalStorage*
+
+- `window.localStorage`
+- the property values must be string
+- the properties persist
+  - if you set a property of the *localStorage* object and then the user reloads the page, the value is still available
+- the lifetime is permanent
+  - it does not expire until the user deletes it
+- scoped to the document origin (= protocol + hostname + port) and browser
+  - all documents with the same origin share the same *localStorage* data
+  - we cannot access *localStorage* data of different browsers even if the document is from same origin
+
+```js
+const name = localStorage.username;
+if (!name) {
+  name = prompt("What is your name?");
+  localStorage.username = name;
+}
+```
+
+## *sessionStorage*
+
+- `window.sessionStorage`
+- the lifetime is the same as the top-level window or browser tab
+  - but if a browser reopens tabs and restores the sessions, *sessionStorage* data is also restored
+- scoped to the document origin
+  - we cannot access *sessionStorage* data of different tabs even if the document is from same origin
+
+
+## *Cookie*s
+
+- intended for storage of small amouts of data by server-side scripts
+  - 4 KB size limit
+
+```js
+function getCookies() {
+  const cookies = new Map();
+  const all = document.cookie;
+  const list = all.split("; ");
+  for (const cookie of list) {
+    if (!cookie.includes("=")) continue;
+    const p = cookie.indexOf("=");
+    const name = cookie.substring(0, p);
+    const value = cookie.substring(p + 1);
+    value = decodeURIComponent(value);
+    cookies.set(name, value);
+  }
+  return cookies;
+}
+
+function setCookie(name, value, daysToLive=null) {
+  // cookie value cannot include `;`, `,`, ` ` so we need to encode it
+  const cookie = `${name}=${encodeURIComponent(value)}`;
+  if (daysToLive !== null) {
+    cookie += `; max-age=${daysToLive * 60 * 60 * 24}`;
+  }
+  document.cookie = cookie;
+}
+```
+
+## *IndexedDB*
+
+- scoped to an origin of a document
+  - documents of the same origin can share an *IndexedDB*
+
