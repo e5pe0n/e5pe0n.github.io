@@ -3238,3 +3238,201 @@ function setCookie(name, value, daysToLive=null) {
 - scoped to an origin of a document
   - documents of the same origin can share an *IndexedDB*
 
+
+<br>
+
+# Chapter 16. Server-Side JavaScript with Node
+
+## Module System
+
+- ES6 module
+  - `import` and `export`
+  - `.mjs`
+  - `type: module` in package.json
+- CommonJS module
+  - `require` and `exports`
+  - `.cjs`
+  - `type: commonjs` in package.json
+
+
+<br>
+
+- first, Node search for a nearest package.json
+- if found, treats programs as a module of *type* in package.json
+- if not found, treats programs as CommonJS module
+
+## Asynchrony
+
+- Node was designed and optimized I/O intensive programs such as network servers
+  - easily implement highly concurrent servers that can handle many requests at the same time
+- But Node uses the single-threaded JavaScript model like web browsers
+  - event-based concurrency
+  - Node maps the OS event to the JavaScript callback you registered and then invokes that function
+
+<br>
+
+- Node makes its API asynchronous and nonblocking by default for concurrency
+- Node APIs are callback-based (*error-first callbacks*)
+
+```js
+const fs = require("fs");
+
+function readConfigFile(path, callback) {
+  fs.readFile(path, "utf8", (err, text) => {
+    if (err) {
+      console.error(err);
+      callback(null);
+      return;
+    }
+    const data = null;
+    try {
+      data = JSON.parse(text);
+    } catch (err) {
+      console.error(err);
+    }
+    callback(data);
+  });
+}
+```
+
+```js
+const util = require("util");
+const fs = require("fs");
+const pfs = {
+  readFile: util.promisify(fs.readFile),
+};
+
+// handmade promise versions
+function promiseRaadConfigFile(path) {
+  return pfs.readFile(path, "utf-8").then((text) => {
+    return JSON.parse(text);
+  });
+}
+
+async function asyncReadConfigFile(path) {
+  const text = await pfs.readFile(path, "utf-8");
+  return JSON.parse(text);
+}
+
+// using predefined
+function promiseReadConfigFile2(path) {
+  return fs.promises.readFile(path, "utf-8").then((text) => {
+    return JSON.parse(text);
+  });
+}
+```
+
+```js
+const fs = require("fs");
+
+function readConfigFileSync(path) {
+  const text = fs.readFileSync(path, "utf-8");
+  return JSON.parse(text);
+}
+```
+
+## *Event*s and *EventEmitter*
+
+```js
+const EventEmitter = require("events");
+const net = require("net");
+
+const server = new net.Server(); // Server class is a subclass of EventEmitter
+server.on("connection", (socket) => {
+  socket.end("Hello World", "utf-8");
+});
+server.on("error", (err) => {
+  console.error(err);
+});
+```
+
+## *Stream*s
+
+### *Pipe*s
+
+```js
+const fs = require("fs");
+
+function pipeFileToSocket(filename, socket) {
+  fs.createReadStream(filename).pipe(socket);
+}
+```
+
+```js
+function pipe(readable, writable, callback) {
+  function handleError(err) {
+    readable.close();
+    writable.close();
+    callback(err);
+  }
+
+  readable
+    .on("error", handleError)
+    .pipe(writable)
+    .on("error", handleError)
+    .on("finish", callback);
+}
+```
+
+```js
+const fs = require("fs");
+const zlib = require("zlib");
+
+function gzip(filename, callback) {
+  const source = fs.createReadStream(filename);
+  const destination = fs.createWriteStream(filename + ".gz");
+  const gzipper = zlib.createGzip();
+
+  source
+    .on("error", callback)
+    .pipe(gzipper)
+    .pipe(destination)
+    .on("error", callback)
+    .on("finish", callback);
+}
+```
+
+```js
+const stream = require("stream");
+
+class GrepStream extends stream.Transform {
+  constructor(pattern) {
+    super({ decodeStrings: false });
+    this.pattern = pattern;
+    this.incompleteLine = "";
+  }
+
+  _transform(chunk, encoding, callback) {
+    if (typeof chunk !== "string") {
+      callback(new Error("Expected a string but got a buffer"));
+      return;
+    }
+
+    const lines = (this.incompleteLine + chunk).split("\n");
+
+    this.incompleteLine = lines.pop();
+
+    let output = lines.filter((line) => this.pattern.test(line)).join("\n");
+
+    if (output) {
+      output += "\n";
+    }
+
+    callback(null, output);
+  }
+
+  // called right before the stream is closed
+  _flush(callback) {
+    if (this.pattern.test(this.incompleteLine)) {
+      callback(null, this.incompleteLine + "\n");
+    }
+  }
+}
+
+const pattern = new RegExp(process.argv[2]);
+process.stdin
+  .setEncoding("utf8")
+  .pipe(new GrepStream(pattern))
+  .pipe(process.stdout)
+  .on("error", () => process.exit());
+```
