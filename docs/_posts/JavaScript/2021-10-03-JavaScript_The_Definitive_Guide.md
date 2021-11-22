@@ -3274,6 +3274,7 @@ function setCookie(name, value, daysToLive=null) {
 - Node makes its API asynchronous and nonblocking by default for concurrency
 - Node APIs are callback-based (*error-first callbacks*)
 
+
 ```js
 const fs = require("fs");
 
@@ -3331,6 +3332,89 @@ function readConfigFileSync(path) {
 }
 ```
 
+```js
+const fs = require("fs");
+const path = require("path");
+
+fs.writeFileSync(
+  path.resolve(__dirname, "settings.json"),
+  JSON.stringify(settings)
+);
+```
+
+### Lowest API to read and write a file
+
+|File Mode String|Description|
+|:---:| :---: |
+|`r`|read; default|
+|`w`|write|
+|`w+`|read/write|
+|`wx`|create a new file to write; fails if the named file already exists|
+|`wx+`|create a new file to read/write; fails if the named file already exists|
+|`a`|append|
+|`a+`|read/append|
+
+```js
+const fs = require("fs");
+
+fs.open("tmp.txt", "w", (err, fd) => { // do something })
+fs.writeFileSync("tmp.txt", "hello", { flag: "a" });
+fs.createWriteStream("tmp.txt", { flags: "wx" });
+```
+
+<br>
+
+```js
+const fs = require("fs");
+
+fs.open("data", (err, fd) => {
+  if (err) {
+    return;
+  }
+  try {
+    fs.read(
+      fd, // file descriptor
+      Buffer.alloc(400),
+      0, // offset (in the allocated buffer where to start fill bytes)
+      400, // longth (to read bytes)
+      20, // position (in the file where to start read bytes)
+      (err, n, b) => {
+        // n is the number of bytes actually read.
+        // b is the buffer that they bytes were read into.
+      }
+    );
+  } finally {
+    fs.close(fd);
+  }
+});
+```
+
+```js
+const fs = require("fs");
+
+function readData(filename) {
+  const fd = fs.openSync(filename);
+  try {
+    const header = Buffer.alloc(12);
+    fs.readSync(fd, header, 0, 12, 0);
+
+    const magic = header.readInt32LE(0);
+    if (magic !== 0xdadafeed) {
+      throw new Error("File is of wrong type");
+    }
+
+    const offset = header.readInt32LE(4);
+    const length = header.readInt32LE(8);
+
+    const data = Buffer.alloc(length);
+    fs.readSync(fd, data, 0, length, offset);
+    return data;
+  } finally {
+    fs.closeSync(fd);
+  }
+}
+```
+
 ## *Event*s and *EventEmitter*
 
 ```js
@@ -3348,7 +3432,22 @@ server.on("error", (err) => {
 
 ## *Stream*s
 
+- Use when a data that you want to read/write cannot be in memory at once
+
+```js
+const fs = require("fs");
+
+const output = fs.createWriteStream("numbers.txt");
+for (let i = 0; i < 100; i++) {
+  output.write(`${i}\n`);
+}
+output.end();
+```
+
 ### *Pipe*s
+
+- handles *backpressure* automatically
+  - keeps a pace to push a chunk to and pop a chunk from a buffer
 
 ```js
 const fs = require("fs");
@@ -3436,3 +3535,378 @@ process.stdin
   .pipe(process.stdout)
   .on("error", () => process.exit());
 ```
+
+### *for/await*
+
+```js
+// this example does not handle backpressure
+async function grep(source, destination, pattern, encoding = "utf8") {
+  source.setEncoding(encoding);
+  destination.on("error", (err) => process.exit());
+
+  let incompleteLine = "";
+  for await (const chunk of source) {
+    const lines = (incompleteLine + chunk).split("\n");
+    incompleteLine = lines.pop();
+    for (const line of lines) {
+      if (pattern.test(line)) {
+        destination.write(line + "\n", encoding);
+      }
+    }
+  }
+  if (pattern.test(incompleteLine)) {
+    destination.write(incompleteLine + "\n", encoding);
+  }
+}
+
+const pattern = new RegExp(process.argv[2]);
+grep(process.stdin, process.stdout, pattern).catch((err) => {
+  console.log(err);
+  process.exit();
+});
+```
+
+## *path*
+
+```js
+const os = require("os");
+
+process.cwd(); // absolute path of the current directory
+__filename; // absolute path of the file
+__dirname; // absolute path of the directory containing the file
+os.homedir(); // absolute path of user's home directory
+
+const path = require("path");
+
+"parent_dir" + path.sep + "child_dir"; // parent_dir/child_dir
+
+const p = "src/pkg/test.js";
+path.basename(p); // test.js
+path.extname(p); // .js
+path.dirname(p); // src/pkg
+path.basename(path.dirname(p)); // pkg
+path.dirname(path.dirname(p)); // src
+
+path.normalize("a/b/c/../c/"); // a/b/c/
+path.normalize("a/./b"); // a/b
+path.normalize("//a//b//"); // /a/b/
+
+path.join("src", "pkg", "t.js"); // src/pkg/t.js
+
+// path.resolve() is just a string manipulation method.
+// It does not actually resolve the path though a file system.
+// Use fs.realpath() and fs.realpathSync() to resolve symbolic links
+path.resolve(); // equivalent to process.cwd()
+path.resolve("t.js"); // path.join(process.cwd(), t.js)
+path.resolve("/tmp", "t.js"); // /tmp/t.js
+path.resolve("/a", "/b", "t.js"); // /b/t.js
+```
+
+## File Utils
+
+```js
+const fs = require("fs");
+
+fs.copyFileSync("src.txt", "dst.txt");
+fs.copyFile(
+  "src.txt",
+  "dst.txt",
+  fs.constants.COPYFILE_EXCL, // copy a file only when a file with the same name does not exist
+  (err) => {
+    // handle error
+  }
+);
+
+fs.promises
+  .copyFile(
+    "src.txt",
+    "dst.txt",
+    fs.constants.COPYFILE_EXCL | fs.constants.COPYFILE_FICLONE
+  )
+  .then(() => {
+    console.log("copy complete");
+  })
+  .catch((err) => {
+    console.error("copy failed", err);
+  });
+```
+
+```js
+const fs = require("fs");
+
+const stats = fs.statSync("./argv.js");
+stats.isFile(); // true
+stats.isDirectory(); // false
+stats.size; // 259
+stats.atime; // 2021-11-18T13:13:22.483Z ; last access
+stats.mtime; // 2021-11-18T10:24:51.191Z ; last modified
+stats.uid; // 0
+stats.gid; // 0
+stats.mode.toString(8); // 100644 ; file permission as an octal
+```
+
+```js
+const os = require("os");
+const fs = require("fs");
+const path = require("path");
+
+let tempDirPath;
+try {
+  tempDirPath = fs.mkdtempSync(path.join(os.tmpdir(), "d-"));
+  console.log(tempDirPath); // /tmp/d-til3mB
+  // do something
+} finally {
+  fs.rmdirSync(tempDirPath);
+}
+```
+
+```js
+const fs = require("fs");
+
+const dirPath = "/workspaces/jdg";
+
+const filePaths = fs.readdirSync(dirPath);
+console.log(filePaths);
+// [
+//   '.devcontainer',
+//   '.git',
+//   '.gitignore',
+//   'README.md',
+//   'ch03_Types-Values-and-Variables',
+//   'ch04_Expressions-and-Operators',
+//   'ch06_Objects',
+//   'ch07_Arrays',
+//   'ch08_Functions',
+//   'ch09_Classes',
+//   'ch10_Modules',
+//   'ch11_The_JavaScript_Standard_Library',
+//   'ch12_Iterators-and-Generators',
+//   'ch13_Asynchronous-JavaScript',
+//   'ch14_Metaprogramming',
+//   'ch16_Server-Side-JavaScript-with-Node',
+//   'node_modules'
+// ]
+
+fs.promises
+  .readdir(dirPath, { withFileTypes: true })
+  .then((entries) => {
+    entries
+      .filter((entry) => entry.isDirectory())
+      .map((entry) => entry.name)
+      .forEach((name) => console.log(name));
+  })
+  .catch(console.error);
+
+// .devcontainer
+// .git
+// ch03_Types-Values-and-Variables
+// ch04_Expressions-and-Operators
+// ch06_Objects
+// ch07_Arrays
+// ch08_Functions
+// ch09_Classes
+// ch10_Modules
+// ch11_The_JavaScript_Standard_Library
+// ch12_Iterators-and-Generators
+// ch13_Asynchronous-JavaScript
+// ch14_Metaprogramming
+// ch16_Server-Side-JavaScript-with-Node
+// node_modules
+```
+
+```js
+const fs = require("fs");
+const path = require("path");
+
+async function listDirectory(dirpath) {
+  const dir = await fs.promises.opendir(dirpath);
+  for await (const entry of dir) {
+    let name = entry.name;
+    if (entry.isDirectory()) {
+      name += "/";
+    }
+    const stats = await fs.promises.stat(path.join(dirpath, name));
+    const size = stats.size;
+    console.log(String(size).padStart(10), name);
+  }
+}
+
+listDirectory("/workspaces/jdg");
+// 4096 node_modules/
+// 4096 ch03_Types-Values-and-Variables/
+// 4096 ch04_Expressions-and-Operators/
+// 4096 ch16_Server-Side-JavaScript-with-Node/
+// 2453 .gitignore
+// 4096 ch12_Iterators-and-Generators/
+//   89 README.md
+// 4096 ch10_Modules/
+// 4096 .devcontainer/
+// 4096 .git/
+// 4096 ch07_Arrays/
+// 4096 ch09_Classes/
+// 4096 ch11_The_JavaScript_Standard_Library/
+// 4096 ch14_Metaprogramming/
+// 4096 ch06_Objects/
+// 4096 ch13_Asynchronous-JavaScript/
+// 4096 ch08_Functions/
+```
+
+## HTTP Clients and Servers
+
+```js
+const https = require("https");
+
+function postJSON(host, endpoint, body, port, username, password) {
+  return new Promise((resolve, reject) => {
+    const bodyText = JSON.stringify(body);
+
+    const requestOptions = {
+      method: "POST",
+      host: host,
+      path: endpoint,
+      headers: {
+        "Content-Type": "application/json",
+        "Content-Length": Buffer.byteLength(bodyText),
+      },
+    };
+    if (port) {
+      requestOptions.port = port;
+    }
+    if (username && password) {
+      requestOptions.auth = `${username}:${password}`;
+    }
+
+    const request = https.request(requestOptions);
+    request.write(bodyText);
+    request.end();
+
+    request.on("error", (e) => reject(e));
+
+    request.on("response", (response) => {
+      if (response.statusCode !== 200) {
+        reject(new Error(`HTTP status ${response.statusCode}`));
+
+        response.resume(); // open memory used this response body
+        return;
+      }
+
+      response.setEncoding("utf-8");
+      let body = "";
+      response.on("data", (chunk) => {
+        body += chunk;
+      });
+      response.on("end", () => {
+        try {
+          resolve(JSON.parse(body));
+        } catch (err) {
+          reject(err);
+        }
+      });
+    });
+  });
+}
+```
+
+## Child Processes
+
+- with blocking
+
+```js
+const child_process = require("child_process");
+const listing = child_process.execSync("ls -l ./*.js", { encoding: "utf8" });
+console.log(listing);
+// -rw-r--r-- 1 root root  259 Nov 18 10:24 ./argv.js
+// -rw-r--r-- 1 root root  693 Nov 18 12:24 ./buffer.js
+// -rw-r--r-- 1 root root  263 Nov 22 01:45 ./child-process.js
+// ...
+// -rw-r--r-- 1 root root  567 Nov 20 06:28 ./sha256-paused-mode.js
+// -rw-r--r-- 1 root root  170 Nov 20 14:08 ./tcp-client.js
+// -rw-r--r-- 1 root root 1469 Nov 20 14:05 ./tcp-server.js
+
+const listing2 = child_process.execFileSync("ls", ["-l", "./"], {
+  encoding: "utf-8",
+});
+console.log(listing2);
+// total 108
+// -rw-r--r-- 1 root root  259 Nov 18 10:24 argv.js
+// -rw-r--r-- 1 root root  693 Nov 18 12:24 buffer.js
+// -rw-r--r-- 1 root root  263 Nov 22 01:45 child-process.js
+// ...
+// -rw-r--r-- 1 root root  567 Nov 20 06:28 sha256-paused-mode.js
+// -rw-r--r-- 1 root root  170 Nov 20 14:08 tcp-client.js
+// -rw-r--r-- 1 root root 1469 Nov 20 14:05 tcp-server.js
+```
+
+- non-blocking
+
+```js
+const child_process = require("child_process");
+const util = require("util");
+const execP = util.promisify(child_process.exec);
+
+function parallelExec(commands) {
+  const promises = commands.map((command) =>
+    execP(command, { encoding: "utf8" })
+  );
+
+  return Promise.all(promises).then((outputs) =>
+    outputs.map((out) => out.stdout)
+  );
+}
+
+module.exports = parallelExec;
+```
+
+### *spawn()*
+
+- a parent process can communicate with a child process through streams to pipe stdin, stdout, stderr of each
+
+### *fork()*
+
+- communication between process is easy
+
+```js
+const child_process = require("child_process");
+
+const child = child_process.fork(`${__dirname}/child.js`);
+
+child.send({ x: 4, y: 3 }); // parent -> child
+
+child.on("message", (message) => {
+  console.log(message.hypotenuse);
+  child.disconnect();
+});
+```
+
+```js
+// child.js
+process.on("message", (message) => {
+  process.send({ hypotenuse: Math.hypot(message.x, message.y) });
+});
+```
+### *Worker Threads*
+
+- thread-base asynchronous
+
+```js
+const threads = require("worker_threads");
+
+if (threads.isMainThread) {
+  module.exports = function reticulateSplines(splines) {
+    return new Promise((resolve, reject) => {
+      const reticulator = new threads.Worker(__filename);
+      reticulator.postMessage(splines);
+      reticulator.on("message", resolve);
+      reticluator.on("error", reject);
+    });
+  };
+} else {
+  threads.parentPort.once("message", (splines) => {
+    for (const spline of splines) {
+      spline.reticulate ? spline.reticulate() : (spline.reticulated = true);
+    }
+    threads.parentPort.postMessage(splines);
+  });
+}
+```
+
