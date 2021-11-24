@@ -177,3 +177,50 @@ const names = [
 ];
 console.log(filter(names, (x) => x.firstName.startsWith("b"))); // [ { firstName: 'beth' } ]
 ```
+
+```ts
+const filter = <T>(array: T[], f: (item: T) => boolean) => {
+  const res = [];
+  for (let i = 0; i < array.length; ++i) {
+    const item = array[i];
+    if (f(item)) {
+      res.push(item);
+    }
+  }
+  return res;
+};
+```
+
+```ts
+// using Type Alias
+type Filter<T> = {
+  (array: T[], f: (item: T) => boolean): T[];
+};
+
+const numberFilter: Filter<number> = (array, f) => [];
+const stringFilter: Filter<string> = (array, f) => [];
+```
+
+## Bounded Polymorphism
+
+- *upper bound* on *U*
+  - i.e. the type *U* should be *at least T*
+
+![upper_bound_on_U]({{site.url}}{{site.baseurl}}/assets/images/Programming-TypeScript/upper_bound_on_U.png)
+
+```ts
+type TreeNode = {
+  value: string;
+};
+type LeafNode = TreeNode & {
+  isLeaf: true;
+};
+type InnerNode = TreeNode & {
+  children: [TreeNode] | [TreeNode, TreeNode];
+};
+
+const mapNode = <T extends TreeNode>(
+  node: T,
+  f: (value: string) => string
+) => ({ ...node, value: f(node.value) });
+```
