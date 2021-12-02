@@ -549,3 +549,11 @@ $$
 $\Delta t\Delta\omega \ge \frac{1}{2}$  
 e.g. 時間-周波数領域が $T-W$ の信号空間の次元数 (信号の個数) は $TW / \frac{1}{2} = 2TW$ である．（面積 $TW$ を信号 1 個あたりの面積 $\frac{1}{2}$ で割る）
 
+
+<hr>
+
+# Role-Oriented Programming
+
+*Role-Oriented Programming* describes *can* and *has-a* relationship other than *is-a* relationship.   
+It can be implemented by *trait*s or *mixin*s.  
+
