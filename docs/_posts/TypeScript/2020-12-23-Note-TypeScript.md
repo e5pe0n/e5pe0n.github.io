@@ -141,9 +141,10 @@ console.log(assigned) // { a: 1, b: 2, c: 10, d: 100 }
 
 - Any object cannot be assigned into a variable of never type
 
-Correct code  
+A correct code
 
 ```ts
+// OK
 const greet = (n: 1 | 2 | 3) => {
   switch (n) {
     case 1:
@@ -159,11 +160,12 @@ const greet = (n: 1 | 2 | 3) => {
 }
 ```
 
-Incorrect code.  
+An incorrect code.  
 The value of `n` cannot be assigned to check so a linter notifies us of the error.  
 This prevents us from forgetting to implement some cases.  
 
 ```ts
+// NG
 const greet = (n: 1 | 2 | 3) => {
   switch (n) {
     case 1:
@@ -196,13 +198,10 @@ const val2: NumArr = ["foo", "bar", "baz"]; // compile error
 ## in
 
 ```ts
-const obj = { a: 1, b: 2, c: 3 };
-console.log("a" in obj);  // true
-for (const key in obj) { console.log(key); }  // a b c
-
-
 type Fig = "one" | "two" | "three";
-type FigMap = { [k in Fig]?: number };  // Mapped Type
+type FigMap = {
+  [k in Fig]?: number
+};  // Mapped Type
 
 const figMap: FigMap = {
   one: 100,
@@ -212,7 +211,32 @@ const figMap: FigMap = {
 figMap.four = 400;  // compile error
 ```
 
+## Const Assertions
+
+```ts
+const v1 = {
+  x: 1,
+  y: 2,
+};  // { x: number; y: number;}
+
+const v2 = {
+  x: 1 as const,
+  y: 2,
+};  // { x: 1; y: number; }
+
+const v3 = {
+  x: 1,
+  y: 2,
+} as const; // { readonly x: 1; readonly y: 2; }
+
+
+const a1 = [1, 2, 3]; // number[]
+const a2 = [1, 2, 3] as const // readonly [1, 2, 3]
+```
+
 ## keyof
+
+Don't forget `typeof` before `keyof`.  
 
 ```ts
 const permissions = {
@@ -234,7 +258,87 @@ const permissions2 = {
   x: 0b001,
 };
 
-type PermsNum2 = Value<typeof permissions>; // number if without `as const`
+type PermsNum2 = Value<typeof permissions>; // number if no `as const`
+```
+
+```ts
+interface Point {
+  x: number;
+  y: number;
+};
+type PointKeys = keyof Point; // "x" | "y"
+
+const sortBy = <K extends keyof T, T>(vals: T[], key: K): T[] => {
+  // ...
+};
+const pts: Point[] = [
+  {x: 1, y: 1},
+  {y: 2, y: 0},
+];
+sortBy(pts, "x");
+```
+
+## Intersection and Union
+
+Be careful for `&` and `|` type operators
+
+```ts
+keyof (A & B) = (keyof A) | (keyof B)
+keyof (A | B) = (keyof A) & (keyof B)
+```
+
+```ts
+type Person = {
+  name: string;
+};
+type Lifespan = {
+  birth: Date;
+  death?: Date;
+};
+type PersonSpan = Person & LifeSpan;
+
+const ps: PersonSpan = {
+  name: "Alan Turing",
+  birth: new Date("1912/06/23"),
+  death: new Date("1954/06/07"),
+  extra: "this is unecessary but allowed",
+};  // OK
+
+type U = Person | Lifespan; // type: never
+```
+
+## Interface Extensions
+
+A set that extending interface (`Sub`) represents always gets to be smaller than or equal to one of an extended interface (`Super`).  
+
+```ts
+interface Sub extends Super {
+  // ...
+}
+```
+
+<br>
+
+- *Vector2D* is a *subtype* of *Vector1D*
+- *Vector2D* is a subset of *Vector1D*
+  - any object that has property `x: number` is a member of *Vector1D*
+- *Vector2D* is assignable to *Vector1D*
+
+
+
+
+```ts
+interface Vector1D {
+  x: number;
+};
+
+interface Vector2D extends Vector1D {
+  y: number;
+};
+
+interface Vector3D extends Vector2D {
+  z: number;
+};
 ```
 
 
