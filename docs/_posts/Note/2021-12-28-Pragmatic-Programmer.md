@@ -91,3 +91,9 @@ const applyDiscount = (customer, orderId, discount) {
     .applyDiscount(discount)
 }
 ```
+
+# Pair/Mob Programming
+
+- when developers' coding skills in a team are different at all
+  - should we do?
+  - how we do?
