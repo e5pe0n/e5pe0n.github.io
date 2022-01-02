@@ -9,7 +9,7 @@ last_modified_at: 2021-12-28
 
 The Pragmatic Programmer (20th Aniversary Edition) / David Thomas, Andrew Hunt / Pearson Addison-Wesley
 
-# ToDo
+# Keep in Mind
 
 ## General
 
@@ -17,6 +17,9 @@ The Pragmatic Programmer (20th Aniversary Edition) / David Thomas, Andrew Hunt /
 
 ## Coding
 
+- a good design produces something that's easier to change than a bad design.
+  - -> effective on agile development
+    - we refactor our code to respond to feedbacks frequently
 - consider reversibility of code
 - get familiar with shell commands
 - get familiar with editor shortcuts
@@ -25,12 +28,21 @@ The Pragmatic Programmer (20th Aniversary Edition) / David Thomas, Andrew Hunt /
   - interfaces and protocols
   - delegation
   - mixins and traits
+- refactor early, refactor often
+  - a medical analogy
+    - take out it while it is small, or it grows and spreads so it will be hard to remove it
 ## Debugging
 
 - try to explain to someone or a rubber duck why the problem is caused
 - binary chop
 - test realistic end-user usage patterns
 
+## Project
+
+- do not embed business policy to code
+  - implement the general case with the policy as an example the system needs to support
+- requirements documents are not for clients
+  - clients might not read them
 
 # Principles
 
