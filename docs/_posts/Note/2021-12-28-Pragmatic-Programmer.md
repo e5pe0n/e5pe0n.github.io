@@ -43,7 +43,13 @@ The Pragmatic Programmer (20th Aniversary Edition) / David Thomas, Andrew Hunt /
   - implement the general case with the policy as an example the system needs to support
 - requirements documents are not for clients
   - clients might not read them
-
+- make a team brand
+  - name the team to build an identity
+- do what works, not what's fashionable
+  - consider the method or tool suits for us
+    - don't choose it just because it's popular
+  - adjust and combine the methods or tools for us
+    - don't pick up one solution and imitate it without thinking like that it's OK because we do the way a famous company do
 # Principles
 
 - ETC; Eeasier to Change
