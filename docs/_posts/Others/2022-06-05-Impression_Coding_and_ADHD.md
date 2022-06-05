@@ -13,8 +13,7 @@ It was very interesting and I have a lot of "me too."
 
 I go to doctor monthly and take medicine everyday for ADHD.  
 Finding medicine that suits me took long time (one year or so).  
-After getting to take medicine right for me, I got so calm than before,
-when I was always like I must to do something (even I don't know what is it).  
+After getting to take medicine right for me, I got so calm than before, when I was always like I must to do something (even I don't know what is it).  
 
 Although medicine get me better, it's not that the symptoms are completely gone.  
 I often miss a schedule and am late to a meeting even if it is set at calendar like calendar aleam "it's time 5 min before meeting" then me "OK I know it" but I've already forgotten it after 1 min.    
