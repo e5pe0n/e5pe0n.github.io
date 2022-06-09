@@ -1,5 +1,5 @@
 ---
-title: "Note: Bitwise OR as Math.floor()"
+title: "Note: Bitwise OR vs. Math.floor()"
 categories:
   - Note
 tags:
