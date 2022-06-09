@@ -23,7 +23,7 @@ console.log(1.23 | 0)  // 1.0
 ```
 
 This works because the operands are casted to integers so its decimals are truncated.  
-But this time, operands are considered as **32-bit** int, so if you give a large number then the calculation result might overflow.  
+But this time, operands are treated as **32-bit** int, so if you give a large number then the calculation result might overflow.  
 
 ```js
 console.log(2147483647.123 | 0)  // 2147483647
