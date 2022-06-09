@@ -22,7 +22,7 @@ In JavaScript, bitwise OR `|` can be used to floor a number like below.
 console.log(1.23 | 0)  // 1.0
 ```
 
-This works because one of the operands is an integer, the other is casted to an integer so its decimals are truncated.  
+This works because the operands are casted to integers so its decimals are truncated.  
 But this time, operands are considered as **32-bit** int, so if you give a large number then the calculation result might overflow.  
 
 ```js
