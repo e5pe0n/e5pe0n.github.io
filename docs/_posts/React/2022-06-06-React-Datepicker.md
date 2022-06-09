@@ -39,7 +39,7 @@ const CustomDatePicker:FC<Props> = (props) => {
   return (
     <CustomDatePicker
       customInputRef="dummyRef"
-      customInput=(<Input ref={ref} />)
+      customInput={<Input ref={ref} />}
       {...props}
     />
   );
@@ -78,7 +78,7 @@ const CustomDatePicker:FC<Props> = (props) => {
 
   return (
     <CustomDatePicker
-      customInput=(<Input readOnly ref={ref} />)
+      customInput={<Input readOnly ref={ref} />}
       {...props}
     />
   );
