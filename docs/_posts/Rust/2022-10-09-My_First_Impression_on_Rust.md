@@ -51,7 +51,7 @@ last_modified_at: 2022-10-09
     - this can be achived by using macros
     - i.e. have to write macros
 
-## Multi-Capturing Closures
+## Closures Capturing the Same Vairable
 
 JS/TS
 
