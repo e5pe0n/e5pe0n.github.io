@@ -1,5 +1,5 @@
 ---
-title: WIP: Disastrous Development 2023
+title: "WIP: Disastrous Development 2023"
 categories:
   - Software Development
 tags:
@@ -11,7 +11,7 @@ I encountered (also working for still now) a disastrous development.
 Terrible developer experience and poor product quality.  
 The project began from November last year, and the product will be relased the first of March.  
 I had already experienced some damn developments but this was definitely the worst one for my mental.  
-I don't attemt to claim that certain person caused the disaster (because this was a team development), but surely I should retrospect about this for developments in the future.  
+I don't attempt to claim that certain person was cause of the disaster (because this was a team development), but surely I should retrospect about this for developments in the future.  
 
 # Project Overview
 
