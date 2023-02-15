@@ -24,7 +24,7 @@ last_modified_at: 2023-02-15
   - it just become an exception in the entire software design, that increases the complexity and tends to lose the order
   - before modifying them, share the ideas and consideration in your mind with team members first
     - software development seems to be close to philosophizing; we have to share and match our recognition and understanding about abstract images in our mind
-      - e.g. *what does `x` mean?*
+      - e.g. does the `User` class actually completely project the same *User* into my mind and yours?
 
 # References
 
