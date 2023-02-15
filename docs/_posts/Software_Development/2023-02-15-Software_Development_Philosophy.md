@@ -19,11 +19,11 @@ last_modified_at: 2023-02-15
 
 # Testing
 
-- write testing code putting high priority on KISS principle
-  - in my experience, the most important thing on testing code is **how we write/read testing code without using our brain as much as possible**
-  - avoid logics such as if-statement and for-loop in testing code
+- write test code putting high priority on KISS principle
+  - in my experience, the most important thing on test code is **how we write/read test code without using our brain as much as possible**
+  - avoid logics such as if-statement and for-loop in test code
   - condone to copy and paste code
-    - organizing testing code similarily with application code is often hard work and doesn't correspond to cost to do it and maintain the code
+    - organizing test code similarily with application code is often hard work and doesn't correspond to cost to do it and maintain the code
   - create test dataset within each test as much as possible
     - each test should be independent each other
 # Refactoring
