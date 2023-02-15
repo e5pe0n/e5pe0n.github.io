@@ -9,7 +9,7 @@ last_modified_at: 2023-02-15
 
 # Discipline
 
-- we must own up to our shortcomings--our ignorance and our mistakes.  
+- we must own up to our shortcomings----our ignorance and our mistakes.  
 - provide options, don't make lame excuses
   - before you approach anyone to tell them why something can't be done, is late, or is broken, stop and **listen to yourself.**  
 - don't leave "broken windows" (bad designs, wrong decisions, or poor code) unrepaired.  
