@@ -25,7 +25,7 @@ last_modified_at: 2023-02-15
   - condone to copy and paste code
     - organizing test code similarily with application code is often hard work and doesn't correspond to cost to do it and maintain the code
   - create test dataset within each test as much as possible
-    - each test should be independent each other
+    - each test should be independent each other  
 # Refactoring
 
 - **put priority on consitency**
