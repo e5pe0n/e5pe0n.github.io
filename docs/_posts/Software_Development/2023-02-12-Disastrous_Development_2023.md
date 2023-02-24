@@ -1,10 +1,10 @@
 ---
-title: "WIP: Disastrous Development 2023"
+title: Disastrous Development 2023
 categories:
   - Software Development
 tags:
   - Software Development
-last_modified_at: 2023-02-12
+last_modified_at: 2023-02-24
 ---
 
 I encountered (also working for still now) a disastrous development.  
@@ -39,7 +39,7 @@ Also we used Canban board for project management tool, and each implementer was 
   - we did KPT (Keep Problem Try) method but anyone didn't realize what is the matter, what is good, and where we should go
   - team members couldn't have motivation enough
 
-- Responsibility each member has was ambiguas
+- Mission and responsibility each member has was ambiguas
   - we hadn't clarified who does what to do
   - this caused to burden implementers because every actual work inevitably comes to implementers finally
 
@@ -51,6 +51,9 @@ Also we used Canban board for project management tool, and each implementer was 
 
 - Implementers burdend 
   - implementers had to review code themselves although they didn't had enough information about the specification and the architecture of the system
+    - i requested this because i hadn't been able to agree PR review from my tech lead when the previous project
+      - i supposed that it was bad that the tech lead himself wouldn't implement anything and that caused many conflicts between implementers and reviewer
+      - at that time (and also still now), the tech lead looks a client, not an engineer for me
 
 - Poor specification
   - those who determined specification of the featureas of the system didn't document enough
@@ -81,5 +84,41 @@ Also we used Canban board for project management tool, and each implementer was 
       - couldn't work as is then must change the specification or the implementation
       - implementers was hurried and forced on work to fix them in the short rest of the schedule
     - we found that some features don't look nice when actually using the application ourselves
+  - integration test and bug fixes in too short period 
+    - test man-hour was about 1/20 of entire schedule!
 
 # Then, What Should We Do?
+
+- Build our *team*
+  - we should clarify our team culture, then what we should do and should not do for that
+    - list up things we put priority on then share them
+    - building environment/atomosphere to be able to discuss anything without guess and hesitation
+  - we need a *strong* leader who can group up team following the agreed team culture
+
+- Clarify mission and responsibility of each member
+  - e.g. what the mission/purpose of tech lead is, then what tech lead should do and not do for that
+
+- Clarify specification
+  - PM, TL or whoever can do it should determine the specification more detail
+  - they should document them then share them with other team members
+
+- Determine software design corresponding to the specification
+
+- Determine more considered schedule
+  - schedule should be derived from the design
+  - in my opinion, it might be better to develop the features incrementally
+    - developers are the first users of what we are creating
+      - should get feedback as soon as possible then improve our product as much as possible
+    - we can gradually extend our development environment to check if the function works as we thought using already developed features
+    - decrease conflicts at integration
+  - arrange more time to test and bug-fixing
+
+- Clarify implementation policy/guideline
+  - determine and document implementation policy/guideline then share it with every implementer
+  - reviewer should be one or two
+    - the less minds to determine the design, the more smooth the development and the more sophisticated the software
+    - mitigate burden of implementers
+  - reviewer himself should also write code
+    - observe and figure out the actual development problems
+    - his implementation could be a catalyst for implementers
+    - -> decrease conflicts between reviewer and implementers
