@@ -4,7 +4,7 @@ categories:
   - Software Development
 tags:
   - Software Development
-last_modified_at: 2023-02-15
+last_modified_at: 2023-02-28
 ---
 
 # Discipline
@@ -17,6 +17,35 @@ last_modified_at: 2023-02-15
   - list up problems on the board every team member can see naturally  
 - keep documents up to date
 
+
+# Storategies
+
+- tracer bullet development (incremental development approach)
+  - overview
+    - implement throughout the system to make sure the entire system works at least partially properly as fast as possible
+    - then gradually adjust and augment the implementation
+  - pros
+    - can get feedback fast
+    - can have integration platform
+  - cautions
+    - don't forget to augment the abstraction/concept along with additional features if necessary
+      - features should be in range of the abstraction/concept for consitency
+  - opposite storategies
+    - implement frontend all, implement backend all, then integrate them at once
+
+# DX
+
+- don't make utility tools only for your local environment
+  - i.e. make utility tools to help team members develop efficiently
+  - e.g. scripts to create data to check if the app works properly
+
+# Coding
+
+- ETC principle; Easier to Change
+  - good design is easier to change than bad design
+  - every design principle out there is simply a special case of ETC.
+- DRY principle; Don't Repeat Yourself
+  - every piece of knowledge must have a single, unambiguous, authoritative representation within a system
 # Testing
 
 - write test code putting high priority on KISS principle
@@ -26,6 +55,7 @@ last_modified_at: 2023-02-15
     - organizing test code similarily with application code is often hard work and doesn't correspond to cost to do it and maintain the code
   - create test dataset within each test as much as possible
     - each test should be independent each other  
+
 # Refactoring
 
 - **put priority on consitency**
