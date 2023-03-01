@@ -9,6 +9,22 @@ last_modified_at: 2023-03-01
 
 [A Philosophy of Software Design, 2nd Edition](https://www.amazon.co.jp/-/en/John-K-Ousterhout-ebook/dp/B09B8LFKQL)
 
+# Contents
+
+- [Introduction](#introduction)
+- [Complexity](#complexity)
+  - [Symptoms](#symptoms)
+  - [Causes](#causes)
+  - [Approaches](#approaches)
+- [Modular Design](#modular-design)
+  - [Module](#module)
+    - [Interface](#interface)
+      - [Formal Interface](#formal-interface)
+      - [Informal Interface](#informal-interface)
+- [Consistency](#consistency)
+- [Obvious](#obvious)
+
+
 # Introduction
 
 - the greatest limitation in writing software is our ability to understand the system we are creating
@@ -122,6 +138,6 @@ last_modified_at: 2023-03-01
 <br>
 
 
-# Code Should be Obvious
+# Obvious
 
 - "obvious" is in mind of the reader; the best way to determine the obviousness of the code is through code reviews
