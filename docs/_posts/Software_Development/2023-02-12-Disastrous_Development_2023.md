@@ -7,10 +7,10 @@ tags:
 last_modified_at: 2023-02-24
 ---
 
-I encountered (also working for still now) a disastrous development.  
-Terrible developer experience and poor product quality.  
-The project began from November last year, and the product will be relased the first of March.  
-I had already experienced some damn developments but this was definitely the worst one for my mental.  
+I encountered (also working for still now) a disastrous development. Terrible developer experience and poor product quality.  
+
+The project began from November last year, and the product will be relased the first of March. I had already experienced some damn developments but this was definitely the worst one for my feeling.  
+
 I don't attempt to claim that certain person was cause of the disaster (because this was a team development), but surely I should retrospect about this for developments in the future.  
 
 # Project Overview
@@ -43,25 +43,20 @@ Also we used Canban board for project management tool, and each implementer was 
   - we hadn't clarified who does what to do
   - this caused to burden implementers because every actual work inevitably comes to implementers finally
 
-- Tech lead hadn't functioned
-  - i assumed that he didn't realize what to do as a tech lead in this team
-  - he didn't review code enough, resolve technical difficulties, do any task
-    - he couldn't help implementers implement because he didn't know how implementers implement and didn't have enough knowledge about language/libraries we used and how the features work that we creating 
-  - just made the schedule and ask if the development is on schedule
-
 - Implementers burdend 
   - implementers had to review code themselves although they didn't had enough information about the specification and the architecture of the system
-    - i requested this because i hadn't been able to agree PR review from my tech lead when the previous project
-      - i supposed that it was bad that the tech lead himself wouldn't implement anything and that caused many conflicts between implementers and reviewer
-      - at that time (and also still now), the tech lead looks a client, not an engineer for me
+    - i requested this because i hadn't been able to agree PR review from TL when the previous project
+      - i supposed that it was bad that TL himself wouldn't implement anything and that caused many conflicts between implementers and reviewer
+      - at that time, the TL looks a client rather than an engineer
+    - but now i think reviewing between implementers ourselves were failure because
+      - implementer couldn't concentrate on implementing enough
+      - no one of us didn't have the authority to determine the specification
 
 - Poor specification
   - those who determined specification of the featureas of the system didn't document enough
   - implementers wrote code as didn't realize what they are actually creating is
 
 - Poor software design
-  - tech lead and one implementer defined the API specification and DB models
-  - they didn't document enough on them and share other implementers
   - poor designing resulted in poor development schedule
 
 - Poor development schedule
@@ -96,7 +91,7 @@ Also we used Canban board for project management tool, and each implementer was 
   - we need a *strong* leader who can group up team following the agreed team culture
 
 - Clarify mission and responsibility of each member
-  - e.g. what the mission/purpose of tech lead is, then what tech lead should do and not do for that
+  - e.g. what the mission/purpose of TL is, then what TL should do and not do for that
 
 - Clarify specification
   - PM, TL or whoever can do it should determine the specification more detail
