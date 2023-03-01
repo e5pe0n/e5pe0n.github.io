@@ -46,6 +46,7 @@ last_modified_at: 2023-02-28
   - every design principle out there is simply a special case of ETC.
 - DRY principle; Don't Repeat Yourself
   - every piece of knowledge must have a single, unambiguous, authoritative representation within a system
+
 # Testing
 
 - write test code putting high priority on KISS principle
