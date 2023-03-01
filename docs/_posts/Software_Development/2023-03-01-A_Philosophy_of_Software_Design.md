@@ -22,7 +22,6 @@ last_modified_at: 2023-03-01
 
 <br>
 
----
 
 
 
@@ -52,7 +51,6 @@ last_modified_at: 2023-03-01
 
 <br>
 
----
 
 # Modular Design
 
@@ -104,7 +102,6 @@ last_modified_at: 2023-03-01
 
 <br>
 
----
 
 # Consistency
 
@@ -124,7 +121,6 @@ last_modified_at: 2023-03-01
 
 <br>
 
----
 
 # Code Should be Obvious
 
