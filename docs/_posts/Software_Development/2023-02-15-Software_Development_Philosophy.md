@@ -4,7 +4,7 @@ categories:
   - Software Development
 tags:
   - Software Development
-last_modified_at: 2023-02-28
+last_modified_at: 2023-03-01
 ---
 
 # Discipline
@@ -14,6 +14,7 @@ last_modified_at: 2023-02-28
   - before you approach anyone to tell them why something can't be done, is late, or is broken, stop and **listen to yourself.**  
 - don't leave "broken windows" (bad designs, wrong decisions, or poor code) unrepaired.  
   - decadence is contagious  
+    - e.g. complexity of the system increase incrementally
   - list up problems on the board every team member can see naturally  
 - keep documents up to date
 
@@ -28,8 +29,11 @@ last_modified_at: 2023-02-28
     - can get feedback fast
     - can have integration platform
   - cautions
-    - don't forget to augment the abstraction/concept along with additional features if necessary
-      - features should be in range of the abstraction/concept for consitency
+    - respect *strategic programming* rather than *tactical programming*
+      - just implementing "working code" is not enough
+      - don't forget to augment the concept/abstraction along with additional features/implementations if necessary to fit the software design
+        - **software design is a continuous process**
+        - features/implementations should be in the range of the concept/abstraction
   - opposite storategies
     - implement frontend all, implement backend all, then integrate them at once
 
@@ -47,6 +51,15 @@ last_modified_at: 2023-02-28
 - DRY principle; Don't Repeat Yourself
   - every piece of knowledge must have a single, unambiguous, authoritative representation within a system
 
+# Refactoring
+
+- **put priority on consitency**
+  - confort the current convention even when coming to mind better implementation
+  - it just become an exception in the entire software design, that increases the complexity and tends to lose the order
+  - before modifying them, share the ideas and consideration in your mind with team members first
+    - **software development seems to be close to philosophizing**; we have to share and match our recognition and understanding about abstract images in our mind
+      - e.g. does the `User` class actually completely project the same *User* into my mind and yours?  
+
 # Testing
 
 - write test code putting high priority on KISS principle
@@ -56,15 +69,6 @@ last_modified_at: 2023-02-28
     - organizing test code similarily with application code is often hard work and doesn't correspond to cost to do it and maintain the code
   - create test dataset within each test as much as possible
     - each test should be independent each other  
-
-# Refactoring
-
-- **put priority on consitency**
-  - confort the current convention even when coming to mind better implementation
-  - it just become an exception in the entire software design, that increases the complexity and tends to lose the order
-  - before modifying them, share the ideas and consideration in your mind with team members first
-    - **software development seems to be close to philosophizing**; we have to share and match our recognition and understanding about abstract images in our mind
-      - e.g. does the `User` class actually completely project the same *User* into my mind and yours?  
 
 # References
 
