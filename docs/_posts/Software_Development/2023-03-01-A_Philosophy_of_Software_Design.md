@@ -20,6 +20,11 @@ last_modified_at: 2023-03-01
   - incremental approach works more effectively than *waterfall model*
     - e.g. *agile development*
 
+<br>
+
+---
+
+
 
 # Complexity
 
@@ -44,6 +49,10 @@ last_modified_at: 2023-03-01
 - make code simpler and more obvious
   - software should be designed for ease of reading, not ease of writing
 - [*modular design*](#modular-design)
+
+<br>
+
+---
 
 # Modular Design
 
@@ -93,6 +102,9 @@ last_modified_at: 2023-03-01
 - if users must read the code of a method in order to use it, then there is no abstraction
 - developers should be able to understand the abstraction provided by a module without reading any code other than its externally visible declarations
 
+<br>
+
+---
 
 # Consistency
 
@@ -110,6 +122,9 @@ last_modified_at: 2023-03-01
 - **don't change existing conventions**
   - having a "better idea" is not a sufficient excuse to introduce inconsistencies
 
+<br>
+
+---
 
 # Code Should be Obvious
 
