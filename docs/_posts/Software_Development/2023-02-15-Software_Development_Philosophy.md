@@ -36,6 +36,11 @@ last_modified_at: 2023-03-01
         - features/implementations should be in the range of the concept/abstraction
   - opposite storategies
     - implement frontend all, implement backend all, then integrate them at once
+  - vs.prototyping
+    - prototyping
+      - generates disposable code
+      - the reconnaissance and intelligence gathering before tracer bullet
+    - tracer code is lean but complete, and forms part of the skeleton of the final system
 
 # DX
 
