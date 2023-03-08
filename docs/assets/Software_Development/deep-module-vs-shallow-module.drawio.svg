@@ -1,4 +1,4 @@
-<svg host="65bd71144e" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" width="641px" height="391px" viewBox="-0.5 -0.5 641 391" content="&lt;mxfile&gt;&lt;diagram id=&quot;lupDRNAw1GA6GMzP92Im&quot; name=&quot;Page-1&quot;&gt;3ZZLc4IwEIB/DXcggnhsfbQ99OSh5wxZIdOQMDEU7a/vokFMo44HnWm9MNkvD7IfOyQBmVabF03r8l0xEEEcsk1AZkEcZxHBZwe2FpB4DwrN2R5FA1jyb7AwtLThDNbOQKOUMLx2Ya6khNw4jGqtWnfYSgn3rTUtwAPLnAqffnBmSptFEg78FXhR9m+OQttT0X6wBeuSMtUeITIPyFQrZfatajMF0bnrveznLc70HjamQZprJljvX1Q0Nrc3aUCvaA52g2bbZ71ueSWoxOi5LbmBZd2NIrMWvzGy0lQCowibdlHQBjZnNxYd0sUyAVWB0Vsc0k9IrSFbIvHExu0gPO61lkeyST+R2o9cHNYePGDDqjitJfW0LKjMDVeSCm62nhrM07gK1karT5gqoTQSqXbaVlyIXwjXKySGOXTeEXTWOJbak+2oOGPinHOtGsmg23R4rfb4ovaxaz1KE896ekr6DZxnf7UURyNXShL7pUhOWYluoWXyuKWYXf4DJK721Ld+r1Lsz5kj6TOAGgkeZY3w6/EfSb9c62jd/e2esD65l/XIs74sqRB4Pj6++GTsih9ldxOP4XDB2PUd3dLI/Ac=&lt;/diagram&gt;&lt;/mxfile&gt;">
+<svg host="65bd71144e" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" width="641px" height="391px" viewBox="-0.5 -0.5 641 391" content="&lt;mxfile&gt;&lt;diagram id=&quot;lupDRNAw1GA6GMzP92Im&quot; name=&quot;Page-1&quot;&gt;3ZY7b4MwEIB/DTuPQJKxzasdOmXobOELWDU2MiYk/fU9gklwTaVGSqQoC7K/O8P544TxokVx2ChS5h+SAvdCnx68aOmFYeIneG3BsQNxHHQgU4x2aAC27BsM9A2tGYXKStRScs1KG6ZSCEi1xYhSsrHTdpLbTy1JBg7YpoS79JNRnXd0FvsX/gYsy/snB76JFKRPNqDKCZXNAEUrL1ooKXU3Kg4L4K273ku3bv1H9FyYAqH/syDsFuwJr83e3oUGtSMpmAL1sd911bCCE4Gz1yZnGrZlmxUtG3zHyHJdcJwFOHSrMIXtQWk4DJCpagOyAK2OmNJHE2PItEg4N/PmIjzsteYD2VG/kJiXnJ3vffGAA6NiXEviaFnXItVMCsKZPjpqcFPaVlBpJb9gIblUSIQ8adsxzn8hvF8mcJpC6x1Bq4hhq72YQMEo5X85V7IWFNqi/VHt4bXap7b1IIkd68mY9Bs4nz1qK04mtpQ4dFsxGrMS3ELL/ElacXat9iC2tSeu9Xu1Yn/ODKQvAUokeJTV3O3HR5V+da+jdfuzO2J9fi/rgWN9mxPO8Xx8fvHx1BY/md1NPE4vPxin2OAvLVr9AA==&lt;/diagram&gt;&lt;/mxfile&gt;">
     <defs/>
     <g>
         <path d="M 0 53 L 0 30 L 200 30 L 200 53" fill="rgb(255, 255, 255)" stroke="rgb(0, 0, 0)" stroke-miterlimit="10" pointer-events="all"/>
@@ -26,13 +26,13 @@
                     <div xmlns="http://www.w3.org/1999/xhtml" style="display: flex; align-items: unsafe center; justify-content: unsafe center; width: 58px; height: 1px; padding-top: 210px; margin-left: 71px;">
                         <div data-drawio-colors="color: rgb(0, 0, 0); " style="box-sizing: border-box; font-size: 0px; text-align: center;">
                             <div style="display: inline-block; font-size: 12px; font-family: Helvetica; color: rgb(0, 0, 0); line-height: 1.2; pointer-events: none; white-space: normal; overflow-wrap: normal;">
-                                Fanctionality
+                                Functionality
                             </div>
                         </div>
                     </div>
                 </foreignObject>
                 <text x="100" y="214" fill="rgb(0, 0, 0)" font-family="Helvetica" font-size="12px" text-anchor="middle">
-                    Fanctional...
+                    Functional...
                 </text>
             </switch>
         </g>
@@ -61,13 +61,13 @@
                     <div xmlns="http://www.w3.org/1999/xhtml" style="display: flex; align-items: unsafe center; justify-content: unsafe center; width: 58px; height: 1px; padding-top: 335px; margin-left: 431px;">
                         <div data-drawio-colors="color: rgb(0, 0, 0); " style="box-sizing: border-box; font-size: 0px; text-align: center;">
                             <div style="display: inline-block; font-size: 12px; font-family: Helvetica; color: rgb(0, 0, 0); line-height: 1.2; pointer-events: none; white-space: normal; overflow-wrap: normal;">
-                                Fanctionality
+                                Functionality
                             </div>
                         </div>
                     </div>
                 </foreignObject>
                 <text x="460" y="339" fill="rgb(0, 0, 0)" font-family="Helvetica" font-size="12px" text-anchor="middle">
-                    Fanctional...
+                    Functional...
                 </text>
             </switch>
         </g>
