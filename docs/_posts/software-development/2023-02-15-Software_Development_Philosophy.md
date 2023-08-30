@@ -56,6 +56,60 @@ last_modified_at: 2023-03-01
 - DRY principle; Don't Repeat Yourself
   - every piece of knowledge must have a single, unambiguous, authoritative representation within a system
 
+- DBC; Design by Contracts
+  - make these below explicit when implementing module, class, function, etc.
+    - preconditions
+    - postconditions
+    - invariants
+  - don't just catch and raise each exception as is; just propagate them if each *try-catch*es actually don't handle exceptions
+    - e.g.  
+      ```ts
+      { // Bad code
+        function f() {
+          try {
+            f1(); // possibly throw errors
+          } catch (err) {
+            // just catch error and throw it as is
+            console.error("f1 failed");
+            throw err;
+          }
+
+          try {
+            f2(); // possibly throw errors
+          } catch (err) {
+            // just catch error and throw it as is
+            console.error("f2 failed");
+            throw err;
+          }
+        }
+
+        function supervisor() {
+          // having responsibility to handle exceptions
+          try {
+            f();
+          } catch (err) {
+            // handling errors here after all
+          }
+        }
+      }
+
+      { // Removing redundant try-catchs; just propagate exceptinos
+        function f() {
+          f1();
+          f2();
+        }
+
+        function supervisor() {
+          // having responsibility to handle exceptions
+          try {
+            f();
+          } catch (err) {
+            // handling propagated errors
+          }
+        }
+      }
+      ```
+
 # Refactoring
 
 - **put priority on consitency**
