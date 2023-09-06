@@ -59,8 +59,8 @@ last_modified_at: 2023-08-28
 - effective modeling
   - knowledge crunching
   - cultivating a language based on the model
-    - ubiquitous language
-      - changes in the ubiquitous language are changes to the model
+    - Ubiquitous Language
+      - changes in the Ubiquitous Language are changes to the model
   - iteration
     - software development is all design
 - don't just model reality (e.g. actual manual operations that will be automated by software/system) as is
@@ -242,6 +242,37 @@ classDiagram
     state
   }
 ```
+
+## Services
+
+- overview
+  - an operation offered as an interface that stands alone in the model, without encapsulating state, as Entities and Value Objects do
+    - operation names should come from the Ubiquitous Language or be introduced into it
+    - parameters and results should be domain objects
+- characteristics
+  - the operation relates to a domain concept that is not a natural part of an Entity or Value Object
+  - the interface is defined in terms of other elements of the domain model
+  - the operation is stateless
+
+## Aggregates
+
+- a cluster of associated objects that we treat as a unit for the purpose of data changes
+- responsibilities
+  - invariant enforcement
+  - change management
+- consists of a root and a boundary
+  - root
+    - a single, specific Entity
+    - objects outside the Aggregate can reference to only the root
+    - can be obtained directly from resource (e.g. database)
+      - other objects must be found by traversal of associations
+  - boundary
+    - a delete operation must remove everything within the boundary at once
+    - when a change to any object within the boundary is commited, all invariants of the whole Aggregate must be satisfied
+
+## Factories
+
+- create and reconstitute complex objects
 
 <br>
 
