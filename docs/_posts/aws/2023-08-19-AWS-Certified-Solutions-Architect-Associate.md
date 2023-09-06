@@ -112,6 +112,16 @@ operations hub to perform *actions* against AWS resources and on-premises server
   - target instances
   - schedule
 
+### AWS System Manager Inventory
+
+collect and aggregate metadata from instances
+
+- *inventory association*
+  - all instances in your account: *global inventory association*
+  - select instance manually
+  - by tag
+- Inventory collect data at least **every 30 minutes**
+
 # Security, Identity and Compliance
 
 ## AWS Artifact
@@ -179,6 +189,31 @@ automates the testing and transfer of AWS-bound migration of non-cloud applicati
 collect information to plan the right migration strategy
 
 - need to install **Application Discovery Agents** on on-premises servers
+
+## AWS Snow Family
+
+- Snowcone
+  - storage 22 TB
+  - vCPUs: 4
+  - memory: 4 GB
+- Snowball Edge Storage Optimized
+  - memory 80 TB
+  - vCPUs: 40
+  - memory: 80 GB
+- Snowball Edge Compute Optimized
+  - storage: 42 TB
+  - vCPUs: 52
+  - memory: 208 GB
+- Snowmobile
+  - storage: PB or EB
+
+## AWS DataSync
+
+- on-premises data stores ->
+  - S3, Glacier, EFS, FSx, RDS (with AWS Database Migration Service)
+- transfer rate: 10 Gbps
+- encryption
+- data validation
 
 # Compute
 
@@ -321,9 +356,38 @@ persistent virtual storage drives attached to EC2 instance
 - **for operations requiring low-latency access to large amounts of data that needn't survive a system failure or reboot**
   - import disposable data from external sources
 
+### ENI; Elastic Network Interfaces
+
+- primary ENI
+  - the first ENI attached to an instance
+  - can't remove the primary ENI from an instance, and can't change it's subnet
+  - primary IP address of an instance is bound to a primary ENI
+    - can't change or remove the address
+- additional ENI in a different subnet can be attached
+- but must be in the same AZ as the instance
+- any address assigned to the ENI must come from the CIDR of the subnet to which it is attached
+- **must be associated at least one security group**
+
+### Enhanced Networking
+
+higher network throughput speeds and lower latency than ENIs
+
+- ENA; Elastic Network Adapter
+  - throughput speeds up to 100 Gbps
+  - Amazon Linux and Ubuntu AMIs enabled by default
+- VF; Intel 82599 Virtual Function Interface
+  - throughput speeds up to 10 Gbps
+
 ### Security Groups
 
-- firewall for an EC2 instance (**instance level traffic control**)
+- *stateful* firewall for an EC2 instance (**instance level traffic control**)
+  - when a security group allows traffic to pass in one direction, it allows reply traffic in the opposite direction
+- attached to ENIs
+- inbound rules
+  - source IP
+  - protocol
+  - destination port range
+- outbound rules
 
 ### Auto Scaling
 
@@ -384,24 +448,244 @@ persistent virtual storage drives attached to EC2 instance
   - min, max, or desired capacity
   - start date and time
 
+# Containers
 
-# Data Storage
+## EKS; Amazon Elastic Kubernetes Service
+
+- Amazon EKS Distro
+  - freely available package you can download to build EKS-compatible environments of your own
+  - make it easy to closely control the versions and environment dependencies
+
+- underlying services
+  - EC2
+  - AWS Fargate
+
+# Storage
 
 ## S3
 
-- encryptions
+- 100 buckets/account by default
+- individual uploads is up to 5 GB
+  - -> Multipart Upload
+    - automatically applied when using AWS CLI or a high-level API
+### Encryption
+
+- unless it's intended to be publicly available, data stored on S3 should always be encrypted
+- Server-Side Encryption
+  - **Amazon S3-Managed Keys (SSE-S3)**
+    - AWS uses its own enterprise-standard keys
+  - **AWS KMS-Managed Keys (SSE-KMS)**
+    - SSE-S3 + full audit trail for tracking key usage using *envelop key*
+    - customer keys imported to AWS KMS is available
+  - Customer-Provided Keys (SSE-C)
+    - customer keys for S3 applied
+- Client-Side Encryption
+  - **AWS KMS-Managed Customer Master Key (CMK)**
+  - *Client-Side Master Key*
+
+### Logging
+
+- S3 generated logs include
+  - accout and IP address of the requestor
+  - source bucket name
+  - action that was requested (GET, PUT, POST, DELETE, etc.)
+  - time the request was issued
+  - response status (including error code)
+
+### Durability
+
+- S3 automatically replicate data across at least three AZs
+  - except S3 One Zone-IA
+
+### Availability
+
+- S3 Standard
+  - 99.99 %
+- S3 Standard-IA (Infrequent Access)
+  - 99.9 %
+- S3 One Zone-IA
+  - 99.5 %
+- S3 Intelligent-Tiering
+  - 99.9 %
+
+### Access Control
+
+- S3 bucket policies
+  - Statement
+    - Effect
+      - Allow
+      - Deny
+    - Principal (Actor)
+    - Action
+      - e.g. s3:PutObject
+    - Resource
+      - bucket ARN (glob using object prefix available)
+- IAM policies
+- Amazon S3 Access Points
+  - hostname that can point to a defined subset ob objects in a bucket
+- ACL
+  - deprecated
+
+### Presigned URLs
+
+- authentication (session) period: 10m (600s)
+- URL expiration: 1h (3600s) by default
+
+## Amazon S3 Glacier
+
+- Glacier Instant Retrieval
+- Glacier Flexible Retrieval
+- Deep Archive
+  - data retrieval will take up to 12h
 
 ## EFS; Elastic File System
+
+- automatically scalable and shareable file storage to be accessed from **Linux instances**
+- make it easy to enable **secure, low-latency, and durable file sharing amoung multiple instances**
+- access files
+  - VPC -> NFS on EC2
+  - on-premises servers -> AWS Direct Connect
+
+## Amazon FSx
+
+- FSx for Lustre
+  - open source distributed filesystem built to give Linux clusters access to **high-performance filesystems for use in compute-intensive operations**
+- FSx for Windowns File Server
+  - Server Message Block (SMB)
+  - NTFS
+  - Microsoft Active Directory
+- FSx for OpenZFS
+- FSx for NetApp ONTAP
+
+## AWS Storage Gateway
+
+- local device -> Storage Gateway appliance -> cloud storage (e.g. S3, EBS)
+  - enable to use cloud storage as local storage
+- appliance
+  - VMware ESXi
+  - Microsoft Hyper-V
+  - Linux KVM
+  - VMware Cloud on AWS
+  - EC2 images
 
 # Network
 
 private IPs
-- 10.0.0.0/24 (10.0.0.0 - 10.255.255.255)
-- 172.16.0.0/17 (172.16.0.0 - 172.31.255.255)
-- 192.168.0.0/16 (192.168.0.0 - 192.168.255.255)
+- **10.0.0.0/8 (10.0.0.0 - 10.255.255.255)**
+- **172.16.0.0/12 (172.16.0.0 - 172.31.255.255)**
+- **192.168.0.0/16 (192.168.0.0 - 192.168.255.255)**
 
-2^4
-2^5kkk
+## VPC
+
+- IPv4 VPC CIDR range: **/16 - /28**
+- primary CIDR block does NOT editable
+- IPv6 VCP CIDR rang: **/56**
+- if a VPC is created, **AWS automatically creates a default route table (main route table) and associates it with every subnet in that VPC**
+- contains a default security group that can't be deleted
+- contains a default NACL that can't be deleted
+
+## Subnet
+
+- A subnet can exist within only one AZ
+- **must have at least one route table**
+- **every instance must exist within a subnet**
+  - can't move the instance to aother subnet; need to terminate then recreate in another subnet
+- the first 4 and last IP are reserved by AWS
+  - e.g. 172.16.100.0/24
+    - 172.16.100.0
+    - 172.16.100.1
+    - 172.16.100.2
+    - 172.16.100.3
+    - 172.16.100.255
+- can have only one NACL
+- if a subnet is created in a VPC, the VPC's default NACL is associated with it by default
+
+## Internet Gateway
+
+- **must create a default route in a route table that points to the internet gateway**
+
+## Route Tables
+
+- control traffic in VPC
+  - as separate virtual router with a connection to one or more subnets
+- each route table consists of **one or more routes** and **at least one subnet association**
+- every route table contains **a local route that allow instances in different subnets to communicate with each other**
+  - Routes
+    - Destination IP prefix
+    - Target resource
+      - AWS network resource
+      - Internet gateway
+      - ENI
+
+|Destination|Target|
+|:---:|:---:|
+|172.31.0.0/16|Local|
+|0.0.0.0/0|igw-0e538022a0fddc318|
+
+## NACL; Network Access Control List
+
+- *stateless* firewall attached to a subnet
+- inbound rules
+  - ascending order of the rule number
+
+|Rule number|Protocol|Port range|Source|Action|
+|:---:|:---:|:---:|:---:|:---:|
+|90|TCP|80|0.0.0.0/0|Deny|
+|100|All|All|0.0.0.0/0|Allow|
+|*|All|All|0.0.0.0/0|Deny|
+
+- outbound rules
+  - to maintain compatibility, do not restrict outbound traffic using an NACL; use a security group instead
+- avoid changing security groups and NACLs simultaneously
+
+## AWS Network Firewall
+
+- a scalable firewall to protect multiple VPCs and subnets, even across different AWS accounts
+- web filtering
+- intrusion detection and prevention
+- stateless and stateful packet filtering
+- centralized visibility of all traffic
+
+## EIP; Elastic IP Address
+
+- BYOIP; bring your own IP address
+
+## AWS Global Accelerator
+
+- provides 2 anycast static IPv4 addresses
+  - route traffic to resources in any region
+    - AWS points-of-presence (POPs) in over 30 countries
+- routes traffic to the fastest endpoint
+
+## NAT; Network Address Translation
+
+- NAT gateway
+  - automatic
+    - managed by AWS
+  - can't apply a security group
+  - apply an NACL to the subnet that it resides in
+- NAT instance
+  - manual
+  - an EC2 instance using preconfigured Linux-based AMI
+  - bastion host (jump host)
+    - connect to instance that don't have public IP
+  - not often used recently
+
+## AWS PrivateLink
+
+- connect VPC resources, AWS services, and on-premises resources to each other bypassing the Internet
+- reliable
+- low-latency
+
+## VPC Peering
+
+- connect instances in one VPC to VPCs in another using AWS PrivateLink
+  - different regions
+  - another AWS customer's instances
+- point-to-point connection between two and only two VPCs
+- must not overlapping CIDR blocks
+- instance-to-instance communication
+
 ## ELB; Elastic Load Balancer
 
 - application
