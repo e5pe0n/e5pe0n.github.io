@@ -363,10 +363,10 @@ persistent virtual storage drives attached to EC2 instance
   - can't remove the primary ENI from an instance, and can't change it's subnet
   - primary IP address of an instance is bound to a primary ENI
     - can't change or remove the address
-- additional ENI in a different subnet can be attached
-- but must be in the same AZ as the instance
 - any address assigned to the ENI must come from the CIDR of the subnet to which it is attached
 - **must be associated at least one security group**
+- additional ENI in a different subnet can be attached
+- but must be in the same AZ as the instance
 
 ### Enhanced Networking
 
@@ -602,6 +602,7 @@ private IPs
 
 ## Internet Gateway
 
+- performs NAT for instances that have a public IP address
 - **must create a default route in a route table that points to the internet gateway**
 
 ## Route Tables
@@ -624,7 +625,7 @@ private IPs
 
 ## NACL; Network Access Control List
 
-- *stateless* firewall attached to a subnet
+- *stateless* firewall attached to a **subnet**
 - inbound rules
   - ascending order of the rule number
 
@@ -659,7 +660,7 @@ private IPs
 
 ## NAT; Network Address Translation
 
-- NAT gateway
+- **NAT gateway**
   - automatic
     - managed by AWS
   - can't apply a security group
@@ -667,6 +668,8 @@ private IPs
 - NAT instance
   - manual
   - an EC2 instance using preconfigured Linux-based AMI
+  - **source/destination check on the ENI must be disabled**
+    - to allow the instance to receive traffic not destined for its IP and to send traffic using a source address that it doesn't own
   - bastion host (jump host)
     - connect to instance that don't have public IP
   - not often used recently
@@ -685,6 +688,90 @@ private IPs
 - point-to-point connection between two and only two VPCs
 - must not overlapping CIDR blocks
 - instance-to-instance communication
+
+## Hybrid Cloud Networking
+
+- VPN; AWS Site-to-Site Virtual Private Network
+- AWS Transit Gateway
+- AWS Direct Connect
+
+### VPN
+
+- connect a VPC to an on-premises network
+  - establish encrypted VPN tunnel
+    - VPC: virutal private gateway
+    - on-premises: customer gateway
+
+### AWS Transit Gateway
+
+- connect **multiple VPCs and on-premises networks** via Direct Connect links or virtual private networks
+- attached to VPC, VPC connection, Direct Connect gateway or another transit gateway
+- Transit Gateway Route Table
+  - control traffic among VPCs and on-premises networks
+  - can't specify an ENI or Internet gateway as a target
+- use cases
+  - **Centralized router**
+  - **Isolated router**
+  - **Shared services**
+  - **Tansit Gateway Peering**
+    - even different regions
+  - **Multicast**
+    - specify the ENI of an instance that will server as the multicast source (multicast group)
+    - sender must be Nitro instance
+  - **Blackhole Routes**
+    - transit gateway drops any traffic that matchies the routes
+  
+### AWS Direct Connect
+
+- uses PrivateLink
+- not encrypted
+  - but TLS used
+- **bypass the Internet**
+  - use cases
+    - **transfer large data sets**
+    - **transfer real-time data**
+    - **regulatory requirements that preclude transferring data over the Internet**
+- connection types
+  - **Dedicated**
+    - single physical connection that terminates at an AWS Direct Connect location
+    - network speed
+      - 1 Gbps
+      - 10 Gbps
+      - 100 Gbps
+  - **Hosted**
+    - 50 Mbps - 10 Gbps
+- Direct Connect Gateways
+  - global resource that provides a single connection point to multiple VPCs in a region
+  - e.g. AWS Transit Gateway, virtual private gateway
+- VIF; Virtual Interface
+  - Private Virtual Interface
+    - connect to the private IP addresses of resources in a single VPC
+      - e.g. EC2, RDS instance
+  - Public Virtual Interface
+    - connect to public IP addresses of AWS services
+      - e.g. S3, DynamoDB
+  - Transit Virtual Interface
+    - connect one or more AWS transit gateways
+    - network speed >= 1 Gbps
+- Direct Connect SiteLink
+  - connect 2 on-premises sites using Direct Connection
+
+## AWS Parallel Cluster
+
+- automatically manage Linux-based HPC cluster
+  - provision cluster instances
+  - create a 15 GB shared filesystem (NFS, EFS, or FXs for Lustre)
+    - stored on an EBS volume that's attached to a master instance
+  - create a batch scheduler using AWS Batch
+
+### EFA; Elastic Fabric Adapter
+
+- allow HPC applications to use the Libfabric API to bypass the OS's TCP/IP stack and access the EFA directly
+  - more thoughput
+  - reduce latency
+- all attached instances must be
+  - in the same subnet
+  - attached to the same security group that allows all traffic to and from it
 
 ## ELB; Elastic Load Balancer
 
