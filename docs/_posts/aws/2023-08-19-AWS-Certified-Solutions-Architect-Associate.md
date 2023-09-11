@@ -778,6 +778,299 @@ private IPs
 - application
 - network
 
+# Database
+
+- OLTP; Online Transaction Processing
+  - for apps that read and write data frequently, on the order of multiple times per seconds
+- OLAP; Online Analytic Processing
+  - optimized for complex queries against large data sets
+  - for data warehousing apps
+    - aggregate multiple OLTP databases into a single OLAP database
+
+## RDS
+
+- MySQL
+  - should use InnoDB with RDS-managed automatic backups
+- MariaDB
+  - MySQL replacement
+  - InnoDB recommended
+- Oracle
+  - Oracle Database 21c
+  - Oracle Database 19c
+  - Oracle Database 12c Release 2
+  - Oracle Database 12c Release 1
+- PostgreSQL
+  - Oracle compatible
+- Amazon Aurora
+  - editions
+    - MySQL compatible
+      - Aurora Backtrack
+        - **restore database to any point in time within the last 72 hours**
+    - PostgreSQL compatible
+  - Amazon Aurora Serveless
+    - automatically scale database up and down on-demand
+- Microsoft SQL Server
+
+### Licence Considerations
+
+- Licence Included
+  - MySQL
+  - MariaDB
+  - PostgreSQL
+  - Micresoft SQL Server
+  - Oracle Database Standard Edition Two (SE2)
+- BYOL; Bring Your Own Licence
+  - Oracle Database Enterprise Edition (EE)
+  - Oracle Database Standard Edition Two (SE2)
+
+### Database Option Groups
+
+- S3 integration
+  - Oracle
+- TDE; Transparent Data Encryption
+  - Microsoft SQL Server
+  - Oracle
+- audit plug-in
+  - MySQL
+  - MariaDB
+
+### Database Instance Classes
+
+- Standard
+  - memory: 512 GB
+  - vCPU: 128
+  - network bandwidth: 40 Gbps
+  - disk throughput: 50,000 Mbps (6,250 MBps)
+  - EBS optimized
+- Memory Optimized
+  - memory: 3,904 GB
+  - vCPU: 128
+  - network bandwidth: 25 Gbps
+  - disk throughput: 14,000 Mbps (1,750 MBps)
+  - EBS optimized
+- Burstable Performance
+  - for nonproduction databases
+    - development, test
+  - memory: 32 GB
+  - vCPU: 8
+  - network bandwidth: 5 Gbps
+  - disk throughput: 2,048 Mbps (256 MBps)
+
+### Database Storage
+
+- page size
+  - the larger page size, the fewer IOPS you need to achieve the same level of throughput
+  - 16 KB
+    - MySQL
+    - MariaDB
+  - 8 KB
+    - PostgreSQL
+    - Microsoft SQL Server
+    - Oracle
+
+<br>
+
+- General-Purpose SSD (gp2)
+  - storage size: 20 GB - 64 TB
+    - if < 1 TB then temporarily burst to 3,000 IOPS
+      - `burst duration in seconds = credit balance / [3,000 - 3 * (storage size in GB)]`
+      - credit balance is replenished at a rate of one baseline IOPS every second
+  - baseline IOPS: 3 IOPS/GB
+  - IOPS: 60 - 16,000
+  - e.g.
+    - 2,000 Mbps throughput needed
+    - page size is 16 KB (128 Kb or 0.128 Mb)
+    - -> 2000 Mbps / 0.128 Mbs = 15.625 IOPS ~= 16,000 IOPS needed
+    - -> 16,000 IOPS / 3 IOPS/GB = 5,334 GB ~= 5,33 TB storage size needed
+- Provisiond IOPS SSD (io1)
+  - no bursting
+  - IOPS: <= 256,000
+  - storage size
+    - MySQL, MariaDB, PostgreSQL, Oracle
+      - 100 GB - 64 TB
+  - `IOPS:storage size in GB` must be >= `50:1`
+    - e.g. if 32,000 IOPS needed, at least 640 GB storage size needed
+- Magnetic Storage (Standard)
+  - for backword compatibility; don't use this
+
+### Read Replicas
+
+- data from the master is **asynchronously** replicated to each read replica
+- DB engines
+  - Microsoft SQL Server
+    - only Enterprise Edition is supported
+  - all other DB engines supported
+    - **Autora: < 15 read replicas**
+    - **others: < 5 read replicas**
+
+### Autora Multi-AZ Deployment
+
+- Single-Master
+  - primary and all replicas share a single cluster volume
+    - **synchronously replicated across 3 AZ**
+    - automatically provisioned up to 64 TB
+  - if primary instance fails
+    - if replicas exist
+      - promote a replica to the primary
+    - else
+      - create a new primary instance
+- Multi-Master
+  - all instances share a single cluster volume
+  - all instances can read and write
+  - **no failover occurs**
+
+### Other DBs Multi-AZ Deployment
+
+- deploy multiple database instances in different AZ  
+  - primary database instance
+  - standby database instance in different AZ  
+    - **standby instance is not read replica**
+
+- if primary instance experiences an outage, fail over to the standby instance, usually within 2 min  
+  - AZ outage
+  - changing a DB instance type
+  - patching of the instance's OS  
+
+- **primary and all standby instances must reside in the same region**
+- synchronously replicates data from the primary to the standby instance
+  - should use **EBS-optimized instances and provisioned IOPS SSD storage**
+- multi-AZ read replica in different region
+  - fail over to different region
+  - MySQL, MariaDB
+
+
+### Automated Snapshots
+
+- EBS snapshot
+  - stored in S3 in multiple AZ in the same region
+  - suspends all I/O operations for a few seconds unless using multi-AZ
+    - **be sure to take snapshots during off-peak times**
+  - created daily during a 30-min backup window
+    - customize window
+    - or RDS randomly select a 30-min window within an 8-hour block that varies by region
+- point-in-time recovery
+  - archives database change logs to S3 every 5 min
+  - **restoring to a point-in-time can take hours**
+  - retention period
+    - time period keeping snapshots
+    - 0 day - 35 days
+      - setting 0 day disables automated snapshots
+        - immediately deletes all existing automated snapshots and point-in-time recovery
+    - 7 days by default
+
+## Amazon Redshift
+
+- mangaged data warehouse service based on PostgreSQL
+- supported connectors
+  - ODBC; Open Database Connectivity
+  - JDBC; Java Database Connectivity
+- Redshift Cluster
+  - one or more **compute node**
+    - **dense compute node**
+      - storage: <= 326 TB
+      - SSD
+    - **dense storage node**
+      - storage: <= 2 PB
+      - HDD
+    - **RA3 node**
+      - storage: <= 16,384 TB
+      - SSD
+  - **leader node**
+    - coordinate communication among the compute nodes, as well as to communicate with clients
+    - no additional charges
+- Data Distribution Style
+  - AUTO distribution
+    - default
+  - EVEN distribution
+  - KEY distribution
+    - spreads the data according to the value in a single column
+  - ALL distribution
+    - distribute every table to every compute node
+
+### Redshift Spectrum
+
+- query data from files stored in S3 without having to import the data into cluster
+- the bucket must be in the same region as the cluster
+
+## DynamoDB
+
+- partition
+  - 10 GB storage allocation for a table
+  - hot partiion
+    - a lot of read and write active occurs in the same partition
+    - **make partition key as specific as possible**
+- primary key
+  - partition key (hash key)
+    - e.g. email address, a unique username, uuid
+    - 2 KB
+  - sort key (range key)
+    - composite primary key
+    - 1 KB
+- item
+  - <= 400 KB
+    - ~= 50,000 english words
+- data type
+  - Scalar
+    - string
+      - <= 400 KB
+      - UTF-8 encoding
+      - empty string not allowed
+    - binary
+      - <= 400 KB
+      - Base-64 encoding
+  - Set
+  - Document
+    - < 32 levels deep
+- thoughput capacity
+  - can switch only once every 24h
+  - **on-demand mode**
+    - automatically scales to accommodate workload
+  - **provision mode**
+    - provisioned throughput
+      - RCUs; read capacity unites
+        - **strongly consistent read**
+          - **4 KB/RCU**
+        - **eventually consistent read**
+          - **8 KB/RCU**
+      - **WCUs; write capacity unites**
+        - **1 KB/WCU**
+- Auto Scaling
+  - min RCU and WCU
+  - max RCU and WCU
+  - desired utilization percentage
+- Reserved Capacity
+  - parchase RCUs and WCUs
+    - 100 - 100,000
+  - have to pay a one-time fee
+  - commit to a period of 1 or 3 years
+- Reading Data
+  - scan operation
+    - lists all items in a table
+  - query operation
+- Secondary Indexes
+  - look up data by an attribute other than the primary key
+  - base table
+    - the table that the index gets its data from
+  - projected attributes
+  - always includes the partition and sort key attributes from the base table
+  - types
+    - **GSI; Global Secondary Index**
+      - can create any time
+      - the partition and hash keys can be different than the base table
+      - eventually consistent read
+    - **LSI; Local Secondary Index**
+      - **must create at the same time as the base table**
+      - cannot delete
+      - **the partition key must be the same as the base table**
+      - **the sort key can be different**
+- Global Tables
+  - replicate a table across multiple regions
+  - must be configured in on-demand mode or provisioned mode with **Auto Scaling enabled**
+  - only one replica table per region
+- Backups
+  - can back up tables at any time
+    - not impact the performance
+
 # Security
 
 ## WAF; Web Application Firewall
