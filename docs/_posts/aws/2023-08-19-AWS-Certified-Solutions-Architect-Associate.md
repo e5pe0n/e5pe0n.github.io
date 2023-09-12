@@ -124,6 +124,77 @@ collect and aggregate metadata from instances
 
 # Security, Identity and Compliance
 
+## IAM; AWS Identity and Access Management
+
+- IAM Policies
+  - effect
+    - allow
+    - deny
+  - action
+    - create buckets
+  - resources
+    - s3
+- single identity can have <= 10 managed policies
+- lock down root user
+  - **delete any access keys associated with root user**
+  - assign a long and complex password and store it in a secure password vault
+  - enable MFA for the root user
+  - wherever possible, don't use root user to perform administration oeprations
+- Access Keys
+  - can enforce key rotaion by password policy
+- Roles
+  - trusted entities
+    - AWS service
+    - another AWS account
+    - web identity who authenticates using a login with **Amazon, Amazon Cognito, Facebook, or Google**
+    - SAML (Security Assertion Markup Language) 2.0 federation with a SAML provider
+  - when a trusted entity **assumes its new role, a time-limited security token is issued by AWS Security Token Service (STS)**
+
+## Amazon Cognito
+
+- **user pools**
+  - **add user sign-up and sign-in to application**
+  - mininum requirements for **password complexity, MFA, email verification**
+- **identity pools**
+  - **give application users temporary, controlled access to other services in AWS account**
+  - create and assign an IAM role to the identity pool
+    - any identified users will have access to the resources specified in the role
+
+## AWS Managed Microsoft AD
+
+- accessed through AWS Directory Service
+- can connect AWS services to an on-premises Microsoft Active Directory using AD connector
+
+## AWS Single Sign-On
+
+- authentication and authorization through an existing Microsoft Active Directory configured within AWS Directory Service
+- works across multiple AWS accounts within AWS Organizations
+- support access to popular apps
+  - **Salesforce**
+  - **Box**
+  - **Office 365**
+  - **custom apps spporting SAML 2.0**
+
+
+## AWS CloudHSM
+
+- HSM; hardware security module
+- launches virtual compute device clusters to perform cryptographic operations
+- off-load the burden of generating, storing, and managing cryptographic keys from web servers
+- useful for
+  - **keys stored in dedicated, 3rd-party validated HSMs under exclusive control**
+  - **FIPS (Federal Infomation Processing Standards) 140-2 compliance**
+  - integration with apps using
+    - **PKCS #11 (Public Key Cryptography Standsrds)**
+    - **Java JCE (Java Cryptography Extension)**
+    - **Microsoft CNG (Cryptography API: Next Generation)**
+  - **high-performance in-VPC cryptographic acceleration (bulk crypto)**
+
+
+## AWS RAM; AWS Resource Access Manager
+
+- safely **share resources with users in multiple accounts within a single organization or even with external AWS accounts**
+
 ## AWS Artifact
 
 digital repository that allows customers to download **compliance-related information** about their AWS accounts and services
