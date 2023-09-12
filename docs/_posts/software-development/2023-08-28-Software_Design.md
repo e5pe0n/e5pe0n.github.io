@@ -1,5 +1,5 @@
 ---
-title: "WIP: System Architecture"
+title: "WIP: Software Design"
 categories:
   - Software Design
 tags:
