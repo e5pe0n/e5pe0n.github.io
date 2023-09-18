@@ -786,10 +786,81 @@ higher network throughput speeds and lower latency than ENIs
 
 # Network
 
-private IPs
-- **10.0.0.0/8 (10.0.0.0 - 10.255.255.255)**
-- **172.16.0.0/12 (172.16.0.0 - 172.31.255.255)**
-- **192.168.0.0/16 (192.168.0.0 - 192.168.255.255)**
+- private IPs
+  - **10.0.0.0/8 (10.0.0.0 - 10.255.255.255)**
+  - **172.16.0.0/12 (172.16.0.0 - 172.31.255.255)**
+  - **192.168.0.0/16 (192.168.0.0 - 192.168.255.255)**
+- ICANN; Internet Corporation for Assigned Names and Numbers
+  - IP
+  - domain name hierarchy
+- domain
+  - one or more servers, data repositories, or other digital resources identified by a single domain name
+- subdomains (hosts)
+  - e.g. aws.amazon.com
+- zone file
+  - Name
+  - TTL
+  - Recourd Class
+  - Recourd Type
+    - A
+      - maps a hostname to an IPv4 address
+    - CNAME; canonical name
+      - alias of a hostname
+    - MX; mail exchange
+      - maps a domain to specified message transfer agests
+    - AAAA
+      - maps a hostname to an IPv6 address
+    - TXT; text
+    - PTR; pointer
+    - SRV
+      - customizable record for service location
+    - SPF; sender policy framework
+    - NAPTR; name authority pointer
+    - CAA; certification authority authorization
+    - NS; name server
+    - SOA; start of authority
+
+## Amazon Route 53
+
+- domain registration
+  - transfer existing domain registration
+    - unlock the domain transfer setting in the registerar's admin interface
+    - request an authorization code
+    - supply code to Route 53
+  - leave domain with current registrar and manage DNS configuration using Route 53
+    - copy the name server addresses included in Route 53 recourd set
+    - paste them as the new name server values in registrar's admin interface
+- DNS management
+- availability monitoring (health checks)
+- traffic management (routing policies)
+  - Weighted Routing
+  - Latency Routing
+  - Failover Routing
+  - Geolocation Routing
+    - e.g. deliver web pages in customer-appropriate languages, restrict content to regions where it's legally permitted
+  - Multivalue Answer Routing
+    - combine a health check configuration with multivalue routing to make a deployment more highly available
+    - <= 8 recourds can be pointed to parallel resources 
+  - Geoproximity Routing
+    - by geographic areas by relationship either to a particular longitude and latitude or to an AWS region
+
+### Route 53 Resolver
+
+- manage bidirectional address queries between servers running in AWS account and on-premises resources
+
+## Amazon CloudFront
+
+- origins
+  - S3
+  - **AWS MediaPackage channel endpoint**
+  - **AWS MediaStore container endpoint**
+    - media-optimized storage service
+  - **Application Load Balancer**
+  - **Lambda function URL**
+  - **Custom origin**
+    - **HTTP server (even on-premises)**
+
+
 
 ## VPC
 
