@@ -4,7 +4,7 @@ categories:
   - AWS
 tags:
   - AWS
-last_modified_at: 2023-08-19
+last_modified_at: 2023-09-18
 ---
 
 # Architecture Pillars
@@ -121,6 +121,151 @@ collect and aggregate metadata from instances
   - select instance manually
   - by tag
 - Inventory collect data at least **every 30 minutes**
+
+
+## CloudTrail
+
+- event
+  - record of an action that a *principal* performs against an AWS resource
+  - types
+    - Managenmet Events (control plain operations)
+      - Write-Only Events
+        - e.g. create a new instance, logging into the management console
+      - Read-Only Events
+        - e.g list instances
+    - Data Events (data plain operations)
+      - Write-Only Events
+        - e.g.
+          - S3: DeleteObject, PutObject
+          - Lambda executions
+      - Read-Only Events
+        - e.g. S3: GetObject
+      - limited to selecting a total of **250 individual objects per trail**, including Lambda functions and S3 buckets aren prefixes
+- action
+  - API
+    - e.g. launching an instance, creating a bucket in S3, creating a VPC
+  - non-API
+    - e.g. logging into the management console
+- **Event History**
+  - logs **90 days** of **management events** and store them in event history by default
+  - global services events logged in event history of every region
+    - e.g. IAM, CloudFront, Route 53
+- Trails
+  - configuration that recourds specified events and delivers them as CloudTrail log files to an S3 bucket
+  - CloudTrail log file
+    - eventTime
+    - userIdentity
+    - eventSource
+    - eventTime
+    - eventName
+    - awsRegion
+    - sourceIPAddress
+  - up to **5 trails for a single region**
+  - **can't send log events larger than 256 KB to CloudWatch Logs**
+- Log File Integrity Validation
+  - if enabled, every time CloudTrail delivers a log file to the S3 buckets, it calculates a cryptographic hash of the file
+  - every hour, CloudTrail creates a separate file: **digest file** that contains the **cryptographic hashes of all log files delivered within the last hour**
+  - keys to encrypt
+    - SSE-S3 by default
+    - SSE-KMS
+      - CMK must be in the same region as the bucket
+
+## CloudWatch
+
+- metrics
+  - e.g. EC2 instance CPU utilization, EBS volume read and write IOPS, S3 bucket sizes, DynamoDB consumed RCUs and WCUs
+    - data points
+      - timestamp, value, unit
+    - dimension (legend)
+      - name/value pair
+  - regular-resolution metrics
+    - timestamp resolution is no less than one min
+  - high-resolution metrics
+    - less than one min
+    - expiration
+      - **after 3 hours**, aggregated into a single **one-minute resolution**
+        - high-resolution metrics expire and are deleted
+      - **after 15 days**, aggregated into a single **5-minute resolution**
+      - **after 63 days**, aggregated into a single **1-hour resolutino**
+      - **after 15 months**, deleted
+- monitoring
+  - Basic monitoring
+    - sends metrics to CloudWatch every 5 min
+  - Detailed monitoring
+    - every min
+- CloudWatch Logs
+  - stores log events from the same source in a *log stream*
+  - **can manually delete log streams, but not individual log events**
+  - organizes log streams into *log groups*
+    - a log stream can exist in only one log group
+  - retention period
+    - 1 days - 10 years or indefinitely (by default)
+  - can manually export a log group to an S3 bucket
+- CloudWatch Agent
+  - a command line-based program that collects logs and metrics from instances and on-premises severs running Linux or Windows
+- CloudWatch Alarms
+  - percentile for statistic
+    - .5 (p50) <=: need `10/1(1 - percentile)` data points
+      - e.g. for p80, `10/(1 - 0.8) = 50` data points needed
+    - < .5 (p50): need `10/percentile` data points
+      - e.g. for p25, `10/(.25) = 40` data points needed
+  - threshould
+    - Static Threshould
+    - Anomaly Detection
+    - Metric Math Expression
+  - alarm states
+    - ALARM
+    - OK
+    - INSUFFICIENT_DATA
+  - evaluation period
+    - <= 24 hours
+  - missing data
+    - As Missing
+      - default
+    - Not Breaching
+    - Breaching
+    - Ignore
+  - actions
+    - Notification Using Simple Notification Service
+      - protocol
+        - HTTP/HTTPS, SQS, Lambda, a mobile push notification, email, email-JSON, SMS
+    - Auto Scaling Action
+    - EC2 Action
+
+## EventBridge
+
+- takes some action based on specific events or on a schedule, not metric values
+- Event Buses
+- Rules
+  - defines the action and the target to take in response to an event
+
+
+## AWS Config
+
+- configuration recorder
+  - **only one configuration recorder per region**
+  - Configuration Item
+    - specific settings for the resource at a point in time
+    - e.g. resource type, ARN, when it was created, relationships to other resources
+    - **can't delete manually**
+  - Configuration History
+    - collection of configuration item
+    - evenry 6 hours in which a change occurs to a resource, delivers a configuration histry file to an S3 bucket
+  - Configuration Stanpshots
+    - collection of all configuration items from a given a point in time
+- Recording Software Inventory
+  - EC2 instances and on-premises servers
+    - Applications
+    - AWS components
+      - e.g. CLI, SDKs
+    - OS name and version
+    - IP address, gateway and subnet mask
+    - Firewall configuration
+    - Windows updates
+  - need to
+    - enable inventory collection for the server using the AWS System Manager (SSM)
+    - AWS Config monitors the SSM: ManagedInstanceInventory resource type
+
 
 # Security, Identity and Compliance
 
