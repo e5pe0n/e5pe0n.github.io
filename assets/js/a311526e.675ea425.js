@@ -1,0 +1,1 @@
+"use strict";(self.webpackChunke_5_pe_0_n_github_io=self.webpackChunke_5_pe_0_n_github_io||[]).push([[9247],{6540:e=>{e.exports=JSON.parse('{"title":"C++","slug":"/category/c","permalink":"/docs/category/c","navigation":{"previous":{"title":"Coding","permalink":"/docs/category/coding"},"next":{"title":"Fundamentals","permalink":"/docs/coding/c++/fundamentals"}}}')}}]);
