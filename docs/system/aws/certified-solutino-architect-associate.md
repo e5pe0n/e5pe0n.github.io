@@ -4,6 +4,15 @@
 ## Architecture Pillars
 
 - resilience architectures
+
+|Availability Percentage|Time Unavailable|
+|:---:|:---:|
+|99%|3d 15h 39m|
+|99.9%|8h 45m|
+|99.95%|4h 22m|
+|99.99%|52m|
+|99.999%|5m|
+
 - high-performancing architectures
 - secure architectures
 - cost-optimizing architectures
@@ -227,13 +236,6 @@ collect and aggregate metadata from instances
     - Auto Scaling Action
     - EC2 Action
 
-### EventBridge
-
-- takes some action based on specific events or on a schedule, not metric values
-- Event Buses
-- Rules
-  - defines the action and the target to take in response to an event
-
 
 ### AWS Config
 
@@ -423,8 +425,17 @@ collect information to plan the right migration strategy
 - on-premises data stores ->
   - S3, Glacier, EFS, FSx, RDS (with AWS Database Migration Service)
 - transfer rate: 10 Gbps
-- encryption
+- **encryption**
 - data validation
+
+### AWS Transfer Family
+
+- transfer data into and out of S3 and EFS
+  - FTP; File Transfer Protocol
+  - SFTP; Secure Shell (SSH) File Transfer Protocol
+  - FTPS; File Transfer Protocol over SSL
+- use cases
+  - migrate on-premises data to AWS infra using common tools such as FileZilla, OpenSSH, and WinSCP
 
 ## Compute
 
@@ -557,6 +568,13 @@ persistent virtual storage drives attached to EC2 instance
   - -> generate another volume then attach it to other instance
   - -> convert AMI image
 - generate AMI image directly
+- **automatically replicates volumes across multiple AZs in a region**
+- backups
+  - Amazon Data Lifecycle Manager
+    - schedule creating snapshot -> S3
+- **don't store application logs on EBS**
+  - use CloudWatch Logs
+- avoid RAID 1, RAID 5, RAID 6 for IOPS consumption
 
 #### Instance Store Volumes
 
@@ -583,11 +601,12 @@ persistent virtual storage drives attached to EC2 instance
 
 higher network throughput speeds and lower latency than ENIs
 
-- ENA; Elastic Network Adapter
+- **ENA; Elastic Network Adapter**
   - throughput speeds up to 100 Gbps
   - Amazon Linux and Ubuntu AMIs enabled by default
-- VF; Intel 82599 Virtual Function Interface
+- **VF; Intel 82599 Virtual Function Interface**
   - throughput speeds up to 10 Gbps
+- **EFA; Elastic Fabric Adapter**
 
 #### Security Groups
 
@@ -676,9 +695,11 @@ higher network throughput speeds and lower latency than ENIs
 ### S3
 
 - 100 buckets/account by default
-- individual uploads is up to 5 GB
+- individual uploads <= 5 GB
   - -> Multipart Upload
     - automatically applied when using AWS CLI or a high-level API
+- Amazon S3 Transfer Acceleration
+  - routing data through CloudFront edge locations
 
 #### Encryption
 
@@ -708,17 +729,21 @@ higher network throughput speeds and lower latency than ENIs
 
 - S3 automatically replicate data across at least three AZs
   - except S3 One Zone-IA
+- **S3 CRR; Cross-Region Replication**
+  - automatically (asynchronously) sync contents of a bucket in one region with a bucket in a second region
+  - low latency
+  - realiability and durability
 
 #### Availability
 
 - S3 Standard
-  - 99.99 %
+  - **99.99 %**
 - S3 Standard-IA (Infrequent Access)
-  - 99.9 %
+  - **99.9 %**
 - S3 One Zone-IA
-  - 99.5 %
+  - **99.5 %**
 - S3 Intelligent-Tiering
-  - 99.9 %
+  - **99.9 %**
 
 #### Access Control
 
@@ -757,6 +782,11 @@ higher network throughput speeds and lower latency than ENIs
 - access files
   - VPC -> NFS on EC2
   - on-premises servers -> AWS Direct Connect
+- stored across multiple zones in a region
+- to protect against data loss and corruption
+  - back up individual files to an S3 bucket or another EFS in the same region
+  - AWS Backup Service
+    - schedule incremental backups of EFS
 
 ### Amazon FSx
 
@@ -1013,6 +1043,7 @@ higher network throughput speeds and lower latency than ENIs
   - use cases
     - **transfer large data sets**
     - **transfer real-time data**
+      - low latency needed
     - **regulatory requirements that preclude transferring data over the Internet**
 - connection types
   - **Dedicated**
@@ -1058,8 +1089,17 @@ higher network throughput speeds and lower latency than ENIs
 
 ### ELB; Elastic Load Balancer
 
-- application
-- network
+- application load balancer
+  - HTTP/HTTPS
+- network load balancer
+  - TCP
+  - integrated with
+    - Auto Scaling
+    - ECS
+    - CloudFormation
+- Gateway Load Balancer
+  - 3rd-party virtual appliance supporting GENEVE protocol
+  - operate on Layer 3 of the OSI model
 
 ## Database
 
@@ -1379,3 +1419,147 @@ higher network throughput speeds and lower latency than ENIs
 
 - NCLs and security groups cannot be used for public endpoints
 
+
+## Analytics
+
+### AWS Lake Formation
+
+- data lake
+  - centralized database that collects and store massive amounts of structured and unstructured data from any number of places
+- can search, analyze, visualize, and correlate data
+- use AWS Glue to collect data
+- use S3 to store data lekes
+- FindMatches ML
+  - help dedup data
+- analytics
+  - **Athena**
+  - **QuickSight**
+  - **RedShift Spectrum**
+  - **Amazon EMR**
+  - **AWS Glue**
+
+### AWS Glue
+
+- perform what database nerds call ETL operations
+  - Extract data from
+    - **S3**
+    - **RDS**
+    - **AWS CloudFront**
+    - **AWS CloudTrail**
+    - **ELB (AWS Elastic Load Balancer)**
+    - **on-premises databases that supports JDBC**
+  - Transform
+    - format
+    - combine
+    - cleaning
+      - eliminating dupulicate, corrupted, or otherwise undesireble data
+  - Load
+    - quicky find text
+- based on Apache Spark
+- AWS Blue Catalog
+  - stores metadata and lables about data lake
+
+### Kinesis
+
+- collection of services that collect, process, store, and deliver streaming data
+
+#### Kinesis Video Streams
+
+- ingest and index streaming video data
+  - e.g. webcams, security cameras, smartphones
+- use cases
+  - computer vision apps
+    - e.g. image recognition
+  - streaming video
+  - 2-way videoconferencing
+- producer-consumer model
+- retention period
+  - 24h by default
+  - <= 7d
+- supports
+  - **HLS; HTTPS Live Stream**
+  - **DASH; Dynamic Adaptive Streaming Over HTTPS**
+  - **WebRTC; Web Real-Time Communication**
+
+#### Kinesis Data Streams
+
+- data pipeline that aggregate, buffer, and reliably store data from producers until a consumer is ready to process it
+  - application logs
+  - stock trades
+  - social media feeds
+  - financial transactions
+  - location tracking information
+- **Amazon Kinesis Agent**
+  - stream server or application logs
+  - java-based app that runs on Linux servers
+- **KPL; Kinesis Producer Library**
+  - send data directly from app into a Kinesis stream
+- multiple consumers can read from a stream concurrently; fan-out
+  - **one-to-many model**
+- shards
+  - read
+    - **<= 5 transactions/sec**
+    - **<= 2 MB/sec data rate**
+  - write
+    - **<= 1,000 records/sec**
+    - **<= 1 MB/sec data rate**
+- use cases
+  - **stream data to a custom app**
+
+#### Kinesis Data Firehose
+
+- ingest streaming data and transform it before sending it to a destination
+  - e.g. format data to Apache Parquet format then send it to Hadoop
+- use Lambda functions to transform data
+- can receive data from a Kinesis Data Stream
+  - to retain data beyond the max retention period
+  - **Kinesis Data Stream -> Kinessis Data Firehose -> S3**
+- use cases
+  - **stream data to services such as Redshift, S3, or Splunk**
+
+|Service|Transforms Data|Maximum Retention|Model|
+|:---:|:---:|:---:|:---:|
+|Simple Queue Service|No|14d|Producer-consumer|
+|Kinesis Video Streams|No|7d|Producer-consumer|
+|Kinesis Data Streams|No|7d|Producer-consumer|
+|Kinesis Video Firehose|Yes|24h|Source-destination|
+
+
+## Application Integration
+
+### EventBridge
+
+- takes some action based on specific events or on a schedule, not metric values
+- Event Buses
+- Rules
+  - defines the action and the target to take in response to an event
+
+### SQS; Simple Queue Service
+
+- message
+  - <= 256 KB
+  - visibility timeout
+    - 30s by default
+    - 0s - 12h
+  - retention period
+    - 4d by default
+    - 1m - 14d
+  - per-queue delay
+    - 0s by default
+    - 0s - 15m
+  - message timer
+    - delay for individual messages
+    - override per-queue delay
+    - 0s by default
+    - 0s - 15m
+- types
+  - Standard Queues
+    - <= 120,000 in-flight messages
+  - FIFO Queues
+    - <= 3,000 messages/sec
+    - <= 20,000 in-flight messages
+- polling
+  - short polling (default)
+    - it's possible to get a false empty response even if there are messages
+  - long polling
+    - <= 20s to return a response
