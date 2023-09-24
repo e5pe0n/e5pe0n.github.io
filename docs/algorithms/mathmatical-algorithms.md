@@ -541,7 +541,7 @@ e.g.
 Determine $x$ to satisfy $A x \equiv B \mod M$ by determining $A^{-1}$ (inverse of $A$ modulo $M$).  
 
 $$
-A x \equiv B \mod M  \\
+A x \equiv B \mod M \\
 A^{-1}A x \equiv B \mod M \\
 x \equiv A^{-1}B \mod M
 $$
