@@ -15,6 +15,14 @@
 
 - high-performancing architectures
 - secure architectures
+  - confidentiality
+    - the only people or systems that can access data are those authorized to access it
+      - encryption
+      - access control
+  - integrity
+    - cryptographic hashing
+    - logging
+  - availability
 - cost-optimizing architectures
 
 ---
@@ -268,15 +276,34 @@ collect and aggregate metadata from instances
 
 ### IAM; AWS Identity and Access Management
 
+- Principals
+  - root user
+  - IAM user
+  - IAM role
+
+:::caution
+
+IAM groups are not a principal.
+
+:::
+
+
 - IAM Policies
-  - effect
-    - allow
-    - deny
-  - action
-    - create buckets
-  - resources
-    - s3
-- single identity can have <= 10 managed policies
+  - elements
+    - Effect
+      - allow
+      - deny
+    - Action
+      - e.g. create buckets
+    - Resources
+      - e.g. s3
+    - Condition
+  - types
+    - AWS Managed Policies
+      - single identity can have <= 10 managed policies
+    - Customer-Managed Policies
+      - IAM doesn't overwrite existing policy but create a new version and maintains the last 5 versions
+    - Inline Policies
 - lock down root user
   - **delete any access keys associated with root user**
   - assign a long and complex password and store it in a secure password vault
@@ -291,6 +318,15 @@ collect and aggregate metadata from instances
     - web identity who authenticates using a login with **Amazon, Amazon Cognito, Facebook, or Google**
     - SAML (Security Assertion Markup Language) 2.0 federation with a SAML provider
   - when a trusted entity **assumes its new role, a time-limited security token is issued by AWS Security Token Service (STS)**
+- Password Policy
+  - password complexity requirements
+    - min length (<= 6)
+    - use of lower and upper case
+    - numbers
+    - nonalphanumeric chars
+  - password expiration
+  - preventing password reuse
+  - requiring an administrator to reset an expired password
 
 ### Amazon Cognito
 
@@ -346,6 +382,126 @@ digital repository that allows customers to download **compliance-related inform
   - Payment Card Industry Data Security Standard (PCI DSS) reports
   - ISO 27001 certifications
 
+### Amazon GuardDuty
+
+- **inspects network traffic to and from instances**
+  - analyzes
+    - VPC flow logs
+    - CloudTrail management event logs
+    - Route53 DNS query logs
+  - looks for known malicious IP addresses, domain names, and potentially malicious activity
+
+#### findings
+
+- notification that details the questionable activity
+- types
+  - Backdoor
+  - Behavior
+    - an EC2 instance is communicating on a protocol and port that it normally doesn't or is sending an abnormally large amount of traffic to an external host
+  - Cryptocurrency
+  - Pentest
+    - penetration test
+  - Persistence
+  - Policy
+  - Recon
+    - reconnaissance attack
+  - ResourceConsumption
+  - Stealth
+    - password policy was weakend
+    - CloudTrail logging was disabled or modified
+    - CloudTrail logs were deleted
+  - Trojan
+  - UnauthorizedAccess
+
+### Amazon Inspector
+
+- agent-based service
+- **looks for vulnerabilities on EC2 instances**
+- rules packages
+  - Common Vulnerabilities and Exposures
+    - CVEs
+    - Linux and Windows
+  - Center for Internet Security Benchmarks
+    - Linux and Windows
+  - Security Best Practices
+    - subset ot Center for Internet Security Benchmarks
+    - Linux only
+  - Runtime Behavior Analysis
+    - Linux only
+  - Network Reachability
+    - VPC vulnerable
+
+### Amazon Detective
+
+- **takes information from VPC flow logs, CloudTrail, and GuardDuty and places this information into a graph database**
+- visualize the graph model to correlate events to identify and investiagte suspicious or interesting activities against AWS resources
+
+### Macie
+
+- automatically locates and classifies sensitive data stored in S3 buckets and show how it's being used
+- using ML
+
+### Security Hub
+
+- collects security information from such as Amazon Inspector, GuardDuty, and Macie
+- asseses account against **AWS security best practices and PCI DSS (Payment Card Industry Data Security Standard)**
+
+### Amazon Fraud Detector
+
+- detects such as
+  - seller fraud
+  - fake accounts
+  - online payment fraud
+- using ML
+
+### AWS Audit Manager
+
+- generates audit reports
+
+### WAF; AWS Web Application Firewall
+
+- monitors HTTP/HTTPS requests to an application load balancer or CloudFront distribution
+- inspect application traffic for malicious activity
+  - **injection of malicious scripts**
+  - **XSS**
+  - **SQL injection**
+  - **HTTP flood attack** with Lamba function
+- can alos block traffic based on
+  - source IP address patterns
+  - geographic location
+
+### AWS Shield
+
+- protect DDoS
+- types
+  - AWS Shield Standard
+    - against common Layers 3 and 4 DDoS attacks
+      - SYN flood
+      - UDP reflection attacks
+    - **automatically activated for all AWS customers**
+  - AWS Shield Advanced
+    - against Layer 7
+      - **HTTP flood attacks**
+    - **include WAF at no charge**
+
+### AWS Firewall Manager
+
+- manages
+  - security groups
+  - AWS Network Firewalls
+  - DNS firewall rules
+  - AWS WAF rules
+- enforce particular security configurations globally
+- monitor and report whether a resource is out of compliance
+
+### Key Management Service
+
+- Customer-managed CMK
+  - key policies
+    - who may use the key
+- AWS-managed CMK
+  - automatically rotates once a year
+  - can't disable, rotate, or revoke it
 
 ## Customer Enablement
 
@@ -564,10 +720,11 @@ persistent virtual storage drives attached to EC2 instance
       - max IOPS/volume: 250
       - max throughput/volume: 250 MiB/s
 
-- create snapshot
-  - -> generate another volume then attach it to other instance
-  - -> convert AMI image
-- generate AMI image directly
+- how to generate AMI from EBS
+  - **create snapshot**
+    - -> **generate another volume then attach it to other instance**
+    - -> **convert AMI image**
+  - also can **generate AMI image directly**
 - **automatically replicates volumes across multiple AZs in a region**
 - backups
   - Amazon Data Lifecycle Manager
@@ -575,6 +732,9 @@ persistent virtual storage drives attached to EC2 instance
 - **don't store application logs on EBS**
   - use CloudWatch Logs
 - avoid RAID 1, RAID 5, RAID 6 for IOPS consumption
+- **encrypt a volume when initially create it using KMS-managed key**
+  - but cannot directly encrypt a volume created from an unencripted snapshot or unencrypted AMI
+  - -> **must first create a snapshot of the unencrypted volume and then encrypt the snapshot**
 
 #### Instance Store Volumes
 
@@ -610,7 +770,7 @@ higher network throughput speeds and lower latency than ENIs
 
 #### Security Groups
 
-- *stateful* firewall for an EC2 instance (**instance level traffic control**)
+- *stateful* firewall for an EC2 instance (**instance level traffic control**) and ELB
   - when a security group allows traffic to pass in one direction, it allows reply traffic in the opposite direction
 - attached to ENIs
 - inbound rules
@@ -787,6 +947,9 @@ higher network throughput speeds and lower latency than ENIs
   - back up individual files to an S3 bucket or another EFS in the same region
   - AWS Backup Service
     - schedule incremental backups of EFS
+- can enable encryption when create it
+  - KMS-CMK to encrypt files
+  - EFS-managed key to encrypt filesystem metadata
 
 ### Amazon FSx
 
@@ -897,7 +1060,7 @@ higher network throughput speeds and lower latency than ENIs
 - contains a default security group that can't be deleted
 - contains a default NACL that can't be deleted
 
-### Subnet
+#### Subnet
 
 - A subnet can exist within only one AZ
 - **must have at least one route table**
@@ -913,12 +1076,12 @@ higher network throughput speeds and lower latency than ENIs
 - can have only one NACL
 - if a subnet is created in a VPC, the VPC's default NACL is associated with it by default
 
-### Internet Gateway
+#### Internet Gateway
 
 - performs NAT for instances that have a public IP address
 - **must create a default route in a route table that points to the internet gateway**
 
-### Route Tables
+#### Route Tables
 
 - control traffic in VPC
   - as separate virtual router with a connection to one or more subnets
@@ -936,7 +1099,7 @@ higher network throughput speeds and lower latency than ENIs
 |172.31.0.0/16|Local|
 |0.0.0.0/0|igw-0e538022a0fddc318|
 
-### NACL; Network Access Control List
+#### NACL; Network Access Control List
 
 - *stateless* firewall attached to a **subnet**
 - inbound rules
@@ -952,7 +1115,7 @@ higher network throughput speeds and lower latency than ENIs
   - to maintain compatibility, do not restrict outbound traffic using an NACL; use a security group instead
 - avoid changing security groups and NACLs simultaneously
 
-### AWS Network Firewall
+#### AWS Network Firewall
 
 - a scalable firewall to protect multiple VPCs and subnets, even across different AWS accounts
 - web filtering
@@ -960,18 +1123,11 @@ higher network throughput speeds and lower latency than ENIs
 - stateless and stateful packet filtering
 - centralized visibility of all traffic
 
-### EIP; Elastic IP Address
+#### EIP; Elastic IP Address
 
 - BYOIP; bring your own IP address
 
-### AWS Global Accelerator
-
-- provides 2 anycast static IPv4 addresses
-  - route traffic to resources in any region
-    - AWS points-of-presence (POPs) in over 30 countries
-- routes traffic to the fastest endpoint
-
-### NAT; Network Address Translation
+#### NAT; Network Address Translation
 
 - **NAT gateway**
   - automatic
@@ -987,13 +1143,13 @@ higher network throughput speeds and lower latency than ENIs
     - connect to instance that don't have public IP
   - not often used recently
 
-### AWS PrivateLink
+#### AWS PrivateLink
 
 - connect VPC resources, AWS services, and on-premises resources to each other bypassing the Internet
 - reliable
 - low-latency
 
-### VPC Peering
+#### VPC Peering
 
 - connect instances in one VPC to VPCs in another using AWS PrivateLink
   - different regions
@@ -1002,7 +1158,7 @@ higher network throughput speeds and lower latency than ENIs
 - must not overlapping CIDR blocks
 - instance-to-instance communication
 
-### Hybrid Cloud Networking
+#### Hybrid Cloud Networking
 
 - VPN; AWS Site-to-Site Virtual Private Network
 - AWS Transit Gateway
@@ -1034,7 +1190,14 @@ higher network throughput speeds and lower latency than ENIs
   - **Blackhole Routes**
     - transit gateway drops any traffic that matchies the routes
   
-#### AWS Direct Connect
+### AWS Global Accelerator
+
+- provides 2 anycast static IPv4 addresses
+  - route traffic to resources in any region
+    - AWS points-of-presence (POPs) in over 30 countries
+- routes traffic to the fastest endpoint
+
+### AWS Direct Connect
 
 - uses PrivateLink
 - not encrypted
@@ -1563,3 +1726,11 @@ higher network throughput speeds and lower latency than ENIs
     - it's possible to get a false empty response even if there are messages
   - long polling
     - <= 20s to return a response
+- resource-based SQS access policies
+  - who can send to and receive messages from a queue
+
+### SNS; Amazon Simple Notification Service
+
+- topics
+  - resource policies
+    - control who can publish messages or subscribe to a topic
