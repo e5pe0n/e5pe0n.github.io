@@ -272,6 +272,23 @@ collect and aggregate metadata from instances
     - AWS Config monitors the SSM: ManagedInstanceInventory resource type
 
 
+### AWS Trusted Advisor
+
+- quick view of how closely account configurations are currently following AWS best practices
+- categories
+  - Const Optimization checks
+  - Performance checks
+    - e.g. excessive use of EBS mangnetic volumes
+  - Security checks
+  - Fault Tolerance checks
+  - Service Limits checks
+
+### AWS Compute Optimizer
+
+- analyze all the compute resources running on account based on the previous 14 days
+- identify improvements and potential savings
+- cost is included in ongoing compute and CloudWatch fees
+
 ## Security, Identity and Compliance
 
 ### IAM; AWS Identity and Access Management
@@ -837,6 +854,62 @@ higher network throughput speeds and lower latency than ENIs
 - **Scheduled Actions**
   - min, max, or desired capacity
   - start date and time
+
+
+#### RI; Reserved Instance
+
+- Amazon EC2 Reserved Instance Marketplace
+  - search by
+    - tenancy (default or dedicated)
+    - instance type
+    - platform (OS)
+- types
+  - Standard RI
+    - 75% off
+  - Convertible RI
+    - can exchange instance later as long as the new instance has equal or greater value than the original
+    - 54% off
+- payment option
+  - All Upfront (the lowest price)
+  - Partial Upfront
+  - No Upfront (billed hourly)
+
+#### Saving Plans
+
+- Compute Savings Plans
+  - < 65% off
+  - for
+    - EMR
+    - ECS
+    - EKS
+    - Fargate
+- EC2 Instance Plans
+  - < 72% off
+
+#### EC2 Spot Instances
+
+- terms
+  - Spot Price
+  - Spot Instance Interruption
+    - Terminate
+    - Stop
+    - Hibernate
+  - Spot Instance Pool
+  - Spot Fleet
+  - Request Type
+    - Request
+      - a one-time instance request
+    - Request And Maintain
+      - to maintain target capacity using a fleet
+    - Reserve For Duration
+      - 1-6h
+
+- request elements
+  - AZ
+  - total target capacity
+    - max instances or vCPUs
+  - AMI
+  - instance type
 
 ## Containers
 
@@ -1734,3 +1807,25 @@ higher network throughput speeds and lower latency than ENIs
 - topics
   - resource policies
     - control who can publish messages or subscribe to a topic
+
+## AWS Cost Management
+
+### AWS Budgets
+
+- track ongoing resource-related usage and consts
+- alert if projected usage levels fail outside of a predefined threshold
+- *cost allocation tags*
+  - take up to 24h before appear in the Billing and Const Management Dashbaord
+  - can't be applied to resources that were launched before the tags were created
+
+### AWS Cost Explorre
+
+- visualize historical AWS usage and consts
+- download data as CSV file
+
+### AWS Cost and Usage Reports
+
+- support
+  - Athena
+  - Redshift
+  - QuickInsight
