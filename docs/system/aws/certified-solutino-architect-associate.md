@@ -142,7 +142,7 @@ collect and aggregate metadata from instances
   - types
     - Managenmet Events (control plain operations)
       - Write-Only Events
-        - e.g. create a new instance, logging into the management console
+        - e.g. create a new instance, login into the management console
       - Read-Only Events
         - e.g list instances
     - Data Events (data plain operations)
@@ -152,12 +152,12 @@ collect and aggregate metadata from instances
           - Lambda executions
       - Read-Only Events
         - e.g. S3: GetObject
-      - limited to selecting a total of **250 individual objects per trail**, including Lambda functions and S3 buckets aren prefixes
+      - limited to selecting a total of **250 individual objects per trail**, including Lambda functions and S3 buckets and prefixes
 - action
   - API
     - e.g. launching an instance, creating a bucket in S3, creating a VPC
   - non-API
-    - e.g. logging into the management console
+    - e.g. login into the management console
 - **Event History**
   - logs **90 days** of **management events** and store them in event history by default
   - global services events logged in event history of every region
@@ -180,6 +180,7 @@ collect and aggregate metadata from instances
   - keys to encrypt
     - SSE-S3 by default
     - SSE-KMS
+    - CMK
       - CMK must be in the same region as the bucket
 
 ### CloudWatch
@@ -198,7 +199,7 @@ collect and aggregate metadata from instances
       - **after 3 hours**, aggregated into a single **one-minute resolution**
         - high-resolution metrics expire and are deleted
       - **after 15 days**, aggregated into a single **5-minute resolution**
-      - **after 63 days**, aggregated into a single **1-hour resolutino**
+      - **after 63 days**, aggregated into a single **1-hour resolution**
       - **after 15 months**, deleted
 - monitoring
   - Basic monitoring
@@ -217,7 +218,7 @@ collect and aggregate metadata from instances
   - a command line-based program that collects logs and metrics from instances and on-premises severs running Linux or Windows
 - CloudWatch Alarms
   - percentile for statistic
-    - .5 (p50) <=: need `10/1(1 - percentile)` data points
+    - .5 (p50) <=: need `10/(1 - percentile)` data points
       - e.g. for p80, `10/(1 - 0.8) = 50` data points needed
     - < .5 (p50): need `10/percentile` data points
       - e.g. for p25, `10/(.25) = 40` data points needed
@@ -1437,8 +1438,8 @@ higher network throughput speeds and lower latency than ENIs
     - e.g.
       - 2,000 Mbps throughput needed
       - page size is 16 KB (128 Kb or 0.128 Mb)
-      - -> 2000 Mbps / 0.128 Mbs = 15.625 IOPS ~= 16,000 IOPS needed
-      - -> 16,000 IOPS / 3 IOPS/GB = 5,334 GB ~= 5,33 TB storage size needed
+      - -> 2000 Mbps / 0.128 Mbs = 15,625 IOPS ~= 16,000 IOPS needed
+      - -> 16,000 IOPS / 3 IOPS/GB = 5,334 GB ~= 5.33 TB storage size needed
   - Provisiond IOPS SSD (io1)
     - no bursting
     - IOPS: <= 256,000
@@ -1628,34 +1629,6 @@ higher network throughput speeds and lower latency than ENIs
   - can back up tables at any time
     - not impact the performance
 
-## Security
-
-### WAF; Web Application Firewall
-
-- only for application load balancers and CloudFront distributions
-- source IP address
-- geographic location
-- XSS
-- SQL injection
-- including AWS Shield Advanced at no charge
-
-### AWS Shield
-
-- DDoS
-- Standard
-  - activated by default for all AWS customers
-- Advanced
-  - HTTP flood attacks
-
-### Amazon Inspector
-
-- rules packages
-  - Security Best Practice
-    - Linux only
-
-- NCLs and security groups cannot be used for public endpoints
-
-
 ## Analytics
 
 ### AWS Lake Formation
@@ -1690,7 +1663,7 @@ higher network throughput speeds and lower latency than ENIs
     - cleaning
       - eliminating dupulicate, corrupted, or otherwise undesireble data
   - Load
-    - quicky find text
+    - quickly find text
 - based on Apache Spark
 - AWS Blue Catalog
   - stores metadata and lables about data lake
@@ -1753,12 +1726,12 @@ higher network throughput speeds and lower latency than ENIs
 - use cases
   - **stream data to services such as Redshift, S3, or Splunk**
 
-|Service|Transforms Data|Maximum Retention|Model|
-|:---:|:---:|:---:|:---:|
-|Simple Queue Service|No|14d|Producer-consumer|
-|Kinesis Video Streams|No|7d|Producer-consumer|
-|Kinesis Data Streams|No|7d|Producer-consumer|
-|Kinesis Video Firehose|Yes|24h|Source-destination|
+|Service|Transforms Data|Default Retention|Maximum Retention|Model|
+|:---:|:---:|:---:|:---:|:---:|
+|Simple Queue Service|No|4d|14d|Producer-consumer|
+|Kinesis Video Streams|No|24h|7d|Producer-consumer|
+|Kinesis Data Streams|No|24h|365d|Producer-consumer|
+|Kinesis Data Firehose|Yes||24h|Source-destination|
 
 
 ## Application Integration
@@ -1812,15 +1785,15 @@ higher network throughput speeds and lower latency than ENIs
 
 ### AWS Budgets
 
-- track ongoing resource-related usage and consts
+- track ongoing resource-related usage and costs
 - alert if projected usage levels fail outside of a predefined threshold
 - *cost allocation tags*
   - take up to 24h before appear in the Billing and Const Management Dashbaord
   - can't be applied to resources that were launched before the tags were created
 
-### AWS Cost Explorre
+### AWS Cost Explorer
 
-- visualize historical AWS usage and consts
+- visualize historical AWS usage and costs
 - download data as CSV file
 
 ### AWS Cost and Usage Reports
