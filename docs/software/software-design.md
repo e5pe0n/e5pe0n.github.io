@@ -37,6 +37,44 @@
 - Design Principles
   - a guideline
 
+## Symptoms of Complexity
+
+- change amplification
+- cognitive load
+- unknown unknown
+
+## Causes of Complexity
+
+- dependendies
+- obscurity
+
+## Modular Design
+
+- goal of modular design is moinimize the dependencies between modules
+- module consists of *interface* and *implementation*
+
+### Interfaces
+
+- **any information a developer needs to know in order to use a module**
+  - e.g.
+    - signiture
+      - name
+      - parameters
+      - returns
+    - comments, documents
+  - if users need to read the code of a method in order to use it, then there is no abstraction
+- **more important for a module to have a simple interface than a simple implementation**
+
+### Implementations
+
+- **reduce the number of places where exceptions have to be handled**
+  - **define errors out of existence**
+
+## Performance
+
+- **before attempting to improve performance, measure the system's existing behaviour**
+
+
 ## Domain
 
 - subject area to which users applies the program
@@ -46,7 +84,7 @@
 
 - simplification
 - abstraction
-  - filter out extraneous details
+  - **filter out extraneous details**
 - effective modeling
   - knowledge crunching
   - cultivating a language based on the model
@@ -203,14 +241,16 @@ flowchart LR
   a -->|access with|r
 ```
 
-### Entities
+### Components
+
+#### Entities
 
 - distinguished by its identity
   - guaranteed the uniqueness
 - need to maintain the life cycle
 - e.g. user
 
-### Value Objects
+#### Value Objects
 
 - representing a descriptive aspect of the domain with no conceptual identity
   - representing elements of the design that we care about only for *what* they are, not *who* or *which* they are
@@ -237,7 +277,7 @@ classDiagram
   }
 ```
 
-### Services
+#### Services
 
 - overview
   - an operation offered as an interface that stands alone in the model, without encapsulating state, as Entities and Value Objects do
@@ -248,9 +288,12 @@ classDiagram
   - the interface is defined in terms of other elements of the domain model
   - the operation is stateless
 
-### Aggregates
+### Life Cycle Management of Domain Objects
+
+#### Aggregates
 
 - a cluster of associated objects that we treat as a unit for the purpose of data changes
+  - transaction against the associated objects
 - responsibilities
   - invariant enforcement
   - change management
@@ -264,15 +307,126 @@ classDiagram
     - a delete operation must remove everything within the boundary at once
     - when a change to any object within the boundary is commited, all invariants of the whole Aggregate must be satisfied
 
-### Factories
+#### Factories
 
+- manage the beginning of the object's life cycle
 - create and reconstitute complex objects
+  - delegate invariant checking to objects or aggregate
+  - ensure that creating objects satisfy client and internal rules
+
+#### Repositories
+
+- manage the middle and end of the object's life cycle
+- motivation
+  - allowing free access from client to infrastructure such as database leads to complicate the client and obscure model-driven design
+- emulate access to infrastructure as if it is just like to manipulate a in-memory collection such as lists and maps
+  - but leave transaction control to the client
+- **don't fight frameworks**; look for affinities between the concepts of domain-driven design and the concenpts in the framework
+- **Repositories as object are not necessary when contructing a workflow to place I/O process to the edge in the workflow**
+
+```mermaid
+flowchart LR
+  jxi(JSON/XML)
+  ds(Desirialize)
+  di(DTO-In; Data Transfer Object)
+  di2dm(DTO-In to Domain Model)
+  dm(Domain Model)
+  dm2do(Domain Model to DTO-Out)
+  do(DTO-Out; Data Transfer Object)
+  so(Serialize)
+  jxo(JSON/XML)
+
+  subgraph From Upstream Context
+  jxi --> ds
+  ds --> di
+  end
+
+  subgraph Bounded Context
+    subgraph I/O-In
+      di --> di2dm
+    end
+
+  di2dm --> dm
+  dm --> dm2do
+
+    subgraph Pure Code
+      dm
+    end
+    subgraph I/O-Out
+      dm2do
+    end
+  end
+
+  subgraph To Donwstream Context
+  dm2do --> do
+  do --> so
+  so --> jxo
+  end
+```
+
+## Supple Design
+
+```mermaid
+flowchart LR
+  ul(Ubiquitous Language)
+  iri(Intention-Revealing Interfaces)
+  mmd(Model-Driven Design)
+  sc(Standalone Classes)
+  cc(Conceptual Contours)
+  coo(Closure of Operations)
+  seff(Side-Effect-Free Functions)
+  a(Assertions)
+
+  iri -->|draw from| ul
+  iri -->|simplify interpretation| coo
+  iri -->|make safe and simple| seff
+  iri -->|make side effects explicit| a
+
+  seff <-->|make composition safe| a
+
+  mmd -->|simplify interpretation| sc
+  mmd -->|express model through| iri
+  mmd -->|reduce cost of change| cc
+
+
+  sc -->|may use| coo
+
+```
+
+## Model Integrity Patterns
+
+```mermaid
+flowchart TD
+  bc(Bounded Context)
+  ul(Ubiquitous Language)
+  ci(Continuous Integration)
+  cm(Context Map)
+  sk(Shared Kernel)
+  cst(Customer/Supplier Teams)
+  c(Conformist)
+  ohs(Open Host Service)
+  pl(Published Language)
+  sw(Separate Ways)
+  al(Anticorruption Layer)
+
+  bc -->|names enter| ul
+  bc -->|keep model unified by| ci
+  bc -->|assess/overview relationships with| cm
+  cm -->|oeverlap allied contexts through| sk
+  cm -->|relate allied contexts as| cst
+  cm -->|overlap unilaterally as| c
+  cm -->|support multiple clients through| ohs
+  ohs -->|formalize as| pl
+  cm -->|free teams to go| sw
+  cm -->|traslate and insulate unilaterally with| al
+
+```
 
 
 ## Referencies
 
-- [Clean Architecture: A Craftsman’s Guide to Software Structure and Design](https://www.oreilly.com/library/view/clean-architecture-a/9780134494272/)
-- [Domain-Driven Design: Tackling Complexity in the Heart of Software](https://www.oreilly.com/library/view/domain-driven-design-tackling/0321125215/)
-- [Fundamentals of Software Architecture](https://www.oreilly.com/library/view/fundamentals-of-software/9781492043447/)
 - [A Philosophy of Software Design](https://www.amazon.co.jp/-/en/John-K-Ousterhout-ebook/dp/B09B8LFKQL)
-
+- [Clean Architecture: A Craftsman’s Guide to Software Structure and Design](https://www.oreilly.com/library/view/clean-architecture-a/9780134494272/)
+- [Fundamentals of Software Architecture](https://www.oreilly.com/library/view/fundamentals-of-software/9781492043447/)
+- [Domain-Driven Design: Tackling Complexity in the Heart of Software](https://www.oreilly.com/library/view/domain-driven-design-tackling/0321125215/)
+- [Domain Modeling Made Functional - Tackle Software Complexity with Domain-Driven Design and F#](https://pragprog.com/titles/swdddf/domain-modeling-made-functional/)
