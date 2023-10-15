@@ -322,7 +322,7 @@ classDiagram
 - emulate access to infrastructure as if it is just like to manipulate a in-memory collection such as lists and maps
   - but leave transaction control to the client
 - **don't fight frameworks**; look for affinities between the concepts of domain-driven design and the concenpts in the framework
-- **Repositories as object are not necessary when contructing a workflow to place I/O process to the edge in the workflow**
+- **Repositories as object are not necessary when contructing a workflow placing I/O process to the edge in the workflow**
 
 ```mermaid
 flowchart LR
