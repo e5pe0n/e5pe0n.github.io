@@ -319,7 +319,7 @@ classDiagram
 - manage the middle and end of the object's life cycle
 - motivation
   - allowing free access from client to infrastructure such as database leads to complicate the client and obscure model-driven design
-- emulate access to infrastructure as if it is just like to manipulate a in-memory collection such as lists and maps
+- **emulate access to infrastructure as if it is just like to manipulate a in-memory collection such as lists and maps**
   - but leave transaction control to the client
 - **don't fight frameworks**; look for affinities between the concepts of domain-driven design and the concenpts in the framework
 - **Repositories as object are not necessary when contructing a workflow placing I/O process to the edge in the workflow**
@@ -328,11 +328,11 @@ classDiagram
 flowchart LR
   jxi(JSON/XML)
   ds(Desirialize)
-  di(DTO-In; Data Transfer Object)
+  di("DTO-In; Data Transfer Object")
   di2dm(DTO-In to Domain Model)
   dm(Domain Model)
   dm2do(Domain Model to DTO-Out)
-  do(DTO-Out; Data Transfer Object)
+  do("DTO-Out; Data Transfer Object")
   so(Serialize)
   jxo(JSON/XML)
 
