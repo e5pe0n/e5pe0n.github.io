@@ -422,6 +422,10 @@ flowchart TD
 
 ```
 
+## Smart Constructor
+
+- validate initial values ensuring the created object is valid and holds invariants
+
 
 ## Referencies
 
@@ -430,3 +434,4 @@ flowchart TD
 - [Fundamentals of Software Architecture](https://www.oreilly.com/library/view/fundamentals-of-software/9781492043447/)
 - [Domain-Driven Design: Tackling Complexity in the Heart of Software](https://www.oreilly.com/library/view/domain-driven-design-tackling/0321125215/)
 - [Domain Modeling Made Functional - Tackle Software Complexity with Domain-Driven Design and F#](https://pragprog.com/titles/swdddf/domain-modeling-made-functional/)
+- [Effective Haskell](https://effective-haskell.com/)
