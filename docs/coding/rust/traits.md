@@ -8,7 +8,7 @@ e.g.
 
 [`Add` trait](https://doc.rust-lang.org/nightly/std/ops/trait.Add.html) binds `Output` type to a trait implementation so that when a `RHS` type is given then can determine the return type of `add()` uniquely.
 
-```rs
+```rust
 pub trait Add<RHS = Self> {
     type Output;  // associated type
     
@@ -16,7 +16,7 @@ pub trait Add<RHS = Self> {
 }
 ```
 
-```rs
+```rust
 impl Add<u32> for u32 {
     type Output = u32;
     
@@ -38,7 +38,7 @@ impl Add<&u32> for u32 {
 
 if `Output` is generics instead of associated type like below,
 
-```rs
+```rust
 pub trait Add<RHS = Self, Output> {
     fn add(self, rhs: RHS) -> Output;
 }
@@ -47,7 +47,7 @@ pub trait Add<RHS = Self, Output> {
 we can get implementations for `RHS`, which could result in multiple result types.
 using associated type disallows to do so.
 
-```rs
+```rust
 impl Add<u32, u32> for u32 {
     fn add(self, rhs: u32) -> u32 {
       // [...]

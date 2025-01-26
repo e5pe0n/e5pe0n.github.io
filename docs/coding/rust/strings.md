@@ -11,7 +11,7 @@
 - not `Sized`
   - DST; dynamically sized type
   - can't allocate to stack
-    ```rs
+    ```rust
     let mut s = String::with_capacity(5);
     s.push_str("Hello");
     let t: str = s[1..];
@@ -38,7 +38,7 @@
 
 ## Example
 
-```rs
+```rust
 let mut s = String::with_capacity(5);
 s.push_str("Hello");
 let t: &str = &s[1..];
