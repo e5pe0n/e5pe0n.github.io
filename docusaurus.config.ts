@@ -1,13 +1,12 @@
-// @ts-check
-// Note: type annotations allow type checking and IDEs autocompletion
+import { themes } from "prism-react-renderer";
+const lightCodeTheme = themes.github;
+const darkCodeTheme = themes.dracula;
+import math from "remark-math";
+import katex from "rehype-katex";
+import type { Config } from "@docusaurus/types";
+import type * as Preset from "@docusaurus/preset-classic";
 
-const lightCodeTheme = require("prism-react-renderer/themes/github");
-const darkCodeTheme = require("prism-react-renderer/themes/dracula");
-const math = require("remark-math");
-const katex = require("rehype-katex");
-
-/** @type {import('@docusaurus/types').Config} */
-const config = {
+const config: Config = {
   title: "e5pe0n Tech Note",
   tagline: "A software engineer's knowledge repo",
   favicon: "img/favicon.ico",
@@ -39,8 +38,7 @@ const config = {
   presets: [
     [
       "classic",
-      /** @type {import('@docusaurus/preset-classic').Options} */
-      ({
+      {
         docs: {
           sidebarPath: require.resolve("./sidebars.js"),
           remarkPlugins: [math],
@@ -50,11 +48,12 @@ const config = {
           showReadingTime: true,
           blogSidebarTitle: "All Posts",
           blogSidebarCount: "ALL",
+          onUntruncatedBlogPosts: "ignore"
         },
         theme: {
           customCss: require.resolve("./src/css/custom.css"),
         },
-      }),
+      } satisfies Preset.Options,
     ],
   ],
 
@@ -69,8 +68,7 @@ const config = {
   ],
 
   themeConfig:
-    /** @type {import('@docusaurus/preset-classic').ThemeConfig} */
-    ({
+    {
       // Replace with your project's social card
       image: "img/docusaurus-social-card.jpg",
       navbar: {
@@ -103,7 +101,7 @@ const config = {
         theme: lightCodeTheme,
         darkTheme: darkCodeTheme,
       },
-    }),
+    } satisfies  Preset.ThemeConfig,
 
   markdown: {
     mermaid: true,
@@ -112,4 +110,4 @@ const config = {
   themes: ["@docusaurus/theme-mermaid"],
 };
 
-module.exports = config;
+export default config;
