@@ -51,6 +51,7 @@ const config = {
           showReadingTime: true,
           blogSidebarTitle: "All Posts",
           blogSidebarCount: "ALL",
+          onUntruncatedBlogPosts: "ignore"
         },
         theme: {
           customCss: require.resolve("./src/css/custom.css"),
