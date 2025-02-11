@@ -218,7 +218,7 @@ collect and aggregate metadata from instances
   - a command line-based program that collects logs and metrics from instances and on-premises severs running Linux or Windows
 - CloudWatch Alarms
   - percentile for statistic
-    - .5 (p50) <=: need `10/(1 - percentile)` data points
+    - .5 (p50) \<\=: need `10/(1 - percentile)` data points
       - e.g. for p80, `10/(1 - 0.8) = 50` data points needed
     - < .5 (p50): need `10/percentile` data points
       - e.g. for p25, `10/(.25) = 40` data points needed
@@ -231,7 +231,7 @@ collect and aggregate metadata from instances
     - OK
     - INSUFFICIENT_DATA
   - evaluation period
-    - <= 24 hours
+    - \<\= 24 hours
   - missing data
     - As Missing
       - default
@@ -318,7 +318,7 @@ IAM groups are not a principal.
     - Condition
   - types
     - AWS Managed Policies
-      - single identity can have <= 10 managed policies
+      - single identity can have \<\= 10 managed policies
     - Customer-Managed Policies
       - IAM doesn't overwrite existing policy but create a new version and maintains the last 5 versions
     - Inline Policies
@@ -338,7 +338,7 @@ IAM groups are not a principal.
   - when a trusted entity **assumes its new role, a time-limited security token is issued by AWS Security Token Service (STS)**
 - Password Policy
   - password complexity requirements
-    - min length (<= 6)
+    - min length (\<\= 6)
     - use of lower and upper case
     - numbers
     - nonalphanumeric chars
@@ -841,8 +841,8 @@ higher network throughput speeds and lower latency than ENIs
     - **Step Scaling Policies**
       - increase instances based on how much the aggregate metric exceeds the threshold
       - e.g. average CPU utilization
-        - 50% <= average CPU utilization < 60%: add more 2 instances
-        - 60% <= average CPU utilization: add more 4 instances
+        - 50% \<\= average CPU utilization < 60%: add more 2 instances
+        - 60% \<\= average CPU utilization: add more 4 instances
       - step adjustments
         - a lower bound
         - an upper bound
@@ -929,7 +929,7 @@ higher network throughput speeds and lower latency than ENIs
 ### S3
 
 - 100 buckets/account by default
-- individual uploads <= 5 GB
+- individual uploads \<\= 5 GB
   - -> Multipart Upload
     - automatically applied when using AWS CLI or a high-level API
 - Amazon S3 Transfer Acceleration
@@ -1103,7 +1103,7 @@ higher network throughput speeds and lower latency than ENIs
     - e.g. deliver web pages in customer-appropriate languages, restrict content to regions where it's legally permitted
   - Multivalue Answer Routing
     - combine a health check configuration with multivalue routing to make a deployment more highly available
-    - <= 8 recourds can be pointed to parallel resources 
+    - \<\= 8 recourds can be pointed to parallel resources 
   - Geoproximity Routing
     - by geographic areas by relationship either to a particular longitude and latitude or to an AWS region
 
@@ -1442,7 +1442,7 @@ higher network throughput speeds and lower latency than ENIs
       - -> 16,000 IOPS / 3 IOPS/GB = 5,334 GB ~= 5.33 TB storage size needed
   - Provisiond IOPS SSD (io1)
     - no bursting
-    - IOPS: <= 256,000
+    - IOPS: \<\= 256,000
     - storage size
       - MySQL, MariaDB, PostgreSQL, Oracle
         - 100 GB - 64 TB
@@ -1525,13 +1525,13 @@ higher network throughput speeds and lower latency than ENIs
 - Redshift Cluster
   - one or more **compute node**
     - **dense compute node**
-      - storage: <= 326 TB
+      - storage: \<\= 326 TB
       - SSD
     - **dense storage node**
-      - storage: <= 2 PB
+      - storage: \<\= 2 PB
       - HDD
     - **RA3 node**
-      - storage: <= 16,384 TB
+      - storage: \<\= 16,384 TB
       - SSD
   - **leader node**
     - coordinate communication among the compute nodes, as well as to communicate with clients
@@ -1565,16 +1565,16 @@ higher network throughput speeds and lower latency than ENIs
     - composite primary key
     - 1 KB
 - item
-  - <= 400 KB
-    - ~= 50,000 english words
+  - \<\= 400 KB
+    - \~\= 50,000 english words
 - data type
   - Scalar
     - string
-      - <= 400 KB
+      - \<\= 400 KB
       - UTF-8 encoding
       - empty string not allowed
     - binary
-      - <= 400 KB
+      - \<\= 400 KB
       - Base-64 encoding
   - Set
   - Document
@@ -1684,7 +1684,7 @@ higher network throughput speeds and lower latency than ENIs
 - producer-consumer model
 - retention period
   - 24h by default
-  - <= 7d
+  - \<\= 7d
 - supports
   - **HLS; HTTPS Live Stream**
   - **DASH; Dynamic Adaptive Streaming Over HTTPS**
@@ -1707,11 +1707,11 @@ higher network throughput speeds and lower latency than ENIs
   - **one-to-many model**
 - shards
   - read
-    - **<= 5 transactions/sec**
-    - **<= 2 MB/sec data rate**
+    - **\<\= 5 transactions/sec**
+    - **\<\= 2 MB/sec data rate**
   - write
-    - **<= 1,000 records/sec**
-    - **<= 1 MB/sec data rate**
+    - **\<\= 1,000 records/sec**
+    - **\<\= 1 MB/sec data rate**
 - use cases
   - **stream data to a custom app**
 
@@ -1746,7 +1746,7 @@ higher network throughput speeds and lower latency than ENIs
 ### SQS; Simple Queue Service
 
 - message
-  - <= 256 KB
+  - \<\= 256 KB
   - visibility timeout
     - 30s by default
     - 0s - 12h
@@ -1763,15 +1763,15 @@ higher network throughput speeds and lower latency than ENIs
     - 0s - 15m
 - types
   - Standard Queues
-    - <= 120,000 in-flight messages
+    - \<\= 120,000 in-flight messages
   - FIFO Queues
-    - <= 3,000 messages/sec
-    - <= 20,000 in-flight messages
+    - \<\= 3,000 messages/sec
+    - \<\= 20,000 in-flight messages
 - polling
   - short polling (default)
     - it's possible to get a false empty response even if there are messages
   - long polling
-    - <= 20s to return a response
+    - \<\= 20s to return a response
 - resource-based SQS access policies
   - who can send to and receive messages from a queue
 
