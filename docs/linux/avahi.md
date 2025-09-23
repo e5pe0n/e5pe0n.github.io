@@ -66,7 +66,22 @@ eth0 IPv4 server-pc   _workstation._tcp  local
 
 now you can ssh from client macos pc
 
-```
+```sh
 ssh <username>@<hostname>
 ```
 
+# Fix hostname
+
+assume your hostname of the pc is `my-pc`. avahi increment hostname like `my-pc-1`, `my-pc-2`, and so on when the hostname conflicts with other hostname in the same network. i encountered this almost everyday and every time restarted avahi-daemon to reset hostname to `my-pc` but even the next day hostname got to `my-pc-x`.
+
+there were many suggestions on the internet to prevent this such as setting `host-name=my-hostname` and `use-ipv6=no` in `/etc/avahi/avahi-daemon.conf` but any one solved the problem.
+
+i gave up probably the right way, decided to just restart avahi-daemon every hour by cron.
+
+```sh
+sudo crontab -e
+```
+
+```
+0 * * * * systemctl restart avahi-daemon
+```
