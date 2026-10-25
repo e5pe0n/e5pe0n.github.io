@@ -3,7 +3,7 @@
 My engineering blog: notes on where I got stuck, and how I got out. Served at https://e5pe0n.github.io/stuck-trace.
 
 - **Articles** in Markdown, with tags, GitHub-style callouts (`> [!NOTE]`, `[!TIP]`, `[!IMPORTANT]`, `[!WARNING]`, `[!CAUTION]`), highlighted code and a table of contents.
-- **Calendar**: a contribution-style heatmap per year, and articles by year, month, ISO week and day.
+- **Activity**: a month calendar with each article on its date, opening on the current month, with a year and month picker; plus pages per year and day.
 - **Search**: full-text, with tag filters, by [Pagefind](https://pagefind.app), built at build time and run in the browser.
 - **Reading**: what I've read in [shushu](https://github.com/e5pe0n/shushu), my RSS reader, live, by day, week, month or year.
 - **RSS** at `/rss.xml`.
@@ -23,14 +23,14 @@ Add a Markdown file to [site/src/content/articles](site/src/content/articles). I
 ---
 title: Calling an IAP-protected Cloud Run service
 description: One sentence for lists, search and RSS.
-date: 2026-10-18 # JST; decides where it goes in the calendar
+date: 2026-10-18 # JST; decides where it goes under Activity
 updated: 2026-10-20 # optional
 tags: [gcp, iap]
 draft: true # optional: shown by `pnpm dev`, left out of the build
 ---
 ```
 
-Dates, the calendar and the Reading page all use Japan Standard Time.
+Dates, Activity and the Reading page all use Japan Standard Time.
 
 ## Development
 
@@ -66,7 +66,7 @@ pnpm -r test && pnpm -r build
 
 The Cloud Run service, its service accounts and the deploy permissions are defined in [e5pe0n/infra](https://github.com/e5pe0n/infra) (the `stuck-trace` stack), along with the IAP access to shushu. Once it is applied, its outputs are set as repository variables (`GCP_PROJECT_ID`, `GCP_REGION`, `GCP_WIF_PROVIDER`, `GCP_DEPLOY_SA`, `READS_API_URL`), and Pages is set to deploy from GitHub Actions:
 
-- [Deploy site](.github/workflows/pages.yml) builds `site/` with `PUBLIC_READS_API=$READS_API_URL` and publishes it to Pages, on every push to `main` that changes it.
+- [Deploy site](.github/workflows/pages.yml) builds `site/` with `PUBLIC_READS_API=$READS_API_URL` and publishes it to Pages, on every push to `main` that changes it and daily at 00:05 JST, so the current month on Activity stays current.
 - [Deploy API](.github/workflows/api-deploy.yml) builds `api/`, pushes the image to Artifact Registry and rolls it out to Cloud Run, on every push to `main` that changes it.
 
 For a custom domain, set `SITE` (e.g. `https://blog.example.com`) and `BASE=/` in the Pages build, and add the domain to the proxy's `allowed_origin`.

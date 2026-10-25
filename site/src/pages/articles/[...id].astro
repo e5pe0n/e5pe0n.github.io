@@ -29,7 +29,7 @@ const day = dayKey(article.data.date);
   <article data-pagefind-body>
     <header>
       <div class="entry-meta">
-        <a class="mono" href={url(`calendar/${day.replaceAll('-', '/')}`)}>
+        <a class="mono" href={url(`activity/${day.replaceAll('-', '/')}`)}>
           <time datetime={article.data.date.toISOString()}>{day}</time>
         </a>
         {article.data.updated && <span>updated {dayKey(article.data.updated)}</span>}

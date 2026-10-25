@@ -1,5 +1,5 @@
 import { getCollection, type CollectionEntry } from 'astro:content';
-import { groupBy, type Period } from './calendar';
+import { groupBy, periodKey, shiftPeriod, type Period } from './calendar';
 
 export const SITE_TITLE = 'stuck-trace';
 export const SITE_DESCRIPTION = 'Notes from where I got stuck, and how I got out.';
@@ -35,41 +35,55 @@ export function readingMinutes(body = ''): number {
   return Math.max(1, Math.round(words / 200 + cjk / 500));
 }
 
-/** The calendar page of a period: `calendar/2026`, `calendar/2026/10`, `calendar/week/2026-W43`, `calendar/2026/10/25`. */
-export function calendarUrl(period: Period, key: string): string {
-  return url(period === 'week' ? `calendar/week/${key}` : `calendar/${key.replaceAll('-', '/')}`);
+/** Activity is organized by year, month and day. */
+export type ActivityPeriod = Exclude<Period, 'week'>;
+
+/** The activity page of a year, month or day key: `activity/2026`, `activity/2026/10` or `activity/2026/10/25`. */
+export function activityUrl(key: string): string {
+  return url(`activity/${key.replaceAll('-', '/')}`);
 }
 
-/** Static paths for every period of the given kind that has an article. */
-export async function calendarPaths(period: Period) {
-  const articles = await getArticles();
-  const groups = groupBy(articles, (a) => a.data.date, period);
-  const keys = groups.map(([key]) => key);
-  return groups.map(([key, group], i) => ({
-    params: periodParams(period, key),
-    props: { period, periodKey: key, articles: group, newer: keys[i - 1], older: keys[i + 1] },
-  }));
-}
-
-function periodParams(period: Period, key: string): Record<string, string> {
-  const [year, month, day] = key.split('-');
-  switch (period) {
-    case 'year':
-      return { year };
-    case 'month':
-      return { year, month };
-    case 'day':
-      return { year, month, day };
-    case 'week':
-      return { week: key };
+/**
+ * Every month from the first article's to the current one (JST, at build time), oldest
+ * first, so any month can be picked even if nothing was written in it.
+ */
+export function activityMonths(articles: Article[]): string[] {
+  const current = periodKey('month', new Date());
+  const first = articles.length ? periodKey('month', articles[articles.length - 1].data.date) : current;
+  const months: string[] = [];
+  for (let month = first < current ? first : current; month <= current; month = shiftPeriod('month', month, 1)) {
+    months.push(month);
   }
+  return months;
 }
 
-export interface CalendarProps {
-  period: Period;
+/** Static paths for every month (see `activityMonths`), and every year and day that has an article. */
+export async function activityPaths(period: ActivityPeriod) {
+  const articles = await getArticles();
+  const groups =
+    period === 'month'
+      ? (() => {
+          const byMonth = new Map(groupBy(articles, (a) => a.data.date, 'month'));
+          return activityMonths(articles)
+            .reverse()
+            .map((month): [string, Article[]] => [month, byMonth.get(month) ?? []]);
+        })()
+      : groupBy(articles, (a) => a.data.date, period);
+  const keys = groups.map(([key]) => key);
+  return groups.map(([key, group], i) => {
+    const [year, month, day] = key.split('-');
+    return {
+      params: day ? { year, month, day } : month ? { year, month } : { year },
+      props: { period, periodKey: key, articles: group, newer: keys[i - 1], older: keys[i + 1] },
+    };
+  });
+}
+
+export interface ActivityProps {
+  period: ActivityPeriod;
   periodKey: string;
   articles: Article[];
-  /** Adjacent periods that have articles. */
+  /** Adjacent periods: months always, years and days that have articles. */
   newer?: string;
   older?: string;
 }

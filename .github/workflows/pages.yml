@@ -11,6 +11,9 @@ on:
       - pnpm-lock.yaml
       - .github/workflows/pages.yml
       - .github/workflows/ci.yml
+  # Daily at 00:05 JST, so "today" and the current month on Activity stay current.
+  schedule:
+    - cron: "5 15 * * *"
   workflow_dispatch:
 
 permissions:
