@@ -1,0 +1,33 @@
+---
+import { yearGrid } from '../lib/calendar';
+import { url } from '../lib/site';
+
+interface Props {
+  year: string;
+  /** Count per `YYYY-MM-DD`. Days with a count link to their calendar page. */
+  counts: Map<string, number>;
+  unit?: string;
+}
+
+const { year, counts, unit = 'article' } = Astro.props;
+const level = (n: number) => (n === 0 ? 0 : Math.min(4, n));
+---
+
+<div class="heatmap" role="img" aria-label={`${unit}s per day in ${year}`}>
+  <div class="heatmap-grid">
+    {
+      yearGrid(year).flatMap((column) =>
+        column.map((day) => {
+          if (!day) return <span class="heatmap-cell empty" />;
+          const n = counts.get(day) ?? 0;
+          const title = `${day}: ${n} ${unit}${n === 1 ? '' : 's'}`;
+          return n > 0 ? (
+            <a class="heatmap-cell" data-level={level(n)} title={title} href={url(`calendar/${day.replaceAll('-', '/')}`)} />
+          ) : (
+            <span class="heatmap-cell" data-level="0" title={title} />
+          );
+        }),
+      )
+    }
+  </div>
+</div>

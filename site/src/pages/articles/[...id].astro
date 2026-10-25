@@ -1,0 +1,105 @@
+---
+import { render } from 'astro:content';
+import Tags from '../../components/Tags.astro';
+import Base from '../../layouts/Base.astro';
+import { dayKey } from '../../lib/calendar';
+import { getArticles, readingMinutes, url, type Article } from '../../lib/site';
+
+export async function getStaticPaths() {
+  const articles = await getArticles();
+  return articles.map((article, i) => ({
+    params: { id: article.id },
+    props: { article, newer: articles[i - 1], older: articles[i + 1] },
+  }));
+}
+
+interface Props {
+  article: Article;
+  newer?: Article;
+  older?: Article;
+}
+
+const { article, newer, older } = Astro.props;
+const { Content, headings } = await render(article);
+const toc = headings.filter((h) => h.depth === 2 || h.depth === 3);
+const day = dayKey(article.data.date);
+---
+
+<Base title={article.data.title} description={article.data.description}>
+  <article data-pagefind-body>
+    <header>
+      <div class="entry-meta">
+        <a class="mono" href={url(`calendar/${day.replaceAll('-', '/')}`)}>
+          <time datetime={article.data.date.toISOString()}>{day}</time>
+        </a>
+        {article.data.updated && <span>updated {dayKey(article.data.updated)}</span>}
+        <span>{readingMinutes(article.body)} min read</span>
+      </div>
+      <h1 data-pagefind-meta="title" data-pagefind-weight="5">{article.data.title}</h1>
+      <Tags tags={article.data.tags} filter />
+    </header>
+
+    {
+      toc.length > 2 && (
+        <details class="toc" open data-pagefind-ignore>
+          <summary>Contents</summary>
+          <ul>
+            {toc.map((h) => (
+              <li class={`depth-${h.depth}`}>
+                <a href={`#${h.slug}`}>{h.text}</a>
+              </li>
+            ))}
+          </ul>
+        </details>
+      )
+    }
+
+    <div class="prose">
+      <Content />
+    </div>
+  </article>
+
+  <nav class="pager" aria-label="More articles">
+    {newer ? <a href={url(`articles/${newer.id}`)}>← {newer.data.title}</a> : <span />}
+    {older ? <a href={url(`articles/${older.id}`)}>{older.data.title} →</a> : <span />}
+  </nav>
+</Base>
+
+<style>
+  header {
+    margin-bottom: 1.5rem;
+  }
+
+  header h1 {
+    margin-bottom: 0.5rem;
+  }
+
+  .toc {
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 0.6rem 1rem;
+    margin-bottom: 1.5rem;
+    font-size: 0.9rem;
+  }
+
+  .toc summary {
+    cursor: pointer;
+    font-weight: 600;
+  }
+
+  .toc ul {
+    list-style: none;
+    padding: 0;
+    margin: 0.5rem 0 0;
+  }
+
+  .toc .depth-3 {
+    padding-left: 1rem;
+  }
+
+  .pager {
+    border-top: 1px solid var(--border);
+    padding-top: 1rem;
+    margin-top: 3rem;
+  }
+</style>

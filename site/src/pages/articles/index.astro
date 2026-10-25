@@ -1,0 +1,13 @@
+---
+import ArticleList from '../../components/ArticleList.astro';
+import Base from '../../layouts/Base.astro';
+import { getArticles } from '../../lib/site';
+
+const articles = await getArticles();
+---
+
+<Base title="Articles">
+  <h1>Articles</h1>
+  <p class="muted">{articles.length} articles, newest first.</p>
+  <ArticleList articles={articles} />
+</Base>

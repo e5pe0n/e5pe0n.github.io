@@ -1,0 +1,55 @@
+---
+import Base from '../layouts/Base.astro';
+import { url } from '../lib/site';
+---
+
+<Base title="Search">
+  <h1>Search</h1>
+  <div id="search" data-bundle={url('pagefind/')}></div>
+  <noscript><p class="empty-state">Search needs JavaScript.</p></noscript>
+  <p id="search-unavailable" class="empty-state" hidden>
+    The search index is built with <code>pnpm build</code>, so search doesn't work in <code>astro dev</code>.
+  </p>
+</Base>
+
+<script>
+  // Pagefind's UI is generated next to the index by `pagefind --site dist`, so it is
+  // loaded at runtime rather than bundled.
+  const el = document.getElementById('search')!;
+  const bundle = el.dataset.bundle!;
+
+  const css = document.createElement('link');
+  css.rel = 'stylesheet';
+  css.href = `${bundle}pagefind-ui.css`;
+  document.head.append(css);
+
+  const script = document.createElement('script');
+  script.src = `${bundle}pagefind-ui.js`;
+  script.onload = () => {
+    const ui = new (window as any).PagefindUI({
+      element: '#search',
+      bundlePath: bundle,
+      showSubResults: true,
+      showImages: false,
+      resetStyles: false,
+    });
+    const q = new URLSearchParams(location.search).get('q');
+    if (q) ui.triggerSearch(q);
+  };
+  script.onerror = () => {
+    document.getElementById('search-unavailable')!.hidden = false;
+  };
+  document.head.append(script);
+</script>
+
+<style is:global>
+  #search {
+    --pagefind-ui-primary: var(--accent);
+    --pagefind-ui-text: var(--fg);
+    --pagefind-ui-background: var(--bg);
+    --pagefind-ui-border: var(--border);
+    --pagefind-ui-tag: var(--accent-soft);
+    --pagefind-ui-font: var(--font-sans);
+    --pagefind-ui-border-radius: 8px;
+  }
+</style>

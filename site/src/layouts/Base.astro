@@ -1,0 +1,178 @@
+---
+import '../styles/global.css';
+import '../styles/callouts.css';
+import { SITE_DESCRIPTION, SITE_TITLE, url } from '../lib/site';
+
+interface Props {
+  title?: string;
+  description?: string;
+  wide?: boolean;
+}
+
+const { title, description = SITE_DESCRIPTION, wide = false } = Astro.props;
+const fullTitle = title ? `${title} · ${SITE_TITLE}` : SITE_TITLE;
+const path = Astro.url.pathname;
+const nav = [
+  { href: url('articles'), label: 'Articles' },
+  { href: url('tags'), label: 'Tags' },
+  { href: url('calendar'), label: 'Calendar' },
+  { href: url('reading'), label: 'Reading' },
+  { href: url('search'), label: 'Search' },
+];
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{fullTitle}</title>
+    <meta name="description" content={description} />
+    <link rel="icon" type="image/svg+xml" href={url('favicon.svg')} />
+    <link rel="alternate" type="application/rss+xml" title={SITE_TITLE} href={url('rss.xml')} />
+    <link rel="canonical" href={new URL(path, Astro.site)} />
+    <meta property="og:title" content={fullTitle} />
+    <meta property="og:description" content={description} />
+    <script is:inline>
+      try {
+        const theme = localStorage.getItem('theme');
+        if (theme) document.documentElement.dataset.theme = theme;
+      } catch {}
+    </script>
+  </head>
+  <body>
+    <header class="site-header">
+      <div class:list={['container', 'header-inner', { wide }]}>
+        <a class="brand mono" href={url()}>stuck-trace<span class="cursor">_</span></a>
+        <nav aria-label="Main">
+          {
+            nav.map(({ href, label }) => (
+              <a href={href} aria-current={path.startsWith(href) ? 'page' : undefined}>
+                {label}
+              </a>
+            ))
+          }
+          <button id="theme-toggle" type="button" aria-label="Toggle dark mode" title="Toggle dark mode">
+            ◐
+          </button>
+        </nav>
+      </div>
+    </header>
+    <main class:list={['container', { wide }]}>
+      <slot />
+    </main>
+    <footer class="site-footer">
+      <div class:list={['container', { wide }]}>
+        <span class="muted small">© {new Date().getFullYear()} e5pe0n</span>
+        <a class="small" href={url('rss.xml')}>RSS</a>
+        <a class="small" href="https://github.com/e5pe0n">GitHub</a>
+      </div>
+    </footer>
+    <script>
+      const toggle = document.getElementById('theme-toggle');
+      toggle?.addEventListener('click', () => {
+        const root = document.documentElement;
+        const current =
+          root.dataset.theme ?? (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+        const next = current === 'dark' ? 'light' : 'dark';
+        root.dataset.theme = next;
+        try {
+          localStorage.setItem('theme', next);
+        } catch {}
+      });
+    </script>
+  </body>
+</html>
+
+<style>
+  .site-header {
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 2rem;
+  }
+
+  .header-inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 0.5rem 1rem;
+    padding-top: 0.9rem;
+    padding-bottom: 0.9rem;
+  }
+
+  .brand {
+    font-weight: 700;
+    color: var(--fg);
+    text-decoration: none;
+    font-size: 1.05rem;
+  }
+
+  .cursor {
+    color: var(--accent);
+    animation: blink 1.1s steps(1) infinite;
+  }
+
+  @keyframes blink {
+    50% {
+      opacity: 0;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .cursor {
+      animation: none;
+    }
+  }
+
+  nav {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.25rem 1rem;
+    font-size: 0.92rem;
+  }
+
+  nav a {
+    color: var(--fg-muted);
+    text-decoration: none;
+  }
+
+  nav a:hover,
+  nav a[aria-current='page'] {
+    color: var(--fg);
+  }
+
+  nav a[aria-current='page'] {
+    text-decoration: underline;
+    text-decoration-color: var(--accent);
+    text-decoration-thickness: 2px;
+    text-underline-offset: 0.4em;
+  }
+
+  #theme-toggle {
+    background: none;
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    color: var(--fg);
+    width: 1.9rem;
+    height: 1.9rem;
+    cursor: pointer;
+    font-size: 0.95rem;
+  }
+
+  main {
+    min-height: 60vh;
+    padding-bottom: 3rem;
+  }
+
+  .site-footer {
+    border-top: 1px solid var(--border);
+    padding: 1.25rem 0 2rem;
+  }
+
+  .site-footer .container {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+  }
+</style>

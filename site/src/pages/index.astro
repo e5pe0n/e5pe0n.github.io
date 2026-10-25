@@ -1,0 +1,104 @@
+---
+import ArticleList from '../components/ArticleList.astro';
+import Base from '../layouts/Base.astro';
+import { getArticles, tagCounts, url } from '../lib/site';
+
+const articles = await getArticles();
+const latest = articles.slice(0, 5);
+const tags = tagCounts(articles).slice(0, 12);
+---
+
+<Base>
+  <section class="intro">
+    <p class="prompt mono"><span class="muted">$</span> whoami</p>
+    <h1>Hi, I'm e5pe0n.</h1>
+    <p class="lead">
+      I'm a software engineer working on backends, infrastructure and real-time media. <strong>stuck-trace</strong> is where I
+      write down what I got stuck on and how I got out, so the next person (usually me) doesn't have to.
+    </p>
+    <ul class="links">
+      <li><a href="https://github.com/e5pe0n">GitHub</a></li>
+      <li><a href={url('rss.xml')}>RSS</a></li>
+    </ul>
+    <ul class="tags">
+      {tags.map(([tag]) => <li><a class="tag" href={url(`tags/${encodeURIComponent(tag)}`)}>#{tag}</a></li>)}
+    </ul>
+  </section>
+
+  <section>
+    <div class="section-head">
+      <h2>Latest articles</h2>
+      <a class="small" href={url('articles')}>All {articles.length} →</a>
+    </div>
+    <ArticleList articles={latest} />
+  </section>
+
+  <section>
+    <div class="section-head">
+      <h2>Recently read</h2>
+      <a class="small" href={url('reading')}>Reading log →</a>
+    </div>
+    <ul id="recent-reads" class="entries" aria-busy="true">
+      <li class="muted small">Loading…</li>
+    </ul>
+  </section>
+</Base>
+
+<script>
+  import { addDays, dayKey } from '../lib/calendar';
+  import { fetchReads, readItem } from '../lib/reads';
+
+  const list = document.getElementById('recent-reads')!;
+  const to = dayKey(new Date());
+
+  function note(text: string) {
+    const li = document.createElement('li');
+    li.className = 'muted small';
+    li.textContent = text;
+    list.replaceChildren(li);
+  }
+
+  fetchReads(addDays(to, -13), to)
+    .then((reads) => {
+      if (reads.length === 0) note('Nothing read in the last two weeks.');
+      else list.replaceChildren(...reads.slice(0, 5).map((r) => readItem(r, { showDay: true })));
+    })
+    .catch(() => note('The reading log is unavailable right now.'))
+    .finally(() => list.setAttribute('aria-busy', 'false'));
+</script>
+
+<style>
+  .intro {
+    padding: 1rem 0 1.5rem;
+  }
+
+  .prompt {
+    margin: 0;
+    color: var(--accent);
+  }
+
+  .lead {
+    font-size: 1.1rem;
+    max-width: 38rem;
+  }
+
+  .links {
+    list-style: none;
+    padding: 0;
+    display: flex;
+    gap: 1rem;
+  }
+
+  .section-head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    border-bottom: 2px solid var(--fg);
+    margin-top: 2.5rem;
+  }
+
+  .section-head h2 {
+    font-size: 1.1rem;
+    margin: 0 0 0.25rem;
+  }
+</style>

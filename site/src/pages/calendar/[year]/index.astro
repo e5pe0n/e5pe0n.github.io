@@ -1,0 +1,14 @@
+---
+import CalendarView from '../../../components/CalendarView.astro';
+import Base from '../../../layouts/Base.astro';
+import { periodLabel } from '../../../lib/calendar';
+import { calendarPaths, type CalendarProps } from '../../../lib/site';
+
+export const getStaticPaths = () => calendarPaths('year');
+
+type Props = CalendarProps;
+---
+
+<Base title={periodLabel(Astro.props.period, Astro.props.periodKey)}>
+  <CalendarView {...Astro.props} />
+</Base>

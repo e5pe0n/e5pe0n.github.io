@@ -1,0 +1,44 @@
+---
+import Base from '../../layouts/Base.astro';
+import { getArticles, tagCounts, url } from '../../lib/site';
+
+const tags = tagCounts(await getArticles());
+---
+
+<Base title="Tags">
+  <h1>Tags</h1>
+  {
+    tags.length === 0 ? (
+      <p class="empty-state">No tags yet.</p>
+    ) : (
+      <ul class="tag-cloud">
+        {tags.map(([tag, count]) => (
+          <li>
+            <a class="tag" href={url(`tags/${encodeURIComponent(tag)}`)}>
+              #{tag} <span class="count">{count}</span>
+            </a>
+          </li>
+        ))}
+      </ul>
+    )
+  }
+</Base>
+
+<style>
+  .tag-cloud {
+    list-style: none;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.6rem;
+  }
+
+  .tag-cloud .tag {
+    font-size: 0.95rem;
+    padding: 0.15em 0.75em;
+  }
+
+  .count {
+    opacity: 0.7;
+  }
+</style>
