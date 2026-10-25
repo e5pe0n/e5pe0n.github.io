@@ -1,5 +1,5 @@
 ---
-import { url } from '../lib/site';
+import { tagUrl } from '../lib/site';
 
 interface Props {
   tags: string[];
@@ -15,7 +15,7 @@ const { tags, filter = false } = Astro.props;
     <ul class="tags">
       {tags.map((tag) => (
         <li>
-          <a class="tag" href={url(`tags/${encodeURIComponent(tag)}`)} data-pagefind-filter={filter ? `tag:${tag}` : undefined}>
+          <a class="tag" href={tagUrl(tag)} data-pagefind-filter={filter ? `tag:${tag}` : undefined}>
             #{tag}
           </a>
         </li>

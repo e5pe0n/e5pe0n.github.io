@@ -2,7 +2,7 @@
 
 My engineering blog: notes on where I got stuck, and how I got out. Served at https://e5pe0n.github.io/stuck-trace.
 
-- **Articles** in Markdown, with tags, GitHub-style callouts (`> [!NOTE]`, `[!TIP]`, `[!IMPORTANT]`, `[!WARNING]`, `[!CAUTION]`), highlighted code and a table of contents.
+- **Articles** in Markdown, with tags (the article list filters by them), GitHub-style callouts (`> [!NOTE]`, `[!TIP]`, `[!IMPORTANT]`, `[!WARNING]`, `[!CAUTION]`), highlighted code and a table of contents.
 - **Activity**: a month calendar with each article on its date, opening on the current month, with a year and month picker; plus pages per year and day.
 - **Search**: full-text, with tag filters, by [Pagefind](https://pagefind.app), built at build time and run in the browser.
 - **Reading**: what I've read in [shushu](https://github.com/e5pe0n/shushu), my RSS reader, live, by day, week, month or year.

@@ -19,6 +19,11 @@ export async function getArticles(): Promise<Article[]> {
   return articles.sort((a, b) => b.data.date.getTime() - a.data.date.getTime());
 }
 
+/** The articles index, filtered to `tag`. */
+export function tagUrl(tag: string): string {
+  return url(`articles?${new URLSearchParams({ tags: tag })}`);
+}
+
 /** Tags with how many articles use them, most used first. */
 export function tagCounts(articles: Article[]): [string, number][] {
   const counts = new Map<string, number>();
