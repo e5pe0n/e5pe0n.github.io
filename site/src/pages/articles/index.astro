@@ -1,40 +1,99 @@
 ---
 import ArticleList from '../../components/ArticleList.astro';
 import Base from '../../layouts/Base.astro';
+import { groupBy } from '../../lib/calendar';
 import { getArticles, tagCounts, tagUrl } from '../../lib/site';
 
 const articles = await getArticles();
 const tags = tagCounts(articles);
+// Newest first: [year, [[month, articles]]].
+const years = groupBy(articles, (a) => a.data.date, 'year').map(
+  ([year, group]) => [year, groupBy(group, (a) => a.data.date, 'month')] as const,
+);
+const MONTHS = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+const monthName = (key: string) => MONTHS[Number(key.slice(5)) - 1];
 ---
 
-<Base title="Articles">
-  <h1>Articles</h1>
+<Base title="Articles" wide>
+  <div class="layout">
+    {
+      years.length > 0 && (
+        <aside class="archive">
+          <nav aria-label="Articles by year and month">
+            <ul>
+              {years.map(([year, months]) => (
+                <li data-archive={year}>
+                  <a class="year-link" href={`#${year}`}>
+                    <span class="mono">{year}</span>
+                    <span class="muted" data-count>{months.reduce((n, [, g]) => n + g.length, 0)}</span>
+                  </a>
+                  <ul class="month-links">
+                    {months.map(([month, group]) => (
+                      <li data-archive={month}>
+                        <a href={`#${month}`}>
+                          <span>{monthName(month)}</span>
+                          <span class="muted" data-count>{group.length}</span>
+                        </a>
+                      </li>
+                    ))}
+                  </ul>
+                </li>
+              ))}
+            </ul>
+          </nav>
+        </aside>
+      )
+    }
 
-  {
-    tags.length > 0 && (
-      <section class="tag-filter" aria-labelledby="tag-filter-label">
-        <div class="filter-head">
-          <span id="tag-filter-label" class="muted small">Filter by tags</span>
-          <button type="button" id="clear-tags" class="link-button small" hidden>
-            Clear
-          </button>
-        </div>
-        <ul class="tags">
-          {tags.map(([tag, count]) => (
-            <li>
-              <a class="tag" href={tagUrl(tag)} data-tag={tag} aria-pressed="false" role="button">
-                #{tag} <span class="count">{count}</span>
-              </a>
-            </li>
-          ))}
-        </ul>
-      </section>
-    )
-  }
+    <div class="content">
+      <h1>Articles</h1>
 
-  <p class="muted" id="article-count" aria-live="polite">{articles.length} articles, newest first.</p>
-  <ArticleList articles={articles} />
-  <p class="empty-state" id="no-match" hidden>No articles have all of the selected tags.</p>
+      {
+        tags.length > 0 && (
+          <section class="tag-filter" aria-labelledby="tag-filter-label">
+            <div class="filter-head">
+              <span id="tag-filter-label" class="muted small">Filter by tags</span>
+              <button type="button" id="clear-tags" class="link-button small" hidden>
+                Clear
+              </button>
+            </div>
+            <ul class="tags">
+              {tags.map(([tag, count]) => (
+                <li>
+                  <a class="tag" href={tagUrl(tag)} data-tag={tag} aria-pressed="false" role="button">
+                    #{tag} <span class="count">{count}</span>
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </section>
+        )
+      }
+
+      <p class="muted" id="article-count" aria-live="polite">{articles.length} articles, newest first.</p>
+
+      {
+        articles.length === 0 ? (
+          <ArticleList articles={[]} />
+        ) : (
+          years.map(([year, months]) => (
+            <section class="year" id={year} data-group={year}>
+              <h2 class="mono">{year}</h2>
+              {months.map(([month, group]) => (
+                <section class="month" id={month} data-group={month}>
+                  <h3>
+                    {monthName(month)} <span class="muted small" data-count>{group.length}</span>
+                  </h3>
+                  <ArticleList articles={group} />
+                </section>
+              ))}
+            </section>
+          ))
+        )
+      }
+      <p class="empty-state" id="no-match" hidden>No articles have all of the selected tags.</p>
+    </div>
+  </div>
 </Base>
 
 <script>
@@ -64,12 +123,28 @@ const tags = tagCounts(articles);
         ? `${items.length} articles, newest first.`
         : `${shown} of ${items.length} articles tagged ${[...selected].map((t) => `#${t}`).join(' + ')}.`;
     noMatch.hidden = shown > 0 || items.length === 0;
+    updateGroups();
     if (clear) clear.hidden = selected.size === 0;
 
     const url = new URL(location.href);
     if (selected.size) url.searchParams.set('tags', [...selected].join(','));
     else url.searchParams.delete('tags');
     history.replaceState(null, '', url);
+  }
+
+  /** Hides years and months left empty by the filter, here and in the archive, and recounts the rest. */
+  function updateGroups() {
+    for (const group of document.querySelectorAll<HTMLElement>('[data-group]')) {
+      const visible = group.querySelectorAll('.entries > li:not([hidden])').length;
+      group.hidden = visible === 0;
+      const counts = [group.querySelector<HTMLElement>(':scope > h3 [data-count]')];
+      const link = document.querySelector<HTMLElement>(`[data-archive="${group.dataset.group}"]`);
+      if (link) {
+        link.hidden = visible === 0;
+        counts.push(link.querySelector<HTMLElement>(':scope > a [data-count]'));
+      }
+      counts.forEach((c) => c && (c.textContent = String(visible)));
+    }
   }
 
   buttons.forEach((b) =>
@@ -99,6 +174,27 @@ const tags = tagCounts(articles);
   );
 
   apply();
+
+  // Highlight the month being read, and its year, in the sidebar.
+  const links = new Map(
+    [...document.querySelectorAll<HTMLAnchorElement>('.archive a')].map((a) => [a.hash.slice(1), a]),
+  );
+  const visible = new Set<string>();
+  const observer = new IntersectionObserver((entries) => {
+    for (const e of entries) {
+      const id = (e.target as HTMLElement).id;
+      if (e.isIntersecting) visible.add(id);
+      else visible.delete(id);
+    }
+    // The topmost month on screen, in page order.
+    const current = [...document.querySelectorAll<HTMLElement>('section.month')].find((m) => visible.has(m.id))?.id;
+    links.forEach((a) => a.removeAttribute('aria-current'));
+    if (current) {
+      links.get(current)?.setAttribute('aria-current', 'true');
+      links.get(current.slice(0, 4))?.setAttribute('aria-current', 'true');
+    }
+  });
+  document.querySelectorAll('section.month').forEach((m) => observer.observe(m));
 </script>
 
 <style>
@@ -134,5 +230,134 @@ const tags = tagCounts(articles);
 
   .count {
     opacity: 0.7;
+  }
+
+  .layout {
+    display: grid;
+    grid-template-columns: 11rem minmax(0, 1fr);
+    gap: 2.5rem;
+    align-items: start;
+  }
+
+  /* The sidebar: years, and their months under them, in a sticky column. */
+  .archive {
+    position: sticky;
+    top: 1.5rem;
+    max-height: calc(100vh - 3rem);
+    overflow-y: auto;
+    padding-top: 0.6rem;
+    font-size: 0.9rem;
+  }
+
+  .archive ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .archive > nav > ul > li + li {
+    margin-top: 0.75rem;
+  }
+
+  .archive a {
+    display: flex;
+    justify-content: space-between;
+    gap: 0.5rem;
+    padding: 0.15rem 0.5rem;
+    border-radius: 6px;
+    color: var(--fg);
+    text-decoration: none;
+  }
+
+  .archive a:hover {
+    background: var(--bg-soft);
+  }
+
+  .archive a[aria-current='true'] {
+    background: var(--accent-soft);
+    color: var(--accent);
+  }
+
+  .year-link {
+    font-weight: 700;
+  }
+
+  .month-links {
+    margin-left: 0.5rem !important;
+    padding-left: 0.25rem !important;
+    border-left: 1px solid var(--border);
+  }
+
+  /* On narrow screens the sidebar sits above the list, with months in a row. */
+  @media (max-width: 760px) {
+    .layout {
+      grid-template-columns: minmax(0, 1fr);
+      gap: 0;
+    }
+
+    .archive {
+      position: static;
+      order: 2;
+      max-height: none;
+      overflow: visible;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 0.5rem;
+      margin-bottom: 1rem;
+    }
+
+    /* Title and tag filter first, then the year and month index, then the list. */
+    .content {
+      display: contents;
+    }
+
+    .content > * {
+      order: 3;
+    }
+
+    .content > h1 {
+      order: 0;
+    }
+
+    .content > .tag-filter {
+      order: 1;
+    }
+
+    .archive > nav > ul > li {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 0.25rem;
+    }
+
+    .archive > nav > ul > li + li {
+      margin-top: 0.25rem;
+    }
+
+    .month-links {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.25rem;
+      margin-left: 0 !important;
+      padding-left: 0 !important;
+      border-left: 0;
+    }
+  }
+
+  .year > h2 {
+    margin: 2rem 0 0;
+    padding-bottom: 0.25rem;
+    border-bottom: 2px solid var(--fg);
+  }
+
+  .month > h3 {
+    margin: 1.25rem 0 0;
+    font-size: 1rem;
+    color: var(--fg-muted);
+  }
+
+  .year,
+  .month {
+    scroll-margin-top: 1rem;
   }
 </style>

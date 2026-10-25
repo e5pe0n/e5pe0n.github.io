@@ -29,9 +29,7 @@ const day = dayKey(article.data.date);
   <article data-pagefind-body>
     <header>
       <div class="entry-meta">
-        <a class="mono" href={url(`activity/${day.replaceAll('-', '/')}`)}>
-          <time datetime={article.data.date.toISOString()}>{day}</time>
-        </a>
+        <time class="mono" datetime={article.data.date.toISOString()}>{day}</time>
         {article.data.updated && <span>updated {dayKey(article.data.updated)}</span>}
         <span>{readingMinutes(article.body)} min read</span>
       </div>

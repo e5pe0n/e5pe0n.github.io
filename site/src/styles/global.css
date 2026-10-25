@@ -68,6 +68,11 @@ html {
   -webkit-text-size-adjust: 100%;
 }
 
+/* Keep `hidden` working on elements whose display is set below. */
+[hidden] {
+  display: none !important;
+}
+
 body {
   margin: 0;
   background: var(--bg);

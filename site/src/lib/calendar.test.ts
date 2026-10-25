@@ -3,7 +3,6 @@ import {
   dayKey,
   groupBy,
   isoWeek,
-  monthGrid,
   periodKey,
   periodLabel,
   periodRange,
@@ -71,12 +70,6 @@ describe('groupBy', () => {
 });
 
 describe('grids', () => {
-  it('covers a month in Monday-first weeks', () => {
-    const grid = monthGrid('2026-10');
-    expect(grid[0]).toEqual([null, null, null, '2026-10-01', '2026-10-02', '2026-10-03', '2026-10-04']);
-    expect(grid.flat().filter(Boolean)).toHaveLength(31);
-  });
-
   it('covers a year in Sunday-first columns', () => {
     const grid = yearGrid('2026');
     expect(grid[0][4]).toBe('2026-01-01');

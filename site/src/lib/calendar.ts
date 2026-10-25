@@ -158,22 +158,6 @@ export function groupBy<T>(items: T[], getDate: (item: T) => Date, period: Perio
   return [...groups].sort(([a], [b]) => (a < b ? 1 : a > b ? -1 : 0));
 }
 
-/** The weeks (Monday first) covering a month; days outside the month are null. */
-export function monthGrid(key: string): (string | null)[][] {
-  const { from, to } = periodRange('month', key);
-  const weeks: (string | null)[][] = [];
-  let day = addDays(from, 1 - (keyToUtc(from).getUTCDay() || 7));
-  while (day <= to) {
-    const week: (string | null)[] = [];
-    for (let i = 0; i < 7; i++) {
-      week.push(day >= from && day <= to ? day : null);
-      day = addDays(day, 1);
-    }
-    weeks.push(week);
-  }
-  return weeks;
-}
-
 /** Columns of 7 days (Sunday first, like GitHub's contribution graph) covering a year. */
 export function yearGrid(year: string): (string | null)[][] {
   const { from, to } = periodRange('year', year);

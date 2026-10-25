@@ -21,7 +21,7 @@ draft: false # true keeps it out of the build
 ---
 ```
 
-The date decides where the article shows up under Activity, and its tags let readers filter the article list.
+The date decides where the article goes in the article list, which is organized by year and month, and its tags let readers filter it.
 
 ## Callouts
 
