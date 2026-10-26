@@ -150,8 +150,15 @@ const tabs = [
   .tabs {
     display: flex;
     gap: 0.5rem;
+    /* Still scrolls sideways if the tabs ever outgrow a narrow screen, without a scroll bar. */
     overflow-x: auto;
+    overflow-y: hidden;
+    scrollbar-width: none;
     font-size: 0.875rem;
+  }
+
+  .tabs::-webkit-scrollbar {
+    display: none;
   }
 
   .tabs a {
