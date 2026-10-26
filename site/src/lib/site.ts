@@ -3,6 +3,13 @@ import { getCollection, type CollectionEntry } from 'astro:content';
 export const SITE_TITLE = 'stuck-trace';
 export const SITE_DESCRIPTION = 'Notes from where I got stuck, and how I got out.';
 
+export const AUTHOR = {
+  name: 'e5pe0n',
+  github: 'e5pe0n',
+  avatar: 'https://avatars.githubusercontent.com/u/47216902?v=4&s=460',
+  bio: "Software engineer working on backends, infrastructure and real-time media. This is where I write down what I got stuck on and how I got out.",
+};
+
 export type Article = CollectionEntry<'articles'>;
 
 /** `path` under the site's base, e.g. `url('articles/foo')` → `/stuck-trace/articles/foo`. */
