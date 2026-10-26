@@ -1,60 +1,61 @@
 :root {
-  --bg: #fbfbfa;
-  --bg-soft: #f2f2ef;
-  --fg: #1d1f21;
-  --fg-muted: #5f6368;
-  --border: #e2e2dd;
-  --accent: #c2410c;
-  --accent-soft: #fde7da;
-  --link: #0b63c4;
-  --code-bg: #f4f4f1;
+  --bg: #ffffff;
+  --bg-soft: #f6f8fa;
+  --fg: #1f2328;
+  --fg-muted: #59636e;
+  --border: #d1d9e0;
+  --accent: #0969da;
+  --accent-soft: #ddf4ff;
+  --link: #0969da;
+  --code-bg: #eff1f3;
   --heat-0: #ebedf0;
-  --heat-1: #fdc9a8;
-  --heat-2: #f59563;
-  --heat-3: #dd5a1f;
-  --heat-4: #9a3412;
-  --font-sans: 'Inter', system-ui, -apple-system, 'Hiragino Sans', 'Noto Sans JP', sans-serif;
-  --font-mono: 'Intel One Mono', ui-monospace, 'SFMono-Regular', Menlo, monospace;
-  --radius: 8px;
+  --heat-1: #9be9a8;
+  --heat-2: #40c463;
+  --heat-3: #30a14e;
+  --heat-4: #216e39;
+  --font-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif,
+    'Apple Color Emoji', 'Segoe UI Emoji';
+  --font-mono: 'Intel One Mono', ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace;
+  --radius: 6px;
   --measure: 46rem;
   color-scheme: light;
 }
 
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme='light']) {
-    --bg: #111315;
-    --bg-soft: #1a1d20;
-    --fg: #e6e6e3;
-    --fg-muted: #9aa0a6;
-    --border: #2b2f33;
-    --accent: #fb923c;
-    --accent-soft: #3a2316;
-    --link: #6cb6ff;
-    --code-bg: #1a1d20;
-    --heat-0: #1f2327;
-    --heat-1: #4a2a17;
-    --heat-2: #8a3d14;
-    --heat-3: #d4601c;
-    --heat-4: #fb923c;
+    --bg: #0d1117;
+    --bg-soft: #151b23;
+    --fg: #f0f6fc;
+    --fg-muted: #9198a1;
+    --border: #3d444d;
+    --accent: #4493f8;
+    --accent-soft: #121d2f;
+    --link: #4493f8;
+    --code-bg: #262c36;
+    --heat-0: #151b23;
+    --heat-1: #033a16;
+    --heat-2: #196c2e;
+    --heat-3: #2ea043;
+    --heat-4: #56d364;
     color-scheme: dark;
   }
 }
 
 :root[data-theme='dark'] {
-  --bg: #111315;
-  --bg-soft: #1a1d20;
-  --fg: #e6e6e3;
-  --fg-muted: #9aa0a6;
-  --border: #2b2f33;
-  --accent: #fb923c;
-  --accent-soft: #3a2316;
-  --link: #6cb6ff;
-  --code-bg: #1a1d20;
-  --heat-0: #1f2327;
-  --heat-1: #4a2a17;
-  --heat-2: #8a3d14;
-  --heat-3: #d4601c;
-  --heat-4: #fb923c;
+  --bg: #0d1117;
+  --bg-soft: #151b23;
+  --fg: #f0f6fc;
+  --fg-muted: #9198a1;
+  --border: #3d444d;
+  --accent: #4493f8;
+  --accent-soft: #121d2f;
+  --link: #4493f8;
+  --code-bg: #262c36;
+  --heat-0: #151b23;
+  --heat-1: #033a16;
+  --heat-2: #196c2e;
+  --heat-3: #2ea043;
+  --heat-4: #56d364;
   color-scheme: dark;
 }
 
@@ -79,7 +80,7 @@ body {
   color: var(--fg);
   font-family: var(--font-sans);
   font-size: 1rem;
-  line-height: 1.7;
+  line-height: 1.5;
 }
 
 a {
@@ -174,8 +175,8 @@ h1 {
 
 .tag {
   display: inline-block;
-  font-family: var(--font-mono);
-  font-size: 0.78rem;
+  font-size: 0.75rem;
+  font-weight: 500;
   padding: 0 0.5em;
   border-radius: 999px;
   background: var(--accent-soft);
@@ -290,38 +291,37 @@ code {
 
 :not(pre) > code {
   background: var(--code-bg);
-  border: 1px solid var(--border);
-  padding: 0.1em 0.35em;
-  border-radius: 4px;
+  padding: 0.2em 0.4em;
+  border-radius: var(--radius);
+  font-size: 85%;
 }
 
+/* Like GitHub: the theme's colors on GitHub's own code background. */
 pre.astro-code {
   padding: 1rem;
   border-radius: var(--radius);
-  border: 1px solid var(--border);
   overflow-x: auto;
-  font-size: 0.875rem;
-  line-height: 1.6;
+  font-size: 85%;
+  line-height: 1.45;
+  background-color: var(--bg-soft) !important;
 }
 
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme='light']) .astro-code,
   :root:not([data-theme='light']) .astro-code span {
     color: var(--shiki-dark) !important;
-    background-color: var(--shiki-dark-bg) !important;
   }
 }
 
 :root[data-theme='dark'] .astro-code,
 :root[data-theme='dark'] .astro-code span {
   color: var(--shiki-dark) !important;
-  background-color: var(--shiki-dark-bg) !important;
 }
 
 /* Prose */
 .prose h2 {
-  margin-top: 2.2em;
-  padding-bottom: 0.2em;
+  margin-top: 1.5em;
+  padding-bottom: 0.3em;
   border-bottom: 1px solid var(--border);
 }
 

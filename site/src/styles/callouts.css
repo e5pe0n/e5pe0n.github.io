@@ -3,11 +3,9 @@
 
 .markdown-alert {
   --alert: #0969da;
-  margin: 1.25rem 0;
+  margin: 0 0 1rem;
   padding: 0.5rem 1rem;
   border-left: 0.25em solid var(--alert);
-  border-radius: 0 var(--radius) var(--radius) 0;
-  background: color-mix(in srgb, var(--alert) 7%, transparent);
 }
 
 .markdown-alert > :first-child {
