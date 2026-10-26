@@ -3,6 +3,7 @@ title: Calling an IAP-protected Cloud Run service from a service account
 description: Why the ID token's audience has to be the IAP OAuth client ID, not the service URL.
 date: 2026-10-18
 tags: [gcp, cloud-run, iap, auth]
+pinned: true
 ---
 
 I put Identity-Aware Proxy in front of a Cloud Run service, and my Cloud Scheduler job started failing with `401 Invalid IAP credentials`. It had worked fine without IAP.

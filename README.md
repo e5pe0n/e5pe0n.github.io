@@ -1,7 +1,8 @@
 # stuck-trace
 
-My engineering blog: notes on where I got stuck, and how I got out. Served at https://e5pe0n.github.io/stuck-trace.
+My engineering blog: notes on where I got stuck, and how I got out. Served at https://e5pe0n.github.io/stuck-trace, laid out like a GitHub profile.
 
+- **Overview**: pinned articles as cards, a contribution graph of articles written and items read over the last year, and month-by-month activity.
 - **Articles** in Markdown, listed by year and month and filterable by tags, with GitHub-style callouts (`> [!NOTE]`, `[!TIP]`, `[!IMPORTANT]`, `[!WARNING]`, `[!CAUTION]`), highlighted code and a table of contents.
 - **Search**: a full-text search box in the header (press `/`), by [Pagefind](https://pagefind.app): indexed at build time, run in the browser.
 - **Reading**: what I've read in [shushu](https://github.com/e5pe0n/shushu), my RSS reader, live, by day, week, month or year.
@@ -26,6 +27,7 @@ date: 2026-10-18 # JST; decides where it goes in the article list
 updated: 2026-10-20 # optional
 tags: [gcp, iap]
 draft: true # optional: shown by `pnpm dev`, left out of the build
+pinned: true # optional: shown as a card on the Overview (the newest articles if none are)
 ---
 ```
 

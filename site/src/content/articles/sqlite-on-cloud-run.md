@@ -3,6 +3,7 @@ title: SQLite on Cloud Run with Litestream
 description: Running a single-writer SQLite app on a serverless platform, and the sharp edges.
 date: 2026-09-27
 tags: [gcp, cloud-run, sqlite]
+pinned: true
 ---
 
 Cloud Run scales to zero and has no persistent disk, which sounds like the worst possible home for SQLite. With [Litestream](https://litestream.io) it works well for a personal app.

@@ -7,6 +7,7 @@
   --accent: #0969da;
   --accent-soft: #ddf4ff;
   --link: #0969da;
+  --tab-active: #fd8c73;
   --code-bg: #eff1f3;
   --heat-0: #ebedf0;
   --heat-1: #9be9a8;
@@ -31,6 +32,7 @@
     --accent: #4493f8;
     --accent-soft: #121d2f;
     --link: #4493f8;
+    --tab-active: #f78166;
     --code-bg: #262c36;
     --heat-0: #151b23;
     --heat-1: #033a16;
@@ -50,6 +52,7 @@
   --accent: #4493f8;
   --accent-soft: #121d2f;
   --link: #4493f8;
+  --tab-active: #f78166;
   --code-bg: #262c36;
   --heat-0: #151b23;
   --heat-1: #033a16;

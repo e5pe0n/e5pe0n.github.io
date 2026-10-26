@@ -1,212 +1,146 @@
 ---
-import ArticleList from '../components/ArticleList.astro';
-import Base from '../layouts/Base.astro';
-import { AUTHOR, getArticles, tagCounts, tagUrl, url } from '../lib/site';
+import ContributionGraph from '../components/ContributionGraph.astro';
+import ProfileLayout from '../layouts/ProfileLayout.astro';
+import { dayKey } from '../lib/calendar';
+import { getArticles, readingMinutes, tagUrl, url } from '../lib/site';
 
 const articles = await getArticles();
-const latest = articles.slice(0, 5);
-const tags = tagCounts(articles).slice(0, 12);
+// Like GitHub: pinned articles, or the most recent ones when none are pinned.
+const pinned = articles.filter((a) => a.data.pinned);
+const cards = (pinned.length ? pinned : articles).slice(0, 6);
+
+// A stable color per tag, like the language dot on a repository card.
+const DOT_COLORS = ['#3178c6', '#f1e05a', '#dea584', '#00add8', '#e34c26', '#563d7c', '#89e051', '#b07219'];
+const dotColor = (tag: string) => DOT_COLORS[[...tag].reduce((h, c) => (h * 31 + c.charCodeAt(0)) >>> 0, 7) % DOT_COLORS.length];
 ---
 
-<Base wide>
-  <div class="layout">
-    <aside class="profile" aria-label="About the author">
-      <img class="avatar" src={AUTHOR.avatar} alt="" width="230" height="230" />
-      <h1 class="names">
-        <span class="name">{AUTHOR.name}</span>
-        <span class="login muted">{AUTHOR.github}</span>
-      </h1>
-      <p class="bio">{AUTHOR.bio}</p>
-      <ul class="links small">
-        <li>
-          <a href={`https://github.com/${AUTHOR.github}`}>
-            <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true">
-              <path
-                fill="currentColor"
-                d="M8 0c4.42 0 8 3.58 8 8a8.013 8.013 0 0 1-5.45 7.59c-.4.08-.55-.17-.55-.38 0-.27.01-1.13.01-2.2 0-.75-.25-1.23-.54-1.48 1.78-.2 3.65-.88 3.65-3.95 0-.88-.31-1.59-.82-2.15.08-.2.36-1.02-.08-2.12 0 0-.67-.22-2.2.82-.64-.18-1.32-.27-2-.27-.68 0-1.36.09-2 .27-1.53-1.03-2.2-.82-2.2-.82-.44 1.1-.16 1.92-.08 2.12-.51.56-.82 1.28-.82 2.15 0 3.06 1.86 3.75 3.64 3.95-.23.2-.44.55-.51 1.07-.46.21-1.61.55-2.33-.66-.15-.24-.6-.83-1.23-.82-.67.01-.27.38.01.53.34.19.73.9.82 1.13.16.45.68 1.31 2.69.94 0 .67.01 1.3.01 1.49 0 .21-.15.45-.55.38A7.995 7.995 0 0 1 0 8c0-4.42 3.58-8 8-8Z"
-              ></path>
-            </svg>
-            github.com/{AUTHOR.github}
-          </a>
-        </li>
-        <li>
-          <a href={url('rss.xml')}>
-            <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true">
-              <path
-                fill="currentColor"
-                d="M2.002 2.725a.75.75 0 0 1 .797-.699C8.79 2.42 13.58 7.21 13.974 13.201a.75.75 0 0 1-1.497.098 10.502 10.502 0 0 0-9.776-9.776.747.747 0 0 1-.7-.798ZM2.84 7.05h-.002a7.002 7.002 0 0 1 6.113 6.111.75.75 0 0 1-1.49.178 5.503 5.503 0 0 0-4.8-4.8.75.75 0 0 1 .179-1.489ZM2 13a1 1 0 1 1 2 0 1 1 0 0 1-2 0Z"
-              ></path>
-            </svg>
-            RSS
-          </a>
-        </li>
-      </ul>
-      {
-        tags.length > 0 && (
-          <ul class="tags">
-            {tags.map(([tag]) => (
-              <li>
-                <a class="tag" href={tagUrl(tag)}>
-                  #{tag}
-                </a>
+<ProfileLayout>
+  <section>
+    <h2 class="section-title">{pinned.length ? 'Pinned' : 'Recent articles'}</h2>
+    {
+      cards.length === 0 ? (
+        <p class="empty-state">No articles yet.</p>
+      ) : (
+        <ol class="cards">
+          {cards.map((article) => {
+            const tag = article.data.tags[0];
+            return (
+              <li class="card">
+                <div class="card-head">
+                  <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true">
+                    <path
+                      fill="currentColor"
+                      d="M2 1.75C2 .784 2.784 0 3.75 0h6.586c.464 0 .909.184 1.237.513l2.914 2.914c.329.328.513.773.513 1.237v9.586A1.75 1.75 0 0 1 13.25 16h-9.5A1.75 1.75 0 0 1 2 14.25Zm1.75-.25a.25.25 0 0 0-.25.25v12.5c0 .138.112.25.25.25h9.5a.25.25 0 0 0 .25-.25V6h-2.75A1.75 1.75 0 0 1 9 4.25V1.5Zm6.75.062V4.25c0 .138.112.25.25.25h2.688l-.011-.013-2.914-2.914-.013-.011Z"
+                    />
+                  </svg>
+                  <a class="card-title" href={url(`articles/${article.id}`)}>
+                    {article.data.title}
+                  </a>
+                </div>
+                <p class="card-description">{article.data.description}</p>
+                <p class="card-meta">
+                  {tag && (
+                    <a class="card-tag" href={tagUrl(tag)}>
+                      <span class="dot" style={`background: ${dotColor(tag)}`} />
+                      {tag}
+                    </a>
+                  )}
+                  <time datetime={article.data.date.toISOString()}>{dayKey(article.data.date)}</time>
+                  <span>{readingMinutes(article.body)} min read</span>
+                </p>
               </li>
-            ))}
-          </ul>
-        )
-      }
-    </aside>
+            );
+          })}
+        </ol>
+      )
+    }
+  </section>
 
-    <div class="content">
-      <section>
-        <div class="section-head">
-          <h2>Latest articles</h2>
-          <a class="small" href={url('articles')}>All {articles.length} →</a>
-        </div>
-        <ArticleList articles={latest} />
-      </section>
-
-      <section>
-        <div class="section-head">
-          <h2>Recently read</h2>
-          <a class="small" href={url('reading')}>Reading log →</a>
-        </div>
-        <ul id="recent-reads" class="entries" aria-busy="true">
-          <li class="muted small">Loading…</li>
-        </ul>
-      </section>
-    </div>
-  </div>
-</Base>
-
-<script>
-  import { addDays, dayKey } from '../lib/calendar';
-  import { fetchReads, readItem } from '../lib/reads';
-
-  const list = document.getElementById('recent-reads')!;
-  const to = dayKey(new Date());
-
-  function note(text: string) {
-    const li = document.createElement('li');
-    li.className = 'muted small';
-    li.textContent = text;
-    list.replaceChildren(li);
-  }
-
-  fetchReads(addDays(to, -13), to)
-    .then((reads) => {
-      if (reads.length === 0) note('Nothing read in the last two weeks.');
-      else list.replaceChildren(...reads.slice(0, 5).map((r) => readItem(r, { showDay: true })));
-    })
-    .catch(() => note('The reading log is unavailable right now.'))
-    .finally(() => list.setAttribute('aria-busy', 'false'));
-</script>
+  <ContributionGraph articles={articles} />
+</ProfileLayout>
 
 <style>
-  /* Like a GitHub profile: the author on the left, the content on the right. */
-  .layout {
-    display: grid;
-    grid-template-columns: 15rem minmax(0, 1fr);
-    gap: 2.5rem;
-    align-items: start;
+  .section-title {
+    font-size: 1rem;
+    font-weight: 400;
+    margin: 0 0 0.5rem;
   }
 
-  .profile {
-    position: sticky;
-    top: 1.5rem;
-  }
-
-  .avatar {
-    display: block;
-    width: 100%;
-    height: auto;
-    aspect-ratio: 1;
-    border-radius: 50%;
-    border: 1px solid var(--border);
-  }
-
-  .names {
-    display: flex;
-    flex-direction: column;
-    margin: 1rem 0 0;
-    line-height: 1.25;
-  }
-
-  .name {
-    font-size: 1.5rem;
-    font-weight: 600;
-  }
-
-  .login {
-    font-size: 1.25rem;
-    font-weight: 300;
-  }
-
-  .bio {
-    margin: 1rem 0;
-  }
-
-  .links {
+  .cards {
     list-style: none;
     padding: 0;
-    margin: 0 0 1rem;
+    margin: 0 0 1.5rem;
     display: grid;
-    gap: 0.35rem;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1rem;
   }
 
-  .links a {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.5rem;
-    color: var(--fg);
-    text-decoration: none;
+  @media (max-width: 640px) {
+    .cards {
+      grid-template-columns: minmax(0, 1fr);
+    }
   }
 
-  .links a:hover {
-    color: var(--accent);
-  }
-
-  .links svg {
+  .card {
+    display: flex;
+    flex-direction: column;
+    padding: 1rem;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    font-size: 0.75rem;
     color: var(--fg-muted);
   }
 
-  .content > section:first-child .section-head {
-    margin-top: 0;
-  }
-
-  /* On narrow screens the profile sits above, avatar beside the name. */
-  @media (max-width: 760px) {
-    .layout {
-      grid-template-columns: minmax(0, 1fr);
-      gap: 1.5rem;
-    }
-
-    .profile {
-      position: static;
-      display: grid;
-      grid-template-columns: 4.5rem minmax(0, 1fr);
-      column-gap: 1rem;
-      align-items: center;
-    }
-
-    .names {
-      margin: 0;
-    }
-
-    .profile > :not(.avatar, .names) {
-      grid-column: 1 / -1;
-    }
-  }
-
-  .section-head {
+  .card-head {
     display: flex;
-    align-items: baseline;
-    justify-content: space-between;
-    border-bottom: 1px solid var(--border);
-    margin-top: 2.5rem;
+    align-items: flex-start;
+    gap: 0.5rem;
   }
 
-  .section-head h2 {
-    font-size: 1.1rem;
-    margin: 0 0 0.25rem;
+  .card-head svg {
+    flex: none;
+    margin-top: 0.15rem;
+  }
+
+  .card-title {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--link);
+    text-decoration: none;
+  }
+
+  .card-title:hover {
+    text-decoration: underline;
+  }
+
+  .card-description {
+    flex: 1;
+    margin: 0.5rem 0 1rem;
+  }
+
+  .card-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.25rem 1rem;
+    margin: 0;
+  }
+
+  .card-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    color: inherit;
+    text-decoration: none;
+  }
+
+  .card-tag:hover {
+    color: var(--link);
+  }
+
+  .dot {
+    width: 0.75rem;
+    height: 0.75rem;
+    border-radius: 50%;
+    border: 1px solid rgb(0 0 0 / 0.1);
   }
 </style>

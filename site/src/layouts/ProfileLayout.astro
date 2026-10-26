@@ -1,0 +1,36 @@
+---
+import Profile from '../components/Profile.astro';
+import Base from './Base.astro';
+
+interface Props {
+  title?: string;
+  description?: string;
+}
+
+// Like a GitHub profile: the author on the left, the selected tab's content on the right.
+---
+
+<Base {...Astro.props} wide>
+  <div class="profile-layout">
+    <Profile />
+    <div class="profile-content">
+      <slot />
+    </div>
+  </div>
+</Base>
+
+<style>
+  .profile-layout {
+    display: grid;
+    grid-template-columns: 15rem minmax(0, 1fr);
+    gap: 2rem;
+    align-items: start;
+  }
+
+  @media (max-width: 760px) {
+    .profile-layout {
+      grid-template-columns: minmax(0, 1fr);
+      gap: 1.5rem;
+    }
+  }
+</style>

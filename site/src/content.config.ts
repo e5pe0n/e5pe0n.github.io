@@ -11,6 +11,8 @@ const articles = defineCollection({
     updated: z.coerce.date().optional(),
     tags: z.array(z.string()).default([]),
     draft: z.boolean().default(false),
+    /** Show on the Overview, like a pinned repository. */
+    pinned: z.boolean().default(false),
   }),
 });
 

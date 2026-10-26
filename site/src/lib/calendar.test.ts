@@ -7,6 +7,7 @@ import {
   periodLabel,
   periodRange,
   shiftPeriod,
+  trailingYearGrid,
   yearGrid,
 } from './calendar';
 
@@ -70,6 +71,15 @@ describe('groupBy', () => {
 });
 
 describe('grids', () => {
+  it('covers the year up to today in Sunday-first columns', () => {
+    const { from, columns } = trailingYearGrid('2026-10-26');
+    expect(from).toBe('2025-10-27');
+    expect(columns[0][0]).toBe(null); // the Sunday before
+    expect(columns[0][1]).toBe('2025-10-27');
+    expect(columns.at(-1)).toEqual(['2026-10-25', '2026-10-26', null, null, null, null, null]);
+    expect(columns.flat().filter(Boolean)).toHaveLength(365);
+  });
+
   it('covers a year in Sunday-first columns', () => {
     const grid = yearGrid('2026');
     expect(grid[0][4]).toBe('2026-01-01');

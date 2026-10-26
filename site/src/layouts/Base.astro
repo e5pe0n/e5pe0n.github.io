@@ -2,7 +2,7 @@
 import '../styles/global.css';
 import '../styles/callouts.css';
 import SearchBox from '../components/SearchBox.astro';
-import { SITE_DESCRIPTION, SITE_TITLE, url } from '../lib/site';
+import { getArticles, SITE_DESCRIPTION, SITE_TITLE, url } from '../lib/site';
 
 interface Props {
   title?: string;
@@ -13,9 +13,28 @@ interface Props {
 const { title, description = SITE_DESCRIPTION, wide = false } = Astro.props;
 const fullTitle = title ? `${title} · ${SITE_TITLE}` : SITE_TITLE;
 const path = Astro.url.pathname;
-const nav = [
-  { href: url('articles'), label: 'Articles' },
-  { href: url('reading'), label: 'Reading' },
+const articleCount = (await getArticles()).length;
+// GitHub-style profile tabs, with Octicons (book, file, rss).
+const tabs = [
+  {
+    href: url(),
+    label: 'Overview',
+    current: path === url() || path === url().replace(/\/$/, ''),
+    icon: 'M0 1.75A.75.75 0 0 1 .75 1h4.253c1.227 0 2.317.59 3 1.501A3.743 3.743 0 0 1 11.006 1h4.245a.75.75 0 0 1 .75.75v10.5a.75.75 0 0 1-.75.75h-4.507a2.25 2.25 0 0 0-1.591.659l-.622.621a.75.75 0 0 1-1.06 0l-.622-.621A2.25 2.25 0 0 0 5.258 13H.75a.75.75 0 0 1-.75-.75Zm7.251 10.324.004-5.073-.002-2.253A2.25 2.25 0 0 0 5.003 2.5H1.5v9h3.757a3.75 3.75 0 0 1 1.994.574ZM8.755 4.75l-.004 7.322a3.752 3.752 0 0 1 1.992-.572H14.5v-9h-3.495a2.25 2.25 0 0 0-2.25 2.25Z',
+  },
+  {
+    href: url('articles'),
+    label: 'Articles',
+    count: articleCount,
+    current: path.startsWith(url('articles')),
+    icon: 'M2 1.75C2 .784 2.784 0 3.75 0h6.586c.464 0 .909.184 1.237.513l2.914 2.914c.329.328.513.773.513 1.237v9.586A1.75 1.75 0 0 1 13.25 16h-9.5A1.75 1.75 0 0 1 2 14.25Zm1.75-.25a.25.25 0 0 0-.25.25v12.5c0 .138.112.25.25.25h9.5a.25.25 0 0 0 .25-.25V6h-2.75A1.75 1.75 0 0 1 9 4.25V1.5Zm6.75.062V4.25c0 .138.112.25.25.25h2.688l-.011-.013-2.914-2.914-.013-.011Z',
+  },
+  {
+    href: url('reading'),
+    label: 'Reading',
+    current: path.startsWith(url('reading')),
+    icon: 'M2.002 2.725a.75.75 0 0 1 .797-.699C8.79 2.42 13.58 7.21 13.974 13.201a.75.75 0 0 1-1.497.098 10.502 10.502 0 0 0-9.776-9.776.747.747 0 0 1-.7-.798ZM2.84 7.05h-.002a7.002 7.002 0 0 1 6.113 6.111.75.75 0 0 1-1.49.178 5.503 5.503 0 0 0-4.8-4.8.75.75 0 0 1 .179-1.489ZM2 13a1 1 0 1 1 2 0 1 1 0 0 1-2 0Z',
+  },
 ];
 ---
 
@@ -48,20 +67,24 @@ const nav = [
     <header class="site-header">
       <div class:list={['container', 'header-inner', { wide }]}>
         <a class="brand mono" href={url()}>stuck-trace</a>
-        <nav aria-label="Main">
-          {
-            nav.map(({ href, label }) => (
-              <a href={href} aria-current={path.startsWith(href) ? 'page' : undefined}>
-                {label}
-              </a>
-            ))
-          }
-          <button id="theme-toggle" type="button" aria-label="Toggle dark mode" title="Toggle dark mode">
-            ◐
-          </button>
-        </nav>
+        <button id="theme-toggle" type="button" aria-label="Toggle dark mode" title="Toggle dark mode">
+          ◐
+        </button>
         <SearchBox />
       </div>
+      <nav class:list={['container', 'tabs', { wide }]} aria-label="Main">
+        {
+          tabs.map(({ href, label, count, current, icon }) => (
+            <a href={href} aria-current={current ? 'page' : undefined}>
+              <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true">
+                <path fill="currentColor" d={icon} />
+              </svg>
+              {label}
+              {count !== undefined && <span class="counter">{count}</span>}
+            </a>
+          ))
+        }
+      </nav>
     </header>
     <main class:list={['container', { wide }]}>
       <slot />
@@ -92,7 +115,9 @@ const nav = [
 <style>
   .site-header {
     border-bottom: 1px solid var(--border);
-    margin-bottom: 2rem;
+    margin-bottom: 1.5rem;
+    background: var(--bg-soft);
+    isolation: isolate;
   }
 
   .header-inner {
@@ -102,7 +127,7 @@ const nav = [
     flex-wrap: wrap;
     gap: 0.5rem 1rem;
     padding-top: 0.9rem;
-    padding-bottom: 0.9rem;
+    padding-bottom: 0.4rem;
   }
 
   .brand {
@@ -121,33 +146,62 @@ const nav = [
     }
   }
 
-  nav {
-    margin-left: auto;
+  /* GitHub's underlined tab bar along the bottom of the header. */
+  .tabs {
     display: flex;
+    gap: 0.5rem;
+    overflow-x: auto;
+    font-size: 0.875rem;
+  }
+
+  .tabs a {
+    display: inline-flex;
     align-items: center;
-    flex-wrap: wrap;
-    gap: 0.25rem 1rem;
-    font-size: 0.92rem;
-  }
-
-  nav a {
-    color: var(--fg-muted);
-    text-decoration: none;
-  }
-
-  nav a:hover,
-  nav a[aria-current='page'] {
+    gap: 0.5rem;
+    padding: 0.5rem 0.5rem 0.6rem;
+    margin-bottom: -1px;
+    border-bottom: 2px solid transparent;
     color: var(--fg);
+    text-decoration: none;
+    white-space: nowrap;
+    position: relative;
   }
 
-  nav a[aria-current='page'] {
-    text-decoration: underline;
-    text-decoration-color: var(--accent);
-    text-decoration-thickness: 2px;
-    text-underline-offset: 0.4em;
+  .tabs a::before {
+    content: '';
+    position: absolute;
+    inset: 0.3rem 0 0.4rem;
+    border-radius: var(--radius);
+    z-index: -1;
+  }
+
+  .tabs a:hover::before {
+    background: var(--bg-soft);
+  }
+
+  .tabs svg {
+    color: var(--fg-muted);
+  }
+
+  .tabs a[aria-current='page'] {
+    font-weight: 600;
+    border-bottom-color: var(--tab-active);
+  }
+
+  .counter {
+    display: inline-block;
+    min-width: 1.25rem;
+    padding: 0 0.4rem;
+    border-radius: 2em;
+    background: var(--code-bg);
+    font-size: 0.75rem;
+    font-weight: 500;
+    line-height: 1.3rem;
+    text-align: center;
   }
 
   #theme-toggle {
+    margin-left: auto;
     background: none;
     border: 1px solid var(--border);
     border-radius: 999px;

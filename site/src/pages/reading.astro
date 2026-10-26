@@ -1,13 +1,12 @@
 ---
-import Base from '../layouts/Base.astro';
+import ProfileLayout from '../layouts/ProfileLayout.astro';
 import { PERIODS } from '../lib/calendar';
 
 const LABELS = { day: 'Day', week: 'Week', month: 'Month', year: 'Year' } as const;
 ---
 
-<Base title="Reading" description="What I've been reading lately, live from my RSS reader.">
-  <h1>Reading</h1>
-  <p class="muted">
+<ProfileLayout title="Reading" description="What I've been reading lately, live from my RSS reader.">
+  <p class="muted intro">
     What I've read in <a href="https://github.com/e5pe0n/shushu">shushu</a>, my RSS reader, live. Times are in JST.
   </p>
 
@@ -36,7 +35,7 @@ const LABELS = { day: 'Day', week: 'Week', month: 'Month', year: 'Year' } as con
     <p class="empty-state">Loading…</p>
   </div>
   <noscript><p class="empty-state">The reading log is loaded live and needs JavaScript.</p></noscript>
-</Base>
+</ProfileLayout>
 
 <script>
   import {
@@ -227,6 +226,10 @@ const LABELS = { day: 'Day', week: 'Week', month: 'Month', year: 'Year' } as con
 </script>
 
 <style>
+  .intro {
+    margin-top: 0;
+  }
+
   .controls {
     display: flex;
     align-items: center;

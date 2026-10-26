@@ -173,3 +173,22 @@ export function yearGrid(year: string): (string | null)[][] {
   }
   return columns;
 }
+
+/**
+ * Like GitHub's contribution graph: the year up to `today` in Sunday-first columns.
+ * Days before the year or after `today` are null.
+ */
+export function trailingYearGrid(today: string): { from: string; columns: (string | null)[][] } {
+  const from = addDays(today, -364);
+  const columns: (string | null)[][] = [];
+  let day = addDays(from, -keyToUtc(from).getUTCDay());
+  while (day <= today) {
+    const column: (string | null)[] = [];
+    for (let i = 0; i < 7; i++) {
+      column.push(day >= from && day <= today ? day : null);
+      day = addDays(day, 1);
+    }
+    columns.push(column);
+  }
+  return { from, columns };
+}
