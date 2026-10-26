@@ -34,7 +34,7 @@ const day = dayKey(article.data.date);
         <span>{readingMinutes(article.body)} min read</span>
       </div>
       <h1 data-pagefind-meta="title" data-pagefind-weight="5">{article.data.title}</h1>
-      <Tags tags={article.data.tags} filter />
+      <Tags tags={article.data.tags} />
     </header>
 
     {

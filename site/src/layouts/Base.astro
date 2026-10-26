@@ -1,6 +1,7 @@
 ---
 import '../styles/global.css';
 import '../styles/callouts.css';
+import SearchBox from '../components/SearchBox.astro';
 import { SITE_DESCRIPTION, SITE_TITLE, url } from '../lib/site';
 
 interface Props {
@@ -15,7 +16,6 @@ const path = Astro.url.pathname;
 const nav = [
   { href: url('articles'), label: 'Articles' },
   { href: url('reading'), label: 'Reading' },
-  { href: url('search'), label: 'Search' },
 ];
 ---
 
@@ -60,6 +60,7 @@ const nav = [
             ◐
           </button>
         </nav>
+        <SearchBox />
       </div>
     </header>
     <main class:list={['container', { wide }]}>
@@ -111,7 +112,17 @@ const nav = [
     font-size: 1.05rem;
   }
 
+  /* Narrow screens: brand and menu on one row, search full width below. */
+  @media (max-width: 640px) {
+    .header-inner > :global(.search) {
+      order: 3;
+      flex-basis: 100%;
+      max-width: none;
+    }
+  }
+
   nav {
+    margin-left: auto;
     display: flex;
     align-items: center;
     flex-wrap: wrap;

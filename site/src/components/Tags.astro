@@ -3,19 +3,17 @@ import { tagUrl } from '../lib/site';
 
 interface Props {
   tags: string[];
-  /** Expose the tags to Pagefind as filters (on article pages only). */
-  filter?: boolean;
 }
 
-const { tags, filter = false } = Astro.props;
+const { tags } = Astro.props;
 ---
 
 {
   tags.length > 0 && (
-    <ul class="tags">
+    <ul class="tags" data-pagefind-ignore>
       {tags.map((tag) => (
         <li>
-          <a class="tag" href={tagUrl(tag)} data-pagefind-filter={filter ? `tag:${tag}` : undefined}>
+          <a class="tag" href={tagUrl(tag)}>
             #{tag}
           </a>
         </li>
