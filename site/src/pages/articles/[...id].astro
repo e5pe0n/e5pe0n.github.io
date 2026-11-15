@@ -25,43 +25,74 @@ const toc = headings.filter((h) => h.depth === 2 || h.depth === 3);
 const day = dayKey(article.data.date);
 ---
 
-<Base title={article.data.title} description={article.data.description}>
-  <article data-pagefind-body>
-    <header>
-      <div class="entry-meta">
-        <time class="mono" datetime={article.data.date.toISOString()}>{day}</time>
-        {article.data.updated && <span>updated {dayKey(article.data.updated)}</span>}
-        <span>{readingMinutes(article.body)} min read</span>
-      </div>
-      <h1 data-pagefind-meta="title" data-pagefind-weight="5">{article.data.title}</h1>
-      <Tags tags={article.data.tags} />
-    </header>
+<Base title={article.data.title} description={article.data.description} wide>
+  <div class:list={['article-layout', { 'has-toc': toc.length > 2 }]}>
+    <div class="article-main">
+      <article data-pagefind-body>
+        <header>
+          <div class="entry-meta">
+            <time class="mono" datetime={article.data.date.toISOString()}>{day}</time>
+            {article.data.updated && <span>updated {dayKey(article.data.updated)}</span>}
+            <span>{readingMinutes(article.body)} min read</span>
+          </div>
+          <h1 data-pagefind-meta="title" data-pagefind-weight="5">{article.data.title}</h1>
+          <Tags tags={article.data.tags} />
+        </header>
+
+        <div class="prose">
+          <Content />
+        </div>
+      </article>
+
+      <nav class="pager" aria-label="More articles">
+        {newer ? <a href={url(`articles/${newer.id}`)}>← {newer.data.title}</a> : <span />}
+        {older ? <a href={url(`articles/${older.id}`)}>{older.data.title} →</a> : <span />}
+      </nav>
+    </div>
 
     {
       toc.length > 2 && (
-        <details class="toc" open data-pagefind-ignore>
-          <summary>Contents</summary>
-          <ul>
-            {toc.map((h) => (
-              <li class={`depth-${h.depth}`}>
-                <a href={`#${h.slug}`}>{h.text}</a>
-              </li>
-            ))}
-          </ul>
-        </details>
+        <aside class="toc" data-pagefind-ignore>
+          <nav aria-labelledby="toc-title">
+            <h2 id="toc-title">Contents</h2>
+            <ul>
+              {toc.map((h) => (
+                <li class={`depth-${h.depth}`}>
+                  <a href={`#${h.slug}`}>{h.text}</a>
+                </li>
+              ))}
+            </ul>
+          </nav>
+        </aside>
       )
     }
-
-    <div class="prose">
-      <Content />
-    </div>
-  </article>
-
-  <nav class="pager" aria-label="More articles">
-    {newer ? <a href={url(`articles/${newer.id}`)}>← {newer.data.title}</a> : <span />}
-    {older ? <a href={url(`articles/${older.id}`)}>{older.data.title} →</a> : <span />}
-  </nav>
+  </div>
 </Base>
+
+<script>
+  // Highlight the section being read in the contents.
+  const links = new Map(
+    [...document.querySelectorAll<HTMLAnchorElement>('.toc a')].map((a) => [decodeURIComponent(a.hash.slice(1)), a]),
+  );
+  const headings = [...document.querySelectorAll<HTMLElement>('.prose :is(h2, h3)[id]')].filter((h) => links.has(h.id));
+
+  function update() {
+    // The last heading scrolled past the top quarter of the screen.
+    const line = innerHeight / 4;
+    let current = headings[0];
+    for (const h of headings) {
+      if (h.getBoundingClientRect().top <= line) current = h;
+      else break;
+    }
+    links.forEach((a) => a.removeAttribute('aria-current'));
+    if (current) links.get(current.id)?.setAttribute('aria-current', 'true');
+  }
+
+  if (headings.length) {
+    addEventListener('scroll', update, { passive: true });
+    update();
+  }
+</script>
 
 <style>
   header {
@@ -72,27 +103,84 @@ const day = dayKey(article.data.date);
     margin-bottom: 0.5rem;
   }
 
-  .toc {
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    padding: 0.6rem 1rem;
-    margin-bottom: 1.5rem;
-    font-size: 0.9rem;
+  /* The article at reading width, its contents in a sticky column on the right. */
+  .article-layout {
+    max-width: var(--measure);
+    margin: 0 auto;
   }
 
-  .toc summary {
-    cursor: pointer;
+  .article-layout.has-toc {
+    max-width: none;
+    display: grid;
+    grid-template-columns: minmax(0, var(--measure)) 14rem;
+    justify-content: center;
+    gap: 3rem;
+    align-items: start;
+  }
+
+  .toc {
+    position: sticky;
+    top: 1.5rem;
+    max-height: calc(100vh - 3rem);
+    overflow-y: auto;
+    font-size: 0.875rem;
+  }
+
+  .toc h2 {
+    font-size: 0.875rem;
     font-weight: 600;
+    margin: 0 0 0.5rem;
   }
 
   .toc ul {
     list-style: none;
     padding: 0;
-    margin: 0.5rem 0 0;
+    margin: 0;
+    border-left: 1px solid var(--border);
   }
 
-  .toc .depth-3 {
-    padding-left: 1rem;
+  .toc a {
+    display: block;
+    padding: 0.2rem 0 0.2rem 0.75rem;
+    margin-left: -1px;
+    border-left: 2px solid transparent;
+    color: var(--fg-muted);
+    text-decoration: none;
+    line-height: 1.4;
+  }
+
+  .toc .depth-3 a {
+    padding-left: 1.5rem;
+  }
+
+  .toc a:hover {
+    color: var(--fg);
+  }
+
+  .toc a[aria-current='true'] {
+    color: var(--fg);
+    font-weight: 600;
+    border-left-color: var(--tab-active);
+  }
+
+  /* Too narrow for two columns: the contents go above the article, in a box. */
+  @media (max-width: 1000px) {
+    .article-layout.has-toc {
+      grid-template-columns: minmax(0, 1fr);
+      gap: 0;
+      max-width: var(--measure);
+      margin: 0 auto;
+    }
+
+    .toc {
+      position: static;
+      max-height: none;
+      order: -1;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 0.75rem 1rem;
+      margin-bottom: 1.5rem;
+    }
   }
 
   .pager {
