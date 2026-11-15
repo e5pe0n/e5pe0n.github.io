@@ -1,13 +1,6 @@
 # e5pe0n.github.io
 
-My engineering blog and notes, served at https://e5pe0n.github.io and laid out like a GitHub profile. It replaces the earlier Docusaurus site, whose blog posts and Tech Note docs are now articles here.
-
-- **Overview**: pinned articles as cards, a contribution graph of articles written over the last year, and month-by-month activity.
-- **Articles** in Markdown, listed by year and month and filterable by tags, with GitHub-style callouts (`> [!NOTE]`, `[!TIP]`, `[!IMPORTANT]`, `[!WARNING]`, `[!CAUTION]`), highlighted code, math (`$...$`, `$$...$$`, by KaTeX), Mermaid diagrams and a table of contents.
-- **Search**: a full-text search box in the header (press `/`), by [Pagefind](https://pagefind.app): indexed at build time, run in the browser.
-- **RSS** at `/rss.xml`.
-
-The blog lives in [site](site): [Astro](https://astro.build), fully static, hosted on GitHub Pages.
+https://e5pe0n.github.io
 
 ## Writing
 
