@@ -1,7 +1,7 @@
 import { getCollection, type CollectionEntry } from 'astro:content';
 
-export const SITE_TITLE = 'stuck-trace';
-export const SITE_DESCRIPTION = 'Notes from where I got stuck, and how I got out.';
+export const SITE_TITLE = 'e5pe0n.github.io';
+export const SITE_DESCRIPTION = "A software engineer's knowledge repo: articles, notes and monthly logs.";
 
 export const AUTHOR = {
   name: 'e5pe0n',
@@ -12,7 +12,7 @@ export const AUTHOR = {
 
 export type Article = CollectionEntry<'articles'>;
 
-/** `path` under the site's base, e.g. `url('articles/foo')` → `/stuck-trace/articles/foo`. */
+/** `path` under the site's base, e.g. `url('articles/foo')` → `/articles/foo`. */
 export function url(path = ''): string {
   const base = import.meta.env.BASE_URL.replace(/\/$/, '');
   const rest = path.replace(/^\//, '');

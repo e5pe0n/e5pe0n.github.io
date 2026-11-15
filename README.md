@@ -1,9 +1,9 @@
-# stuck-trace
+# e5pe0n.github.io
 
-My engineering blog: notes on where I got stuck, and how I got out. Served at https://e5pe0n.github.io/stuck-trace, laid out like a GitHub profile.
+My engineering blog and notes, served at https://e5pe0n.github.io and laid out like a GitHub profile. It replaces the earlier Docusaurus site, whose blog posts and Tech Note docs are now articles here.
 
 - **Overview**: pinned articles as cards, a contribution graph of articles written over the last year, and month-by-month activity.
-- **Articles** in Markdown, listed by year and month and filterable by tags, with GitHub-style callouts (`> [!NOTE]`, `[!TIP]`, `[!IMPORTANT]`, `[!WARNING]`, `[!CAUTION]`), highlighted code and a table of contents.
+- **Articles** in Markdown, listed by year and month and filterable by tags, with GitHub-style callouts (`> [!NOTE]`, `[!TIP]`, `[!IMPORTANT]`, `[!WARNING]`, `[!CAUTION]`), highlighted code, math (`$...$`, `$$...$$`, by KaTeX), Mermaid diagrams and a table of contents.
 - **Search**: a full-text search box in the header (press `/`), by [Pagefind](https://pagefind.app): indexed at build time, run in the browser.
 - **RSS** at `/rss.xml`.
 
@@ -11,12 +11,12 @@ The blog lives in [site](site): [Astro](https://astro.build), fully static, host
 
 ## Writing
 
-Add a Markdown file to [site/src/content/articles](site/src/content/articles). Its name is its URL:
+Add a Markdown file to [site/src/content/articles](site/src/content/articles). Its path is its URL (`algorithms/trees.md` → `/articles/algorithms/trees`), and images can sit beside it:
 
 ```yaml
 ---
 title: Calling an IAP-protected Cloud Run service
-description: One sentence for lists, search and RSS.
+description: One sentence for lists, search and RSS. # optional
 date: 2026-10-18 # JST; decides where it goes in the article list
 updated: 2026-10-20 # optional
 tags: [gcp, iap]
@@ -35,7 +35,7 @@ Requires Node.js 24 ([mise.toml](mise.toml)) and pnpm.
 pnpm install
 ```
 
-Run the blog on http://localhost:4321/stuck-trace/:
+Run the blog on http://localhost:4321/:
 
 ```sh
 pnpm --dir site dev
@@ -57,4 +57,4 @@ pnpm -r test && pnpm -r build
 
 Pages is set to deploy from GitHub Actions: [Deploy site](.github/workflows/pages.yml) builds `site/` and publishes it to Pages, on every push to `main` that changes it.
 
-For a custom domain, set `SITE` (e.g. `https://blog.example.com`) and `BASE=/` in the Pages build.
+For a custom domain, set `SITE` (e.g. `https://blog.example.com`) in the Pages build.
