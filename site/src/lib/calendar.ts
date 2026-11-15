@@ -1,7 +1,7 @@
-// Date helpers shared by the calendar pages and the /reading page.
+// Date helpers for the article list and the contribution graph.
 //
 // Everything is bucketed in Japan Standard Time (UTC+9, no DST), so a post
-// dated "2026-10-25" and a read at 2026-10-25T23:30+09:00 land on the same day
+// dated "2026-10-25" and an instant at 2026-10-25T23:30+09:00 land on the same day
 // no matter where the site is built or viewed.
 
 export const TZ_OFFSET_MINUTES = 540;

@@ -14,7 +14,7 @@ const { title, description = SITE_DESCRIPTION, wide = false } = Astro.props;
 const fullTitle = title ? `${title} · ${SITE_TITLE}` : SITE_TITLE;
 const path = Astro.url.pathname;
 const articleCount = (await getArticles()).length;
-// GitHub-style profile tabs, with Octicons (book, file, rss).
+// GitHub-style profile tabs, with Octicons (book, file).
 const tabs = [
   {
     href: url(),
@@ -28,12 +28,6 @@ const tabs = [
     count: articleCount,
     current: path.startsWith(url('articles')),
     icon: 'M2 1.75C2 .784 2.784 0 3.75 0h6.586c.464 0 .909.184 1.237.513l2.914 2.914c.329.328.513.773.513 1.237v9.586A1.75 1.75 0 0 1 13.25 16h-9.5A1.75 1.75 0 0 1 2 14.25Zm1.75-.25a.25.25 0 0 0-.25.25v12.5c0 .138.112.25.25.25h9.5a.25.25 0 0 0 .25-.25V6h-2.75A1.75 1.75 0 0 1 9 4.25V1.5Zm6.75.062V4.25c0 .138.112.25.25.25h2.688l-.011-.013-2.914-2.914-.013-.011Z',
-  },
-  {
-    href: url('reading'),
-    label: 'Reading',
-    current: path.startsWith(url('reading')),
-    icon: 'M2.002 2.725a.75.75 0 0 1 .797-.699C8.79 2.42 13.58 7.21 13.974 13.201a.75.75 0 0 1-1.497.098 10.502 10.502 0 0 0-9.776-9.776.747.747 0 0 1-.7-.798ZM2.84 7.05h-.002a7.002 7.002 0 0 1 6.113 6.111.75.75 0 0 1-1.49.178 5.503 5.503 0 0 0-4.8-4.8.75.75 0 0 1 .179-1.489ZM2 13a1 1 0 1 1 2 0 1 1 0 0 1-2 0Z',
   },
 ];
 ---

@@ -6,8 +6,8 @@ interface Props {
   articles: Article[];
 }
 
-// Articles are known at build time; reads are fetched live, so the graph and the
-// activity below it are drawn in the browser, first from articles, then with reads.
+// The graph and the activity below it are drawn in the browser, where "the last
+// year" ends today rather than on the day the site was built.
 const data = Astro.props.articles.map((a) => ({
   title: a.data.title,
   url: url(`articles/${a.id}`),
@@ -22,7 +22,7 @@ const data = Astro.props.articles.map((a) => ({
       <div class="graph" role="grid" aria-labelledby="contrib-total"></div>
     </div>
     <div class="graph-foot">
-      <span class="muted" id="contrib-status">Articles written and items read, per day (JST).</span>
+      <span class="muted">Articles written per day (JST).</span>
       <span class="legend" aria-hidden="true">
         Less
         {[0, 1, 2, 3, 4].map((l) => <span class="cell" data-level={l} />)}
@@ -41,8 +41,7 @@ const data = Astro.props.articles.map((a) => ({
 </section>
 
 <script>
-  import { dayKey, groupBy, periodLabel, trailingYearGrid } from '../lib/calendar';
-  import { fetchReads, type Read } from '../lib/reads';
+  import { dayKey, periodLabel, trailingYearGrid } from '../lib/calendar';
 
   type ArticleRef = { title: string; url: string; day: string };
 
@@ -50,7 +49,6 @@ const data = Astro.props.articles.map((a) => ({
   const articles: ArticleRef[] = JSON.parse(root.dataset.articles!);
   const graph = root.querySelector<HTMLElement>('.graph')!;
   const total = document.getElementById('contrib-total')!;
-  const status = document.getElementById('contrib-status')!;
   const activity = document.getElementById('activity')!;
   const heading = document.getElementById('activity-heading')!;
   const clear = document.getElementById('activity-clear')!;
@@ -60,7 +58,6 @@ const data = Astro.props.articles.map((a) => ({
   const { from, columns } = trailingYearGrid(today);
   const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 
-  let reads: Read[] = [];
   let selected: string | null = null;
   let monthsShown = 2;
 
@@ -85,18 +82,14 @@ const data = Astro.props.articles.map((a) => ({
   };
   const FILE_ICON =
     'M2 1.75C2 .784 2.784 0 3.75 0h6.586c.464 0 .909.184 1.237.513l2.914 2.914c.329.328.513.773.513 1.237v9.586A1.75 1.75 0 0 1 13.25 16h-9.5A1.75 1.75 0 0 1 2 14.25Zm1.75-.25a.25.25 0 0 0-.25.25v12.5c0 .138.112.25.25.25h9.5a.25.25 0 0 0 .25-.25V6h-2.75A1.75 1.75 0 0 1 9 4.25V1.5Zm6.75.062V4.25c0 .138.112.25.25.25h2.688l-.011-.013-2.914-2.914-.013-.011Z';
-  const RSS_ICON =
-    'M2.002 2.725a.75.75 0 0 1 .797-.699C8.79 2.42 13.58 7.21 13.974 13.201a.75.75 0 0 1-1.497.098 10.502 10.502 0 0 0-9.776-9.776.747.747 0 0 1-.7-.798ZM2.84 7.05h-.002a7.002 7.002 0 0 1 6.113 6.111.75.75 0 0 1-1.49.178 5.503 5.503 0 0 0-4.8-4.8.75.75 0 0 1 .179-1.489ZM2 13a1 1 0 1 1 2 0 1 1 0 0 1-2 0Z';
 
-  const readDay = (r: Read) => dayKey(new Date(r.read_at));
   const inYear = (day: string) => day >= from && day <= today;
 
-  /** Contributions per day: articles written plus items read. */
+  /** Contributions per day: articles written. */
   function counts() {
     const map = new Map<string, number>();
     const add = (day: string) => inYear(day) && map.set(day, (map.get(day) ?? 0) + 1);
     articles.forEach((a) => add(a.day));
-    reads.forEach((r) => add(readDay(r)));
     return map;
   }
 
@@ -145,8 +138,8 @@ const data = Astro.props.articles.map((a) => ({
     graph.replaceChildren(...cells);
   }
 
-  /** One month (or day) of activity: articles written, then reads grouped by feed. */
-  function period(title: string, as: ArticleRef[], rs: Read[]) {
+  /** One month (or day) of activity: articles written. */
+  function period(title: string, as: ArticleRef[]) {
     const section = el('section', 'period');
     const h = el('h3', 'period-title');
     h.append(el('span', '', title));
@@ -171,41 +164,6 @@ const data = Astro.props.articles.map((a) => ({
       section.append(item);
     }
 
-    if (rs.length) {
-      const feeds = new Map<string, number>();
-      rs.forEach((r) => feeds.set(r.feed_title, (feeds.get(r.feed_title) ?? 0) + 1));
-      const sorted = [...feeds].sort((a, b) => b[1] - a[1]);
-      const item = el('div', 'item');
-      item.append(el('span', 'item-icon'));
-      item.lastElementChild!.append(icon(RSS_ICON));
-      const body = el('div', 'item-body');
-      const details = el('details');
-      details.append(el('summary', 'item-summary', `Read ${plural(rs.length, 'item')} from ${plural(feeds.size, 'feed')}`));
-      const list = el('ul', 'item-list feeds');
-      for (const [feed, n] of sorted) {
-        const li = el('li');
-        const bar = el('span', 'bar');
-        bar.style.setProperty('--share', String(n / sorted[0][1]));
-        li.append(el('span', 'feed', feed), el('span', 'muted', plural(n, 'item')), bar);
-        list.append(li);
-      }
-      const titles = el('ul', 'item-list');
-      for (const r of rs.slice(0, 10)) {
-        const li = el('li');
-        const link = el(r.url ? 'a' : 'span', '', r.title || '(untitled)');
-        if (r.url && link instanceof HTMLAnchorElement) {
-          link.href = r.url;
-          link.target = '_blank';
-          link.rel = 'noopener noreferrer';
-        }
-        li.append(link, el('span', 'muted', r.feed_title));
-        titles.append(li);
-      }
-      details.append(list, titles);
-      body.append(details);
-      item.append(body);
-      section.append(item);
-    }
     return section;
   }
 
@@ -215,17 +173,15 @@ const data = Astro.props.articles.map((a) => ({
       clear.hidden = false;
       more.hidden = true;
       const as = articles.filter((a) => a.day === selected);
-      const rs = reads.filter((r) => readDay(r) === selected);
       activity.replaceChildren(
-        as.length || rs.length ? period(periodLabel('day', selected), as, rs) : el('p', 'muted none', 'No activity on this day.'),
+        as.length ? period(periodLabel('day', selected), as) : el('p', 'muted none', 'No activity on this day.'),
       );
       return;
     }
     heading.textContent = 'Contribution activity';
     clear.hidden = true;
     const yearArticles = articles.filter((a) => inYear(a.day));
-    const readsByMonth = new Map(groupBy(reads, (r) => new Date(r.read_at), 'month'));
-    const months = [...new Set([...yearArticles.map((a) => a.day.slice(0, 7)), ...readsByMonth.keys()])].sort().reverse();
+    const months = [...new Set(yearArticles.map((a) => a.day.slice(0, 7)))].sort().reverse();
     if (months.length === 0) {
       activity.replaceChildren(el('p', 'muted none', 'No activity in the last year.'));
       more.hidden = true;
@@ -238,7 +194,6 @@ const data = Astro.props.articles.map((a) => ({
           period(
             periodLabel('month', m),
             yearArticles.filter((a) => a.day.startsWith(m)),
-            readsByMonth.get(m) ?? [],
           ),
         ),
     );
@@ -270,16 +225,6 @@ const data = Astro.props.articles.map((a) => ({
   const scroller = root.querySelector('.graph-scroll')!;
   scroller.scrollLeft = scroller.scrollWidth;
 
-  status.textContent = 'Loading reads…';
-  fetchReads(from, today)
-    .then((r) => {
-      reads = r;
-      status.textContent = 'Articles written and items read, per day (JST).';
-      draw();
-    })
-    .catch(() => {
-      status.textContent = 'Articles only: the reading log is unavailable right now.';
-    });
 </script>
 
 <style>
@@ -448,9 +393,6 @@ const data = Astro.props.articles.map((a) => ({
     cursor: default;
   }
 
-  #activity :global(summary.item-summary) {
-    cursor: pointer;
-  }
 
   #activity :global(.item-list) {
     list-style: none;
@@ -476,26 +418,6 @@ const data = Astro.props.articles.map((a) => ({
   #activity :global(.item-list li > :not(:first-child)) {
     flex: none;
     font-size: 0.75rem;
-  }
-
-  #activity :global(.feeds li) {
-    display: grid;
-    grid-template-columns: minmax(0, 1fr) auto 6rem;
-    align-items: center;
-  }
-
-  #activity :global(.feed) {
-    font-weight: 600;
-  }
-
-  #activity :global(.bar) {
-    height: 0.5rem;
-    border-radius: 999px;
-    background: linear-gradient(
-      to right,
-      var(--heat-3) calc(var(--share) * 100%),
-      var(--bg-soft) calc(var(--share) * 100%)
-    );
   }
 
   #activity :global(.none) {
