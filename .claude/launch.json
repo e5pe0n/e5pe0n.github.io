@@ -1,0 +1,17 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "site",
+      "runtimeExecutable": "mise",
+      "runtimeArgs": ["exec", "--", "pnpm", "--dir", "site", "preview", "--port", "4321"],
+      "port": 4321
+    },
+    {
+      "name": "api",
+      "runtimeExecutable": "env",
+      "runtimeArgs": ["FIXTURES=1", "PORT=8080", "mise", "exec", "--", "pnpm", "--dir", "api", "dev"],
+      "port": 8080
+    }
+  ]
+}
