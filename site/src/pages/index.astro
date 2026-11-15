@@ -1,0 +1,146 @@
+---
+import ContributionGraph from '../components/ContributionGraph.astro';
+import ProfileLayout from '../layouts/ProfileLayout.astro';
+import { dayKey } from '../lib/calendar';
+import { getArticles, readingMinutes, tagUrl, url } from '../lib/site';
+
+const articles = await getArticles();
+// Like GitHub: pinned articles, or the most recent ones when none are pinned.
+const pinned = articles.filter((a) => a.data.pinned);
+const cards = (pinned.length ? pinned : articles).slice(0, 6);
+
+// A stable color per tag, like the language dot on a repository card.
+const DOT_COLORS = ['#3178c6', '#f1e05a', '#dea584', '#00add8', '#e34c26', '#563d7c', '#89e051', '#b07219'];
+const dotColor = (tag: string) => DOT_COLORS[[...tag].reduce((h, c) => (h * 31 + c.charCodeAt(0)) >>> 0, 7) % DOT_COLORS.length];
+---
+
+<ProfileLayout>
+  <section>
+    <h2 class="section-title">{pinned.length ? 'Pinned' : 'Recent articles'}</h2>
+    {
+      cards.length === 0 ? (
+        <p class="empty-state">No articles yet.</p>
+      ) : (
+        <ol class="cards">
+          {cards.map((article) => {
+            const tag = article.data.tags[0];
+            return (
+              <li class="card">
+                <div class="card-head">
+                  <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true">
+                    <path
+                      fill="currentColor"
+                      d="M2 1.75C2 .784 2.784 0 3.75 0h6.586c.464 0 .909.184 1.237.513l2.914 2.914c.329.328.513.773.513 1.237v9.586A1.75 1.75 0 0 1 13.25 16h-9.5A1.75 1.75 0 0 1 2 14.25Zm1.75-.25a.25.25 0 0 0-.25.25v12.5c0 .138.112.25.25.25h9.5a.25.25 0 0 0 .25-.25V6h-2.75A1.75 1.75 0 0 1 9 4.25V1.5Zm6.75.062V4.25c0 .138.112.25.25.25h2.688l-.011-.013-2.914-2.914-.013-.011Z"
+                    />
+                  </svg>
+                  <a class="card-title" href={url(`articles/${article.id}`)}>
+                    {article.data.title}
+                  </a>
+                </div>
+                <p class="card-description">{article.data.description}</p>
+                <p class="card-meta">
+                  {tag && (
+                    <a class="card-tag" href={tagUrl(tag)}>
+                      <span class="dot" style={`background: ${dotColor(tag)}`} />
+                      {tag}
+                    </a>
+                  )}
+                  <time datetime={article.data.date.toISOString()}>{dayKey(article.data.date)}</time>
+                  <span>{readingMinutes(article.body)} min read</span>
+                </p>
+              </li>
+            );
+          })}
+        </ol>
+      )
+    }
+  </section>
+
+  <ContributionGraph articles={articles} />
+</ProfileLayout>
+
+<style>
+  .section-title {
+    font-size: 1rem;
+    font-weight: 400;
+    margin: 0 0 0.5rem;
+  }
+
+  .cards {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 1.5rem;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1rem;
+  }
+
+  @media (max-width: 640px) {
+    .cards {
+      grid-template-columns: minmax(0, 1fr);
+    }
+  }
+
+  .card {
+    display: flex;
+    flex-direction: column;
+    padding: 1rem;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    font-size: 0.75rem;
+    color: var(--fg-muted);
+  }
+
+  .card-head {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
+
+  .card-head svg {
+    flex: none;
+    margin-top: 0.15rem;
+  }
+
+  .card-title {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--link);
+    text-decoration: none;
+  }
+
+  .card-title:hover {
+    text-decoration: underline;
+  }
+
+  .card-description {
+    flex: 1;
+    margin: 0.5rem 0 1rem;
+  }
+
+  .card-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.25rem 1rem;
+    margin: 0;
+  }
+
+  .card-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    color: inherit;
+    text-decoration: none;
+  }
+
+  .card-tag:hover {
+    color: var(--link);
+  }
+
+  .dot {
+    width: 0.75rem;
+    height: 0.75rem;
+    border-radius: 50%;
+    border: 1px solid rgb(0 0 0 / 0.1);
+  }
+</style>

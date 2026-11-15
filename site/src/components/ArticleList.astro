@@ -1,0 +1,41 @@
+---
+import { dayKey } from '../lib/calendar';
+import { url, type Article } from '../lib/site';
+import Tags from './Tags.astro';
+
+interface Props {
+  articles: Article[];
+}
+
+const { articles } = Astro.props;
+---
+
+{
+  articles.length === 0 ? (
+    <p class="empty-state">No articles here yet.</p>
+  ) : (
+    <ul class="entries">
+      {articles.map((article) => (
+        <li data-tags={JSON.stringify(article.data.tags)}>
+          <a class="entry-title" href={url(`articles/${article.id}`)}>
+            {article.data.title}
+          </a>
+          <p class="muted small description">{article.data.description}</p>
+          <div class="entry-meta">
+            <time class="mono" datetime={article.data.date.toISOString()}>
+              {dayKey(article.data.date)}
+            </time>
+            {article.data.draft && <span class="tag">draft</span>}
+            <Tags tags={article.data.tags} />
+          </div>
+        </li>
+      ))}
+    </ul>
+  )
+}
+
+<style>
+  .description {
+    margin: 0.15rem 0 0.35rem;
+  }
+</style>

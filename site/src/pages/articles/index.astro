@@ -1,0 +1,274 @@
+---
+import ArticleList from '../../components/ArticleList.astro';
+import ProfileLayout from '../../layouts/ProfileLayout.astro';
+import { groupBy } from '../../lib/calendar';
+import { getArticles, tagCounts, tagUrl } from '../../lib/site';
+
+const articles = await getArticles();
+const tags = tagCounts(articles);
+// Newest first: [year, [[month, articles]]].
+const years = groupBy(articles, (a) => a.data.date, 'year').map(
+  ([year, group]) => [year, groupBy(group, (a) => a.data.date, 'month')] as const,
+);
+const MONTHS = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+const monthName = (key: string) => MONTHS[Number(key.slice(5)) - 1];
+---
+
+<ProfileLayout title="Articles">
+  <div class="articles-layout">
+    <div class="content">
+      {
+        tags.length > 0 && (
+          <section class="tag-filter" aria-labelledby="tag-filter-label">
+            <div class="filter-head">
+              <span id="tag-filter-label" class="muted small">Filter by tags</span>
+              <button type="button" id="clear-tags" class="link-button small" hidden>
+                Clear
+              </button>
+            </div>
+            <ul class="tags">
+              {tags.map(([tag, count]) => (
+                <li>
+                  <a class="tag" href={tagUrl(tag)} data-tag={tag} aria-pressed="false" role="button">
+                    #{tag} <span class="count">{count}</span>
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </section>
+        )
+      }
+
+      <p class="muted" id="article-count" aria-live="polite">{articles.length} articles, newest first.</p>
+
+      {
+        articles.length === 0 ? (
+          <ArticleList articles={[]} />
+        ) : (
+          years.map(([year, months]) => (
+            <section class="year" id={year} data-group={year}>
+              <h2 class="mono">{year}</h2>
+              {months.map(([month, group]) => (
+                <section class="month" id={month} data-group={month}>
+                  <h3>
+                    {monthName(month)} <span class="muted small" data-count>{group.length}</span>
+                  </h3>
+                  <ArticleList articles={group} />
+                </section>
+              ))}
+            </section>
+          ))
+        )
+      }
+      <p class="empty-state" id="no-match" hidden>No articles have all of the selected tags.</p>
+    </div>
+
+    {
+      years.length > 0 && (
+        <nav class="years" aria-label="Years">
+          {years.map(([year]) => (
+            <a href={`#${year}`} data-archive={year}>
+              {year}
+            </a>
+          ))}
+        </nav>
+      )
+    }
+  </div>
+</ProfileLayout>
+
+<script>
+  // Shows only the articles that have every selected tag. The selection lives in
+  // ?tags=a,b so a filtered list can be linked to (tag links elsewhere point here).
+  const buttons = [...document.querySelectorAll<HTMLAnchorElement>('.tag-filter [data-tag]')];
+  const items = [...document.querySelectorAll<HTMLLIElement>('.entries > li[data-tags]')];
+  const count = document.getElementById('article-count')!;
+  const clear = document.getElementById('clear-tags');
+  const noMatch = document.getElementById('no-match')!;
+
+  const selected = new Set(
+    (new URLSearchParams(location.search).get('tags') ?? '').split(',').filter(Boolean),
+  );
+
+  function apply() {
+    buttons.forEach((b) => b.setAttribute('aria-pressed', String(selected.has(b.dataset.tag!))));
+    let shown = 0;
+    for (const item of items) {
+      const tags: string[] = JSON.parse(item.dataset.tags!);
+      const match = [...selected].every((t) => tags.includes(t));
+      item.hidden = !match;
+      if (match) shown++;
+    }
+    count.textContent =
+      selected.size === 0
+        ? `${items.length} articles, newest first.`
+        : `${shown} of ${items.length} articles tagged ${[...selected].map((t) => `#${t}`).join(' + ')}.`;
+    noMatch.hidden = shown > 0 || items.length === 0;
+    updateGroups();
+    if (clear) clear.hidden = selected.size === 0;
+
+    const url = new URL(location.href);
+    if (selected.size) url.searchParams.set('tags', [...selected].join(','));
+    else url.searchParams.delete('tags');
+    history.replaceState(null, '', url);
+  }
+
+  /** Hides years and months left empty by the filter, and their year buttons, and recounts the months. */
+  function updateGroups() {
+    for (const group of document.querySelectorAll<HTMLElement>('[data-group]')) {
+      const visible = group.querySelectorAll('.entries > li:not([hidden])').length;
+      group.hidden = visible === 0;
+      const count = group.querySelector<HTMLElement>(':scope > h3 [data-count]');
+      if (count) count.textContent = String(visible);
+      const link = document.querySelector<HTMLElement>(`[data-archive="${group.dataset.group}"]`);
+      if (link) link.hidden = visible === 0;
+    }
+  }
+
+  buttons.forEach((b) =>
+    b.addEventListener('click', (e) => {
+      e.preventDefault();
+      const tag = b.dataset.tag!;
+      if (selected.has(tag)) selected.delete(tag);
+      else selected.add(tag);
+      apply();
+    }),
+  );
+  clear?.addEventListener('click', () => {
+    selected.clear();
+    apply();
+  });
+
+  // Tag chips inside the list filter in place too, instead of reloading.
+  document.querySelectorAll<HTMLAnchorElement>('.entries a.tag').forEach((a) =>
+    a.addEventListener('click', (e) => {
+      const tag = new URL(a.href).searchParams.get('tags');
+      if (!tag) return;
+      e.preventDefault();
+      selected.add(tag);
+      apply();
+      scrollTo({ top: 0, behavior: 'smooth' });
+    }),
+  );
+
+  apply();
+
+  // Highlight the year being read, like GitHub's contribution year buttons.
+  const links = new Map(
+    [...document.querySelectorAll<HTMLAnchorElement>('.years a')].map((a) => [a.hash.slice(1), a]),
+  );
+  const visible = new Set<string>();
+  const observer = new IntersectionObserver((entries) => {
+    for (const e of entries) {
+      const id = (e.target as HTMLElement).id;
+      if (e.isIntersecting) visible.add(id);
+      else visible.delete(id);
+    }
+    // The topmost month on screen, in page order.
+    const current = [...document.querySelectorAll<HTMLElement>('section.month')].find((m) => visible.has(m.id))?.id;
+    links.forEach((a) => a.removeAttribute('aria-current'));
+    if (current) links.get(current.slice(0, 4))?.setAttribute('aria-current', 'true');
+  });
+  document.querySelectorAll('section.month').forEach((m) => observer.observe(m));
+</script>
+
+<style>
+  .tag-filter {
+    margin: 0.5rem 0 1rem;
+  }
+
+  .filter-head {
+    display: flex;
+    align-items: baseline;
+    gap: 0.75rem;
+    margin-bottom: 0.4rem;
+  }
+
+  .link-button {
+    background: none;
+    border: 0;
+    padding: 0;
+    color: var(--link);
+    cursor: pointer;
+    font: inherit;
+  }
+
+  .tag-filter .tag {
+    font-size: 0.85rem;
+    padding: 0.1em 0.7em;
+  }
+
+  .tag-filter .tag[aria-pressed='true'] {
+    background: var(--accent);
+    color: var(--bg);
+  }
+
+  .count {
+    opacity: 0.7;
+  }
+
+  .articles-layout {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 1.5rem;
+    align-items: start;
+  }
+
+  /* Year buttons on the right, like GitHub's contribution year picker. */
+  .years {
+    position: sticky;
+    top: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    min-width: 6rem;
+  }
+
+  .years a {
+    padding: 0.4rem 1rem;
+    border-radius: var(--radius);
+    font-size: 0.75rem;
+    color: var(--fg-muted);
+    text-decoration: none;
+  }
+
+  .years a:hover {
+    background: var(--bg-soft);
+    color: var(--fg);
+  }
+
+  .years a[aria-current='true'] {
+    background: var(--accent);
+    color: #fff;
+  }
+
+  @media (max-width: 760px) {
+    .articles-layout {
+      grid-template-columns: minmax(0, 1fr);
+    }
+
+    .years {
+      position: static;
+      order: -1;
+      flex-direction: row;
+      flex-wrap: wrap;
+    }
+  }
+
+  .year > h2 {
+    margin: 1.5rem 0 0;
+    padding-bottom: 0.25rem;
+    border-bottom: 2px solid var(--fg);
+  }
+
+  .month > h3 {
+    margin: 1.25rem 0 0;
+    font-size: 1rem;
+    color: var(--fg-muted);
+  }
+
+  .year,
+  .month {
+    scroll-margin-top: 1rem;
+  }
+</style>

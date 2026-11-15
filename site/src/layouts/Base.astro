@@ -1,0 +1,231 @@
+---
+import '../styles/global.css';
+import '../styles/callouts.css';
+import SearchBox from '../components/SearchBox.astro';
+import { getArticles, SITE_DESCRIPTION, SITE_TITLE, url } from '../lib/site';
+
+interface Props {
+  title?: string;
+  description?: string;
+  wide?: boolean;
+}
+
+const { title, description = SITE_DESCRIPTION, wide = false } = Astro.props;
+const fullTitle = title ? `${title} · ${SITE_TITLE}` : SITE_TITLE;
+const path = Astro.url.pathname;
+const articleCount = (await getArticles()).length;
+// GitHub-style profile tabs, with Octicons (book, file).
+const tabs = [
+  {
+    href: url(),
+    label: 'Overview',
+    current: path === url() || path === url().replace(/\/$/, ''),
+    icon: 'M0 1.75A.75.75 0 0 1 .75 1h4.253c1.227 0 2.317.59 3 1.501A3.743 3.743 0 0 1 11.006 1h4.245a.75.75 0 0 1 .75.75v10.5a.75.75 0 0 1-.75.75h-4.507a2.25 2.25 0 0 0-1.591.659l-.622.621a.75.75 0 0 1-1.06 0l-.622-.621A2.25 2.25 0 0 0 5.258 13H.75a.75.75 0 0 1-.75-.75Zm7.251 10.324.004-5.073-.002-2.253A2.25 2.25 0 0 0 5.003 2.5H1.5v9h3.757a3.75 3.75 0 0 1 1.994.574ZM8.755 4.75l-.004 7.322a3.752 3.752 0 0 1 1.992-.572H14.5v-9h-3.495a2.25 2.25 0 0 0-2.25 2.25Z',
+  },
+  {
+    href: url('articles'),
+    label: 'Articles',
+    count: articleCount,
+    current: path.startsWith(url('articles')),
+    icon: 'M2 1.75C2 .784 2.784 0 3.75 0h6.586c.464 0 .909.184 1.237.513l2.914 2.914c.329.328.513.773.513 1.237v9.586A1.75 1.75 0 0 1 13.25 16h-9.5A1.75 1.75 0 0 1 2 14.25Zm1.75-.25a.25.25 0 0 0-.25.25v12.5c0 .138.112.25.25.25h9.5a.25.25 0 0 0 .25-.25V6h-2.75A1.75 1.75 0 0 1 9 4.25V1.5Zm6.75.062V4.25c0 .138.112.25.25.25h2.688l-.011-.013-2.914-2.914-.013-.011Z',
+  },
+];
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{fullTitle}</title>
+    <meta name="description" content={description} />
+    <link rel="icon" type="image/svg+xml" href={url('favicon.svg')} />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Intel+One+Mono:ital,wght@0,400;0,700;1,400&display=swap"
+    />
+    <link rel="alternate" type="application/rss+xml" title={SITE_TITLE} href={url('rss.xml')} />
+    <link rel="canonical" href={new URL(path, Astro.site)} />
+    <meta property="og:title" content={fullTitle} />
+    <meta property="og:description" content={description} />
+    <script is:inline>
+      try {
+        const theme = localStorage.getItem('theme');
+        if (theme) document.documentElement.dataset.theme = theme;
+      } catch {}
+    </script>
+  </head>
+  <body>
+    <header class="site-header">
+      <div class:list={['container', 'header-inner', { wide }]}>
+        <a class="brand mono" href={url()}>{SITE_TITLE}</a>
+        <button id="theme-toggle" type="button" aria-label="Toggle dark mode" title="Toggle dark mode">
+          ◐
+        </button>
+        <SearchBox />
+      </div>
+      <nav class:list={['container', 'tabs', { wide }]} aria-label="Main">
+        {
+          tabs.map(({ href, label, count, current, icon }) => (
+            <a href={href} aria-current={current ? 'page' : undefined}>
+              <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true">
+                <path fill="currentColor" d={icon} />
+              </svg>
+              {label}
+              {count !== undefined && <span class="counter">{count}</span>}
+            </a>
+          ))
+        }
+      </nav>
+    </header>
+    <main class:list={['container', { wide }]}>
+      <slot />
+    </main>
+    <footer class="site-footer">
+      <div class:list={['container', { wide }]}>
+        <span class="muted small">© {new Date().getFullYear()} e5pe0n</span>
+        <a class="small" href={url('rss.xml')}>RSS</a>
+        <a class="small" href="https://github.com/e5pe0n">GitHub</a>
+      </div>
+    </footer>
+    <script>
+      const toggle = document.getElementById('theme-toggle');
+      toggle?.addEventListener('click', () => {
+        const root = document.documentElement;
+        const current =
+          root.dataset.theme ?? (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+        const next = current === 'dark' ? 'light' : 'dark';
+        root.dataset.theme = next;
+        try {
+          localStorage.setItem('theme', next);
+        } catch {}
+      });
+    </script>
+  </body>
+</html>
+
+<style>
+  .site-header {
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 1.5rem;
+    background: var(--bg-soft);
+    isolation: isolate;
+  }
+
+  .header-inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 0.5rem 1rem;
+    padding-top: 0.9rem;
+    padding-bottom: 0.4rem;
+  }
+
+  .brand {
+    font-weight: 700;
+    color: var(--fg);
+    text-decoration: none;
+    font-size: 1.05rem;
+  }
+
+  /* Narrow screens: brand and menu on one row, search full width below. */
+  @media (max-width: 640px) {
+    .header-inner > :global(.search) {
+      order: 3;
+      flex-basis: 100%;
+      max-width: none;
+    }
+  }
+
+  /* GitHub's underlined tab bar along the bottom of the header. */
+  .tabs {
+    display: flex;
+    gap: 0.5rem;
+    /* Still scrolls sideways if the tabs ever outgrow a narrow screen, without a scroll bar. */
+    overflow-x: auto;
+    overflow-y: hidden;
+    scrollbar-width: none;
+    font-size: 0.875rem;
+  }
+
+  .tabs::-webkit-scrollbar {
+    display: none;
+  }
+
+  .tabs a {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 0.5rem 0.6rem;
+    margin-bottom: -1px;
+    border-bottom: 2px solid transparent;
+    color: var(--fg);
+    text-decoration: none;
+    white-space: nowrap;
+    position: relative;
+  }
+
+  .tabs a::before {
+    content: '';
+    position: absolute;
+    inset: 0.3rem 0 0.4rem;
+    border-radius: var(--radius);
+    z-index: -1;
+  }
+
+  .tabs a:hover::before {
+    background: var(--bg-soft);
+  }
+
+  .tabs svg {
+    color: var(--fg-muted);
+  }
+
+  .tabs a[aria-current='page'] {
+    font-weight: 600;
+    border-bottom-color: var(--tab-active);
+  }
+
+  .counter {
+    display: inline-block;
+    min-width: 1.25rem;
+    padding: 0 0.4rem;
+    border-radius: 2em;
+    background: var(--code-bg);
+    font-size: 0.75rem;
+    font-weight: 500;
+    line-height: 1.3rem;
+    text-align: center;
+  }
+
+  #theme-toggle {
+    margin-left: auto;
+    background: none;
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    color: var(--fg);
+    width: 1.9rem;
+    height: 1.9rem;
+    cursor: pointer;
+    font-size: 0.95rem;
+  }
+
+  main {
+    min-height: 60vh;
+    padding-bottom: 3rem;
+  }
+
+  .site-footer {
+    border-top: 1px solid var(--border);
+    padding: 1.25rem 0 2rem;
+  }
+
+  .site-footer .container {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+  }
+</style>

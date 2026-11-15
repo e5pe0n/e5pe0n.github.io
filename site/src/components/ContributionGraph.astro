@@ -1,0 +1,445 @@
+---
+import { dayKey } from '../lib/calendar';
+import { url, type Article } from '../lib/site';
+
+interface Props {
+  articles: Article[];
+}
+
+// The graph and the activity below it are drawn in the browser, where "the last
+// year" ends today rather than on the day the site was built.
+const data = Astro.props.articles.map((a) => ({
+  title: a.data.title,
+  url: url(`articles/${a.id}`),
+  day: dayKey(a.data.date),
+}));
+---
+
+<section class="contributions" data-articles={JSON.stringify(data)}>
+  <h2 class="section-title" id="contrib-total">Contributions in the last year</h2>
+  <div class="graph-box">
+    <div class="graph-scroll">
+      <div class="graph" role="grid" aria-labelledby="contrib-total"></div>
+    </div>
+    <div class="graph-foot">
+      <span class="muted">Articles written per day (JST).</span>
+      <span class="legend" aria-hidden="true">
+        Less
+        {[0, 1, 2, 3, 4].map((l) => <span class="cell" data-level={l} />)}
+        More
+      </span>
+    </div>
+  </div>
+
+  <h2 class="section-title activity-title">
+    <span id="activity-heading">Contribution activity</span>
+    <button type="button" class="link-button" id="activity-clear" hidden>Show all activity</button>
+  </h2>
+  <div id="activity"></div>
+  <button type="button" class="more" id="activity-more" hidden>Show more activity</button>
+  <noscript><p class="empty-state">The contribution graph needs JavaScript.</p></noscript>
+</section>
+
+<script>
+  import { dayKey, periodLabel, trailingYearGrid } from '../lib/calendar';
+
+  type ArticleRef = { title: string; url: string; day: string };
+
+  const root = document.querySelector<HTMLElement>('.contributions')!;
+  const articles: ArticleRef[] = JSON.parse(root.dataset.articles!);
+  const graph = root.querySelector<HTMLElement>('.graph')!;
+  const total = document.getElementById('contrib-total')!;
+  const activity = document.getElementById('activity')!;
+  const heading = document.getElementById('activity-heading')!;
+  const clear = document.getElementById('activity-clear')!;
+  const more = document.getElementById('activity-more')!;
+
+  const today = dayKey(new Date());
+  const { from, columns } = trailingYearGrid(today);
+  const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+
+  let selected: string | null = null;
+  let monthsShown = 2;
+
+  const el = <K extends keyof HTMLElementTagNameMap>(tag: K, className?: string, text?: string) => {
+    const e = document.createElement(tag);
+    if (className) e.className = className;
+    if (text !== undefined) e.textContent = text;
+    return e;
+  };
+  const plural = (n: number, word: string) => `${n} ${word}${n === 1 ? '' : 's'}`;
+  const icon = (d: string) => {
+    const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+    svg.setAttribute('viewBox', '0 0 16 16');
+    svg.setAttribute('width', '16');
+    svg.setAttribute('height', '16');
+    svg.setAttribute('aria-hidden', 'true');
+    const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+    path.setAttribute('fill', 'currentColor');
+    path.setAttribute('d', d);
+    svg.append(path);
+    return svg;
+  };
+  const FILE_ICON =
+    'M2 1.75C2 .784 2.784 0 3.75 0h6.586c.464 0 .909.184 1.237.513l2.914 2.914c.329.328.513.773.513 1.237v9.586A1.75 1.75 0 0 1 13.25 16h-9.5A1.75 1.75 0 0 1 2 14.25Zm1.75-.25a.25.25 0 0 0-.25.25v12.5c0 .138.112.25.25.25h9.5a.25.25 0 0 0 .25-.25V6h-2.75A1.75 1.75 0 0 1 9 4.25V1.5Zm6.75.062V4.25c0 .138.112.25.25.25h2.688l-.011-.013-2.914-2.914-.013-.011Z';
+
+  const inYear = (day: string) => day >= from && day <= today;
+
+  /** Contributions per day: articles written. */
+  function counts() {
+    const map = new Map<string, number>();
+    const add = (day: string) => inYear(day) && map.set(day, (map.get(day) ?? 0) + 1);
+    articles.forEach((a) => add(a.day));
+    return map;
+  }
+
+  function drawGraph() {
+    const perDay = counts();
+    const sum = [...perDay.values()].reduce((a, b) => a + b, 0);
+    total.textContent = `${sum.toLocaleString('en-US')} contribution${sum === 1 ? '' : 's'} in the last year`;
+    // Levels by quartile of the busiest day, as GitHub does.
+    const max = Math.max(1, ...perDay.values());
+    const level = (n: number) => (n === 0 ? 0 : Math.min(4, Math.ceil((n / max) * 4)));
+
+    graph.style.setProperty('--weeks', String(columns.length));
+    const cells: HTMLElement[] = [el('span', 'corner')];
+    // Month labels over the first week that starts in each month.
+    columns.forEach((week, i) => {
+      const first = week.find(Boolean);
+      const label = el('span', 'month-label');
+      if (first && (i === 0 || Number(first.slice(8)) <= 7) && (i > 0 || Number(first.slice(8)) <= 14)) {
+        label.textContent = MONTHS[Number(first.slice(5, 7)) - 1];
+      }
+      label.style.gridColumn = String(i + 2);
+      cells.push(label);
+    });
+    ['', 'Mon', '', 'Wed', '', 'Fri', ''].forEach((name, d) => {
+      const label = el('span', 'day-label', name);
+      label.style.gridRow = String(d + 2);
+      cells.push(label);
+      columns.forEach((week, i) => {
+        const day = week[d];
+        const cell = el(day ? 'button' : 'span', 'cell');
+        cell.style.gridRow = String(d + 2);
+        cell.style.gridColumn = String(i + 2);
+        if (day) {
+          const n = perDay.get(day) ?? 0;
+          cell.dataset.level = String(level(n));
+          cell.dataset.day = day;
+          (cell as HTMLButtonElement).type = 'button';
+          const label = `${n === 0 ? 'No' : n} contribution${n === 1 ? '' : 's'} on ${periodLabel('day', day)}`;
+          cell.title = label;
+          cell.setAttribute('aria-label', label);
+          cell.setAttribute('aria-pressed', String(day === selected));
+        } else cell.classList.add('empty');
+        cells.push(cell);
+      });
+    });
+    graph.replaceChildren(...cells);
+  }
+
+  /** One month (or day) of activity: articles written. */
+  function period(title: string, as: ArticleRef[]) {
+    const section = el('section', 'period');
+    const h = el('h3', 'period-title');
+    h.append(el('span', '', title));
+    section.append(h);
+
+    if (as.length) {
+      const item = el('div', 'item');
+      item.append(el('span', 'item-icon'));
+      item.lastElementChild!.append(icon(FILE_ICON));
+      const body = el('div', 'item-body');
+      body.append(el('p', 'item-summary', `Wrote ${plural(as.length, 'article')}`));
+      const list = el('ul', 'item-list');
+      for (const a of as) {
+        const li = el('li');
+        const link = el('a', '', a.title) as HTMLAnchorElement;
+        link.href = a.url;
+        li.append(link, el('time', 'muted', periodLabel('day', a.day).replace(/, \d{4}$/, '').replace(/^\w+, /, '')));
+        list.append(li);
+      }
+      body.append(list);
+      item.append(body);
+      section.append(item);
+    }
+
+    return section;
+  }
+
+  function drawActivity() {
+    if (selected) {
+      heading.textContent = `Activity on ${periodLabel('day', selected)}`;
+      clear.hidden = false;
+      more.hidden = true;
+      const as = articles.filter((a) => a.day === selected);
+      activity.replaceChildren(
+        as.length ? period(periodLabel('day', selected), as) : el('p', 'muted none', 'No activity on this day.'),
+      );
+      return;
+    }
+    heading.textContent = 'Contribution activity';
+    clear.hidden = true;
+    const yearArticles = articles.filter((a) => inYear(a.day));
+    const months = [...new Set(yearArticles.map((a) => a.day.slice(0, 7)))].sort().reverse();
+    if (months.length === 0) {
+      activity.replaceChildren(el('p', 'muted none', 'No activity in the last year.'));
+      more.hidden = true;
+      return;
+    }
+    activity.replaceChildren(
+      ...months
+        .slice(0, monthsShown)
+        .map((m) =>
+          period(
+            periodLabel('month', m),
+            yearArticles.filter((a) => a.day.startsWith(m)),
+          ),
+        ),
+    );
+    more.hidden = monthsShown >= months.length;
+  }
+
+  function draw() {
+    drawGraph();
+    drawActivity();
+  }
+
+  graph.addEventListener('click', (e) => {
+    const day = (e.target as HTMLElement).closest<HTMLElement>('[data-day]')?.dataset.day;
+    if (!day) return;
+    selected = selected === day ? null : day;
+    draw();
+  });
+  clear.addEventListener('click', () => {
+    selected = null;
+    draw();
+  });
+  more.addEventListener('click', () => {
+    monthsShown += 2;
+    drawActivity();
+  });
+
+  draw();
+  // Scroll the graph to today, as GitHub does on narrow screens.
+  const scroller = root.querySelector('.graph-scroll')!;
+  scroller.scrollLeft = scroller.scrollWidth;
+
+</script>
+
+<style>
+  .section-title {
+    font-size: 1rem;
+    font-weight: 400;
+    margin: 0 0 0.5rem;
+  }
+
+  .graph-box {
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 0.75rem 1rem 0.5rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .graph-scroll {
+    overflow-x: auto;
+  }
+
+  .graph {
+    --cell: 10px;
+    display: inline-grid;
+    grid-template-columns: 1.75rem repeat(var(--weeks), var(--cell));
+    grid-template-rows: 1rem repeat(7, var(--cell));
+    gap: 3px;
+    font-size: 0.7rem;
+    color: var(--fg);
+  }
+
+  .graph :global(.month-label) {
+    grid-row: 1;
+    white-space: nowrap;
+    overflow: visible;
+    width: 0;
+    line-height: 1;
+  }
+
+  .graph :global(.day-label) {
+    grid-column: 1;
+    line-height: var(--cell);
+  }
+
+  .contributions :global(.cell) {
+    width: var(--cell, 10px);
+    height: var(--cell, 10px);
+    padding: 0;
+    border: 0;
+    border-radius: 2px;
+    outline: 1px solid rgb(27 31 35 / 0.06);
+    outline-offset: -1px;
+    background: var(--heat-0);
+    display: inline-block;
+  }
+
+  .graph :global(button.cell) {
+    cursor: pointer;
+  }
+
+  .graph :global(.cell.empty) {
+    background: transparent;
+    outline: 0;
+  }
+
+  .contributions :global(.cell[data-level='1']) { background: var(--heat-1); }
+  .contributions :global(.cell[data-level='2']) { background: var(--heat-2); }
+  .contributions :global(.cell[data-level='3']) { background: var(--heat-3); }
+  .contributions :global(.cell[data-level='4']) { background: var(--heat-4); }
+
+  .graph :global(.cell[aria-pressed='true']) {
+    outline: 2px solid var(--fg);
+    outline-offset: 0;
+  }
+
+  .graph-foot {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    font-size: 0.75rem;
+    margin-top: 0.5rem;
+  }
+
+  .legend {
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+    color: var(--fg-muted);
+  }
+
+  .legend .cell {
+    --cell: 10px;
+  }
+
+  .activity-title {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+  }
+
+  .link-button {
+    background: none;
+    border: 0;
+    padding: 0;
+    color: var(--link);
+    cursor: pointer;
+    font: inherit;
+    font-size: 0.875rem;
+  }
+
+  #activity :global(.period-title) {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    font-size: 0.75rem;
+    font-weight: 600;
+    margin: 1rem 0 0.5rem;
+  }
+
+  #activity :global(.period-title)::after {
+    content: '';
+    flex: 1;
+    border-top: 1px solid var(--border);
+  }
+
+  #activity :global(.item) {
+    display: flex;
+    gap: 1rem;
+    padding: 0.5rem 0 1rem;
+    position: relative;
+  }
+
+  /* The timeline's vertical line through the icons. */
+  #activity :global(.item)::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 1rem;
+    border-left: 2px solid var(--border);
+    z-index: -1;
+  }
+
+  #activity :global(.item-icon) {
+    flex: none;
+    display: grid;
+    place-items: center;
+    width: 2rem;
+    height: 2rem;
+    border-radius: 50%;
+    background: var(--bg-soft);
+    border: 2px solid var(--bg);
+    color: var(--fg-muted);
+  }
+
+  #activity :global(.item-body) {
+    flex: 1;
+    min-width: 0;
+    padding-top: 0.3rem;
+  }
+
+  #activity :global(.item-summary) {
+    margin: 0 0 0.5rem;
+    font-size: 1rem;
+    cursor: default;
+  }
+
+
+  #activity :global(.item-list) {
+    list-style: none;
+    margin: 0 0 0.5rem;
+    padding: 0;
+    font-size: 0.875rem;
+  }
+
+  #activity :global(.item-list li) {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 0.2rem 0;
+  }
+
+  #activity :global(.item-list li > :first-child) {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  #activity :global(.item-list li > :not(:first-child)) {
+    flex: none;
+    font-size: 0.75rem;
+  }
+
+  #activity :global(.none) {
+    padding: 1rem 0;
+  }
+
+  .more {
+    display: block;
+    width: 100%;
+    margin-top: 0.5rem;
+    padding: 0.4rem;
+    font: inherit;
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--link);
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    cursor: pointer;
+  }
+
+  .more:hover {
+    background: var(--bg-soft);
+  }
+</style>
